@@ -1,0 +1,14 @@
+\chapter*{Design}
+\addcontentsline{toc}{chapter}{Design}
+\begin{enumerate}
+	\item Hardware design
+	\item MHTP API architecture
+    	\begin{enumerate}
+        	\item Factory pattern with reflection in combination with delegation pattern was used to abstract the input from the touch screen device and notify the MHTP manager system
+            \item Observer pattern is used to notify haptic shapes about any new input
+            \item Bytetags (or glyphs?) were used to get input from touch screen device
+        \end{enumerate}
+    \item MHTP API allows both high and low level manipulation of the device (in a similar fashion to HTP toolkit)
+    \item Behaviour design
+    \item Text exploration using SpeechSynthetiser
+\end{enumerate}

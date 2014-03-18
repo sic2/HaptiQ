@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="GlyphRecognition">
+</Property><Property Name="Solution File" Value="C:\Users\surface\Desktop\MHTP\resources\Glyph\Sources\GlyphRecognition\GlyphRecognition.sln">
+</Property><Property Name="Date" Value="19 February 2014">
+</Property><Property Name="Time" Value="09:31">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="GlyphRecognition.sln" Description="File successfully backed up as C:\Users\surface\Desktop\MHTP\resources\Glyph\Sources\GlyphRecognition\Backup\GlyphRecognition.sln">
+</Event><Event ErrorLevel="0" Project="GlyphRecognition" Source="GlyphRecognition.csproj" Description="Project file successfully backed up as C:\Users\surface\Desktop\MHTP\resources\Glyph\Sources\GlyphRecognition\Backup\GlyphRecognition.csproj">
+</Event><Event ErrorLevel="0" Project="GlyphRecognition" Source="ExtractedGlyphData.cs" Description="File successfully backed up as C:\Users\surface\Desktop\MHTP\resources\Glyph\Sources\GlyphRecognition\Backup\ExtractedGlyphData.cs">
+</Event><Event ErrorLevel="0" Project="GlyphRecognition" Source="Glyph.cs" Description="File successfully backed up as C:\Users\surface\Desktop\MHTP\resources\Glyph\Sources\GlyphRecognition\Backup\Glyph.cs">
+</Event><Event ErrorLevel="0" Project="GlyphRecognition" Source="GlyphDatabase.cs" Description="File successfully backed up as C:\Users\surface\Desktop\MHTP\resources\Glyph\Sources\GlyphRecognition\Backup\GlyphDatabase.cs">
+</Event><Event ErrorLevel="0" Project="GlyphRecognition" Source="GlyphRecognizer.cs" Description="File successfully backed up as C:\Users\surface\Desktop\MHTP\resources\Glyph\Sources\GlyphRecognition\Backup\GlyphRecognizer.cs">
+</Event><Event ErrorLevel="0" Project="GlyphRecognition" Source="GlyphTracker.cs" Description="File successfully backed up as C:\Users\surface\Desktop\MHTP\resources\Glyph\Sources\GlyphRecognition\Backup\GlyphTracker.cs">
+</Event><Event ErrorLevel="0" Project="GlyphRecognition" Source="Properties\AssemblyInfo.cs" Description="File successfully backed up as C:\Users\surface\Desktop\MHTP\resources\Glyph\Sources\GlyphRecognition\Backup\Properties\AssemblyInfo.cs">
+</Event><Event ErrorLevel="0" Project="GlyphRecognition" Source="SquareBinaryGlyphRecognizer.cs" Description="File successfully backed up as C:\Users\surface\Desktop\MHTP\resources\Glyph\Sources\GlyphRecognition\Backup\SquareBinaryGlyphRecognizer.cs">
+</Event><Event ErrorLevel="0" Project="GlyphRecognition" Source="AForge.Vision.GlyphRecognition.snk" Description="File successfully backed up as C:\Users\surface\Desktop\MHTP\resources\Glyph\Sources\GlyphRecognition\Backup\AForge.Vision.GlyphRecognition.snk">
+</Event><Event ErrorLevel="0" Project="GlyphRecognition" Source="GlyphRecognition.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="GlyphRecognition" Source="GlyphRecognition.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="" Source="GlyphRecognition.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="GlyphRecognition.sln" Description="Converted">
+</Event></UpgradeLog>

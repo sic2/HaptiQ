@@ -1,0 +1,9 @@
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\Input_API\bin\Debug\Input_API.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\Input_API\bin\Debug\Input_API.pdb
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\Input_API\bin\Debug\AForge.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\Input_API\bin\Debug\AForge.Imaging.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\Input_API\bin\Debug\AForge.Math.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\Input_API\bin\Debug\AForge.Vision.GlyphRecognition.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\Input_API\obj\Debug\Input_API.csprojResolveAssemblyReference.cache
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\Input_API\obj\Debug\Input_API.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\Input_API\obj\Debug\Input_API.pdb

@@ -1,0 +1,79 @@
+\documentclass[12pt]{report}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{minitoc}
+\graphicspath{{images/}}
+
+\title{}
+
+\title{
+	{A Haptic Device for Graph and Text Exploration by People with Visual Disabilities}\\
+	{\large University of St. Andrews}\\
+	{\includegraphics{St_Andrews_Logo.png}}
+}
+
+\author{Simone Ivan Conte \\ 100003610}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+\newpage
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus id ante dapibus, aliquam odio sed, placerat neque. In auctor, ante vitae tincidunt vestibulum, augue tellus lacinia ante, nec semper mi diam eget arcu. Duis suscipit tincidunt convallis. Maecenas elementum faucibus risus, a porttitor mi vulputate a. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris at odio in tortor volutpat molestie. Nam faucibus diam at odio posuere, dictum ornare est rhoncus. Curabitur ac adipiscing metus. Morbi diam urna, pharetra ut condimentum sit amet, lacinia sit amet ipsum. Donec at tempus quam. In tellus est, consectetur vel odio quis, dapibus dapibus tellus. Praesent auctor orci id velit ultricies congue.
+
+Aenean sodales nisi vel turpis vestibulum tempus. Nulla nisl urna, faucibus sit amet tincidunt eget, vehicula at elit. Proin porta semper neque. Donec in mauris a est bibendum.
+
+\chapter*{Declaration}
+\addcontentsline{toc}{chapter}{Declaration}
+I declare that the material submitted for assessment is my own work except where credit is explicitly
+given to others by citation or acknowledgement. This work was performed during the current academic
+year except where otherwise stated.
+
+The main text of this project report is XXXX words long, including project specication and plan.
+
+In submitting this project report to the University of St Andrews, I give permission for it to be made
+available for use in accordance with the regulations of the University Library. I also give permission for
+the title and abstract to be published and for copies of the report to be made and supplied at cost to
+any bona de library or research worker, and to be made available on the World Wide Web. I retain the
+copyright in this work.
+
+
+\tableofcontents
+\newpage
+
+\chapter*{Table of Figures}
+\addcontentsline{toc}{chapter}{Table of Figures}
+\newpage
+
+\input{./sections/intro.tex}
+\newpage
+\input{./sections/background.tex}
+\newpage
+\input{./sections/spec.tex}
+\newpage
+\input{./sections/softEng.tex}
+\newpage
+\input{./sections/ethics.tex}
+\newpage
+\input{./sections/design.tex}
+\newpage
+\input{./sections/implementation.tex}
+\newpage
+\input{./sections/evaluation.tex}
+\newpage
+\input{./sections/conclusion.tex}
+
+\newpage
+\chapter*{Bibliography}
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{plain}
+\bibliography{bibliography.bib}
+
+\end{document}

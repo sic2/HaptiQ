@@ -1,0 +1,62 @@
+GRATF 2.0.1 release notes
+------------------------------
+06.03.2012.
+
+Version updates and fixes:
+
+* The project is updated to use AForge.NET framework version 2.2.4.1.
+
+* The project is updated to use Visual Studion .NET 2010 (C# Express Edition 2010 is fine to use).
+
+* The project is updated to use XNA 4.0.
+
+
+
+
+GRATF 2.0.0 release notes
+------------------------------
+19.09.2011.
+
+Version updates and fixes:
+
+* The project is updated to use AForge.NET framework version 2.2.2
+
+* Glyph recognition/tracking library
+  - Added glyph tracking class, which tracks glyphs throughout a video stream.
+    While tracking it takes care of glyphs' "shaking" - suppresses noise in
+    detection of glyphs' corners (if any of corners' coordinates don't change
+    for more than one pixel, then corners' coordinates are taken from previous
+    video frame). Also the class does glyphs' pose estimation using Coplanar
+    POSIT algorithm from AForge.Math namespace.
+
+* Glyph Recognition Studio
+  - Added possibility to print glyphs from the application.
+  
+  - Added XNA based visualizer of 3D augmented reality. It puts 3D object on top
+    of a recognized glyph using same pose as the glyph has.
+
+
+
+
+GRATF 1.0.0 release notes
+------------------------------
+05.11.2010.
+
+First release of the project. Based on AForge.NET framework v.2.1.4
+
+It includes:
+
+- A prototype of glyph recognition algorithm, which is implemented as a
+  plug-in to IPPrototyper tool from AForge.NET framework. Can be used
+  for demonstrating glyph recognition algorithm's idea step by step or
+  for its further improvement, debugging and testing.
+  
+- Glyph Recognition Studio - an application which does recognition of glyphs
+  in video streams (video files or local capture devices, like web cameras).
+  Also the application does 2D augmented reality - puts images into video
+  feed replacing recognized glyphs - virtual objects in real world.
+
+- Glyph recognition library, which is an extension to AForge.NET framework.
+  The library can be reused in other applications which require glyph
+  recognition functionality.
+  

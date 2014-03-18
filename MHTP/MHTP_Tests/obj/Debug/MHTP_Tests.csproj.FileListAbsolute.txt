@@ -1,0 +1,40 @@
+c:\users\simone\documents\visual studio 2010\Projects\MHTP\MHTP_Tests\bin\Debug\MHTP_Tests.dll
+c:\users\simone\documents\visual studio 2010\Projects\MHTP\MHTP_Tests\bin\Debug\MHTP_Tests.pdb
+c:\users\simone\documents\visual studio 2010\Projects\MHTP\MHTP_Tests\bin\Debug\MHTP.exe
+c:\users\simone\documents\visual studio 2010\Projects\MHTP\MHTP_Tests\bin\Debug\MHTP.pdb
+c:\users\simone\documents\visual studio 2010\Projects\MHTP\MHTP_Tests\obj\Debug\MHTP_Tests.csprojResolveAssemblyReference.cache
+c:\users\simone\documents\visual studio 2010\Projects\MHTP\MHTP_Tests\obj\Debug\MHTP_Tests.dll
+c:\users\simone\documents\visual studio 2010\Projects\MHTP\MHTP_Tests\obj\Debug\MHTP_Tests.pdb
+C:\Users\Simone\Desktop\MHTP\MHTP_Tests\bin\Debug\MHTP_Tests.dll
+C:\Users\Simone\Desktop\MHTP\MHTP_Tests\bin\Debug\MHTP_Tests.pdb
+C:\Users\Simone\Desktop\MHTP\MHTP_Tests\bin\Debug\SurfaceInput.dll
+C:\Users\Simone\Desktop\MHTP\MHTP_Tests\bin\Debug\SurfaceInput.pdb
+C:\Users\Simone\Desktop\MHTP\MHTP_Tests\obj\Debug\MHTP_Tests.csprojResolveAssemblyReference.cache
+C:\Users\Simone\Desktop\MHTP\MHTP_Tests\obj\Debug\MHTP_Tests.dll
+C:\Users\Simone\Desktop\MHTP\MHTP_Tests\obj\Debug\MHTP_Tests.pdb
+C:\Users\Simone\Desktop\MHTP\MHTP_Tests\bin\Debug\MHTP_API.dll
+C:\Users\Simone\Desktop\MHTP\MHTP_Tests\bin\Debug\MHTP_API.pdb
+C:\Users\Simone\Documents\MHTP\MHTP\MHTP_Tests\bin\Debug\MHTP_Tests.dll
+C:\Users\Simone\Documents\MHTP\MHTP\MHTP_Tests\bin\Debug\MHTP_Tests.pdb
+C:\Users\Simone\Documents\MHTP\MHTP\MHTP_Tests\bin\Debug\MHTP_API.dll
+C:\Users\Simone\Documents\MHTP\MHTP\MHTP_Tests\bin\Debug\SurfaceInput.dll
+C:\Users\Simone\Documents\MHTP\MHTP\MHTP_Tests\bin\Debug\MHTP_API.pdb
+C:\Users\Simone\Documents\MHTP\MHTP\MHTP_Tests\bin\Debug\SurfaceInput.pdb
+C:\Users\Simone\Documents\MHTP\MHTP\MHTP_Tests\obj\Debug\MHTP_Tests.csprojResolveAssemblyReference.cache
+C:\Users\Simone\Documents\MHTP\MHTP\MHTP_Tests\obj\Debug\MHTP_Tests.dll
+C:\Users\Simone\Documents\MHTP\MHTP\MHTP_Tests\obj\Debug\MHTP_Tests.pdb
+C:\Users\Simone\Documents\MHTP\MHTP\MHTP_Tests\bin\Debug\MHTP_API.xml
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\obj\Debug\MHTP_Tests.csprojResolveAssemblyReference.cache
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\bin\Debug\MHTP_Tests.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\bin\Debug\MHTP_Tests.pdb
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\bin\Debug\Input_API.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\bin\Debug\MHTP_API.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\bin\Debug\AForge.Vision.GlyphRecognition.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\bin\Debug\AForge.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\bin\Debug\AForge.Math.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\bin\Debug\AForge.Imaging.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\bin\Debug\Input_API.pdb
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\bin\Debug\MHTP_API.pdb
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\bin\Debug\MHTP_API.xml
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\obj\Debug\MHTP_Tests.dll
+C:\Users\Simone\Documents\Repos\MHTP\MHTP\MHTP_Tests\obj\Debug\MHTP_Tests.pdb
