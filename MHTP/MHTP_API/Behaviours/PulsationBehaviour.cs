@@ -33,7 +33,7 @@ namespace MHTP_API
 
         /// <summary>
         /// Constructor of the pulsation behaviour.
-        ///  XXX 
+        /// Make the specified actuators to pulse at a constant interval 
         /// </summary>
         /// <param name="highFrequencyActuators">
         /// Values from 0 to k indicate the single actuators
@@ -80,7 +80,7 @@ namespace MHTP_API
             return retval;
         }
 
-        // XXX
+        // XXX - UNUSED
         private void setMHTPActuators(MHTP mhtp)
         {
             int[] actuators = pulsationMatrix[_highFrequencyActuators];

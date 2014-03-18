@@ -57,6 +57,7 @@ Input_API
 
 Known issues
 
-- Not possible to configure servos from outside the code
+- DirectionBehaviour and PulsationBehaviour work only on a 4-MHTP.
+- PrinterModels/ does not contain the latest models (18/03/2014).
 
 For more issues see: http://sic2.host.cs.st-andrews.ac.uk/public/
