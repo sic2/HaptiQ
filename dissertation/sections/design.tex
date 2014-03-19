@@ -1,14 +1,30 @@
-\chapter*{Design}
-\addcontentsline{toc}{chapter}{Design}
+\chapter{Design}
+
 \begin{enumerate}
 	\item Hardware design
+    	\begin{enumerate}
+        	\item Improving the actuators
+            	show pictures of old HTP and new MHTP
+            \item pressure sensors (they are optional)
+            \item actuators position facilitate directions. this is useful for blind people. an alternative device could provide actuators displaced as a grid.
+            \item 4-MHTP
+            \item 8-MHTP
+            \item touch screen display SDK should be able to provide raw input
+            \item from Brock's : "most blind seem to explore tactile maps with both hands and all 10 fingers"
+            \item the computer needs a sound card for enabling text-to-speech output
+        \end{enumerate}
 	\item MHTP API architecture
     	\begin{enumerate}
+        	\item state what architecture is targeted
         	\item Factory pattern with reflection in combination with delegation pattern was used to abstract the input from the touch screen device and notify the MHTP manager system
             \item Observer pattern is used to notify haptic shapes about any new input
             \item Bytetags (or glyphs?) were used to get input from touch screen device
+            \item custom configuration
+            \item API allows recognition of glyphs using different devices (touch displayes via surface sdk, webcam, etc)
+            \item Limitations: there is a lower bound threshold on how often input can be acquired. this depends on the input device, the input technique used and the "refresh rate" of the MHTP
         \end{enumerate}
     \item MHTP API allows both high and low level manipulation of the device (in a similar fashion to HTP toolkit)
     \item Behaviour design
-    \item Text exploration using SpeechSynthetiser
+    \item Haptic objects
+    \item Text exploration using SpeechSynthetiser - this can be personalised by adding custom haptic shapes which can react differently
 \end{enumerate}
