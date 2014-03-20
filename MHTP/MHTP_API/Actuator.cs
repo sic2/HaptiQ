@@ -13,7 +13,7 @@ namespace MHTP_API
     /// </summary>
     public class Actuator
     {
-        private double _pressure;
+        private int _pressure;
         private int _id; // used to identify which actuator is of the MHTP
         private double _minPosition;
         private double _maxPosition;
@@ -37,6 +37,7 @@ namespace MHTP_API
 
             _servo = servo;
             _id = id;
+            _pressure = 0;
             setMinPosition(minPosition);
             setMaxPosition(maxPosition);
          }
@@ -71,7 +72,7 @@ namespace MHTP_API
         /// <summary>
         /// Get the current pressure of this actuator
         /// </summary>
-        public double pressure
+        public int pressure
         {
             get { return _pressure; }
         }
@@ -81,7 +82,7 @@ namespace MHTP_API
         /// Note: This function should not be called from other classes other than MHTP
         /// </summary>
         /// <param name="pressure"></param>
-        public void setPressure(double pressure)
+        public void setPressure(int pressure)
         {
             _pressure = pressure;
         }
