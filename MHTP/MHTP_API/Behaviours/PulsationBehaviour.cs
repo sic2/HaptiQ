@@ -15,8 +15,8 @@ namespace MHTP_API
         private int _highFrequencyActuators;
         private double _highFrequency;
 
-        private const double HIGH_POSITION = 160;
-        private const double LOW_POSITION = 135;
+        private const double HIGH_POSITION = 40;
+        private const double LOW_POSITION = 0;
         private double position;
 
         // XXX - rather than using matrices, can use logic operations (shift)
@@ -66,33 +66,20 @@ namespace MHTP_API
             int[] acts = pulsationMatrix[_highFrequencyActuators];
             foreach (KeyValuePair<int, SerializableTuple<int, int>> entry in actuators)
             {
+                retval[entry.Key] = actuators[entry.Key].Item1;
                 if (acts[entry.Key] == 1)
                 {
-                    retval[entry.Key] = position > actuators[entry.Key].Item2 ? actuators[entry.Key].Item2 : position;
+                    retval[entry.Key] += position > actuators[entry.Key].Item2 ? actuators[entry.Key].Item2 : position;
                 }
                 else if (acts[entry.Key] == 0)
                 {
-                    retval[entry.Key] = actuators[entry.Key].Item1;
+                    retval[entry.Key] += actuators[entry.Key].Item1;
                 }
             }
 
             System.Threading.Thread.Sleep((int)(10 * _highFrequency));
             return retval;
         }
-
-        // XXX - UNUSED
-        private void setMHTPActuators(MHTP mhtp)
-        {
-            int[] actuators = pulsationMatrix[_highFrequencyActuators];
-            for (int i = 0; i < actuators.Length; i++)
-            {
-                if (actuators[i] == 1)
-                    mhtp.setActuatorPosition(i, position);
-                else if (actuators[i] == 0)
-                    mhtp.setActuatorMinPosition(i);
-            }
-        }
-
         
         public override bool Equals(System.Object obj)
         {

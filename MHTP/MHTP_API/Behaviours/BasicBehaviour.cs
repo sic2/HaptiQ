@@ -40,7 +40,7 @@ namespace MHTP_API
             _type = type;
             _currentActiveActuators = 1;
             TIME = 0;
-            position = 170;
+            position = 40;
         }
 
         /// <summary>
@@ -99,9 +99,9 @@ namespace MHTP_API
                 if ((tmp & 1) != 0)
                 {
                     position = position > actuators[i].Item2 ? actuators[i].Item2 : position;
-                    // XXX - only if pressure data exist !?
-                    double adjustedPosition = position * (1 / 3.0 * Math.Cos(pressureData[i] * Math.PI / 1000) + 2 / 3.0); // XXX - assume pressure range is 1000
-                    retval[i] = adjustedPosition;    
+                    double adjustedPosition = pressureData == null ? 
+                            position : position * (1 / 3.0 * Math.Cos(pressureData[i] * Math.PI / 1000) + 2 / 3.0); // XXX - assume pressure range is 1000
+                    retval[i] = actuators[i].Item1 + adjustedPosition;    
                 }
                 else
                 {
