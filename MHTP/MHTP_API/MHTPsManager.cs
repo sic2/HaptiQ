@@ -11,14 +11,56 @@ using Phidgets.Events;
 
 namespace MHTP_API
 {
+    /// <summary>
+    /// Delegate for PressureInput events
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <param name="id">This MHTP id</param>
+    /// <param name="position"></param>
+    /// <param name="actuatorId"></param>
+    /// <param name="pressureValue"></param>
+    public delegate void MHTPPressureInputEventHandler(object sender, EventArgs e, uint id, Point position, int actuatorId, int pressureValue);
+
+    /// <summary>
+    /// Delegate for Position (and Orientation) events.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <param name="id">This MHTP id</param>
+    /// <param name="position"></param>
+    /// <param name="orientation"></param>
+    public delegate void MHTPPositionEventHandler(object sender, EventArgs e, uint id, Point position, double orientation);
+
     // Singleton pattern
     // see http://stackoverflow.com/questions/4203634/singleton-with-parameters
     /// <summary>
     /// The MHTPsManager handles any number of MHTPs, making sure
     /// that they are configured and no error occurs. 
+    /// 
+    /// Also, the MHTPsManager automatically subscribes to MHTPs events:
+    /// - PressureInputEventHandler
+    /// - PositionEventHandler
+    /// So, a client application need to subscribe only to the events:
+    /// - MHTPPressureInputEventHandler
+    /// - MHTPPositionEventHandler
+    /// to get information about any MHTP. 
+    /// However, the API also allows users to subscribe to these events
+    /// from the MHTP object themselves.
+    /// In this latter case, it is suggested to call #removeMHTPsEventsHandlers
+    /// Call #addMHTPsEventsHandlers to restore it.
     /// </summary>
     public class MHTPsManager
     {
+        /*
+        * EVENTS - fired whenever an MHTP changes position, orientation or pressure input values
+        */
+        public event MHTPPressureInputEventHandler PressureInput;
+        public event MHTPPositionEventHandler PositionChanged;
+        /*
+        * END EVENTS 
+        */
+
         private String _windowName;
         private String _inputClass;
 
@@ -208,7 +250,7 @@ namespace MHTP_API
                 {
                     MHTP mhtp = new MHTP(_nextID, configuration);
                     if (configuration.interfaceKitBoardAttached)
-                        mhtp.Changed += new PressureInputEventHandler(mhtp_Changed);
+                        mhtp.PressureGesture += new PressureGestureEventHandler(pressureGestureMHTPChanged);
                     addMHTP(mhtp); // Add this MHTP to MHTPsManager appropriate data structure
                 }
             }
@@ -345,8 +387,15 @@ namespace MHTP_API
             }
         }
 
-        // FIXME - some of the parameters are not used ?
-        private void mhtp_Changed(object sender, EventArgs e, Point position, uint id, List<Tuple<DateTime, double>> list)
+        /// <summary>
+        /// Notifies haptic observers about a relevant pressure input
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <param name="id"></param>
+        /// <param name="position"></param>
+        /// <param name="list"></param>
+        private void pressureGestureMHTPChanged(object sender, EventArgs e, uint id, Point position, List<Tuple<DateTime, int>> list)
         {
             // Notify observers
             lock (_syncObj)
@@ -371,6 +420,8 @@ namespace MHTP_API
             }
             else
             {
+                mhtp.PositionChanged += new PositionEventHandler(mhtp_PositionChanged);
+                mhtp.PressureInput += new PressureInputEventHandler(mhtp_PressureInput);
                 _mhtpsDictionary.Add(_nextID, mhtp);
                 _inputIdentifiersToMHTPs.Add(mhtp.configuration.inputIdentifier, _nextID);
                 return _nextID++;
@@ -389,6 +440,8 @@ namespace MHTP_API
             }
             else
             {
+                _mhtpsDictionary[mhtpID].PositionChanged -= new PositionEventHandler(mhtp_PositionChanged);
+                _mhtpsDictionary[mhtpID].PressureInput -= new PressureInputEventHandler(mhtp_PressureInput);
                 _mhtpsDictionary.Remove(mhtpID);
             }
         }
@@ -414,6 +467,51 @@ namespace MHTP_API
             if (_mhtpsDictionary.ContainsKey(mhtpID))
                 return _mhtpsDictionary[mhtpID];
             return null;
+        }
+
+        /// <summary>
+        /// Subscribe to the Position and Pressure events for all MHTPs
+        /// </summary>
+        public void addMHTPsEventsHandlers()
+        {
+            foreach (KeyValuePair<UInt32, MHTP> entry in _mhtpsDictionary)
+            {
+                entry.Value.PositionChanged += new PositionEventHandler(mhtp_PositionChanged);
+                entry.Value.PressureInput += new PressureInputEventHandler(mhtp_PressureInput);
+            }
+        }
+
+        /// <summary>
+        /// Unsubscribe to the Position and Pressure events for all MHTPs
+        /// </summary>
+        public void removeMHTPsEventsHandlers()
+        {
+            foreach (KeyValuePair<UInt32, MHTP> entry in _mhtpsDictionary)
+            {
+                entry.Value.PositionChanged -= new PositionEventHandler(mhtp_PositionChanged);
+                entry.Value.PressureInput -= new PressureInputEventHandler(mhtp_PressureInput);
+            }
+        }
+
+        /********************/
+        /* Manage MHTPs     */
+        /* position and     */    
+        /* pressure events  */
+        /********************/
+        private void mhtp_PositionChanged(object sender, EventArgs e, uint id, Point position, double orientation)
+        {
+            if (PositionChanged != null)
+            {
+                PositionChanged(this, e, id, position, orientation);
+            }
+        }
+
+        private void mhtp_PressureInput(object sender, EventArgs e, uint id, Point position, int actuatorId, int pressureValue)
+        {
+            if (PressureInput != null)
+            {
+                PressureInput(this, e, id, position, actuatorId, pressureValue);
+            }
         }
 
         /****************************

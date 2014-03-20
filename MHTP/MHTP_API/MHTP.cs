@@ -10,29 +10,103 @@ using Input_API;
 
 namespace MHTP_API
 {
+    /***************************/
+    /* DELEGATES DEFINITIONS   */
+    /***************************/
+ 
+    /// <summary>
+    /// Delegate for PressureGesture events
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <param name="id">This MHTP id</param>
+    /// <param name="position"></param>
+    /// <param name="list">list of recent pressure values</param>
+    public delegate void PressureGestureEventHandler(object sender, EventArgs e, uint id, Point position, List<Tuple<DateTime, int>> list);
+
     /// <summary>
     /// Delegate for PressureInput events
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    /// <param name="id">id of the MHTP generating the event</param>
-    /// <param name="list">list of recent pressure values</param>
-    public delegate void PressureInputEventHandler(object sender, EventArgs e, Point position, uint id, List<Tuple<DateTime, double>> list);
+    /// <param name="id">This MHTP id</param>
+    /// <param name="position"></param>
+    /// <param name="actuatorId"></param>
+    /// <param name="pressureValue"></param>
+    public delegate void PressureInputEventHandler(object sender, EventArgs e, uint id, Point position, int actuatorId, int pressureValue);
+
+    /// <summary>
+    /// Delegate for Position (and Orientation) events.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <param name="id">This MHTP id</param>
+    /// <param name="position"></param>
+    /// <param name="orientation"></param>
+    public delegate void PositionEventHandler(object sender, EventArgs e, uint id, Point position, double orientation);
 
     /// <summary>
     /// This class represent an MHTP.
     /// </summary>
     public class MHTP
     {
+        /*
+         * EVENTS
+         */
+        /// <summary>
+        /// The PressureGestureEventHandler event is used to notify that a relevant input was input
+        /// via the pressure sensors
+        /// </summary>
+        public event PressureGestureEventHandler PressureGesture;
+
+        /// <summary>
+        /// The PressureInputEventHandler event is used to notify that the pressure input of one of the sensors
+        /// has changed
+        /// </summary>
+        public event PressureInputEventHandler PressureInput;
+
+        /// <summary>
+        /// The PositionEventHandler event is used to notify that either the position
+        /// or the orientation (or both) of this MHTP have changed.
+        /// </summary>
+        public event PositionEventHandler PositionChanged;
+        /*
+         * END EVENTS 
+         */
+
+        private Point _position;
         /// <summary>
         /// Current position of this MHTP
         /// </summary>
-        public Point position { get; set; }
+        public Point position
+        {
+            get
+            {
+                return _position;
+            }
+            set
+            {
+                _position = value;
+                OnPositionChanged(null);
+            }
+        }
 
+        private double _orientation;
         /// <summary>
         /// Orientation is in radians
         /// </summary>
-        public double orientation { get; set; } 
+        public double orientation
+        {
+            get
+            {
+                return _orientation;
+            }
+            set
+            {
+                _orientation = value;
+                OnPositionChanged(null);
+            }
+        } 
 
         private AdvancedServo _advServo;
         private static List<Actuator> _actuators;
@@ -43,7 +117,7 @@ namespace MHTP_API
         // map actuator_id -> (time, pressure value)
         // data is recorded only when above the threshold.
         // When below the threshold the data is removed.
-        private Dictionary<int, List<Tuple<DateTime, double>>> _inputData;
+        private Dictionary<int, List<Tuple<DateTime, int>>> _inputData;
         private Dictionary<int, double> _currentPressureData;
 
         /// <summary>
@@ -88,7 +162,7 @@ namespace MHTP_API
             this._configuration = configuration;
 
             // Initialise data structures
-            _inputData = new Dictionary<int, List<Tuple<DateTime, double>>>();
+            _inputData = new Dictionary<int, List<Tuple<DateTime, int>>>();
             _currentPressureData = new Dictionary<int, double>();
             _actuators = new List<Actuator>();
             _behaviours = new List<IBehaviour>();
@@ -479,23 +553,46 @@ namespace MHTP_API
             }
         }
 
+        /* -------------- */
+        /* EVENT METHODS  */ 
+        /* ---------------*/
+
         /// <summary>
-        /// The PressureInputEventHandler event is used to notify that a relevant input was input
-        /// via the pressure sensors
+        /// This method raises a PressureGestureEventHandler event.
         /// </summary>
-        public event PressureInputEventHandler Changed;
+        /// <param name="e"></param>
+        /// <param name="list">list of all pressure data collected for this event</param>
+        private void OnPressureGesture(EventArgs e, List<Tuple<DateTime, int>> list)
+        {
+            if (PressureGesture != null)
+            {
+                PressureGesture(this, e, _id, _position, list);
+            }
+        }
 
         /// <summary>
         /// This method raises a PressureInputEventHandler event.
         /// </summary>
         /// <param name="e"></param>
-        /// <param name="id">actuator id</param>
-        /// <param name="list">list of all pressure data collected for this event</param>
-        protected virtual void OnChanged(EventArgs e, uint id, List<Tuple<DateTime, double>> list)
+        /// <param name="actuatorId"></param>
+        /// <param name="pressureValue"></param>
+        private void OnPressureInput(EventArgs e, int actuatorId, int pressureValue)
         {
-            if (Changed != null)
+            if (PressureInput != null)
             {
-                Changed(this, e, position, id, list);
+                PressureInput(this, e, _id, _position, actuatorId, pressureValue);
+            }
+        }
+
+        /// <summary>
+        /// This method raises a PositionEventHandler event.
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnPositionChanged(EventArgs e)
+        {
+            if (PositionChanged != null)
+            {
+                PositionChanged(this, e, _id, _position, _orientation);
             }
         }
 
@@ -556,14 +653,14 @@ namespace MHTP_API
                 if (e.Value > INPUT_PRESSURE_THRESHOLD)
                 {
                     if (!_inputData.ContainsKey(e.Index))
-                        _inputData[e.Index] = new List<Tuple<DateTime, double>>();
-                    _inputData[e.Index].Add(new Tuple<DateTime, double>(DateTime.Now, e.Value));
+                        _inputData[e.Index] = new List<Tuple<DateTime, int>>();
+                    _inputData[e.Index].Add(new Tuple<DateTime, int>(DateTime.Now, e.Value));
                 }
                 else if (e.Value < INPUT_PRESSURE_THRESHOLD && e.Value > NOISE_THRESHOLD)
                 {
                     if (_inputData.ContainsKey(e.Index))
                     {
-                        OnChanged(null, _id, _inputData[e.Index]);
+                        OnPressureGesture(null, _inputData[e.Index]);
                         _inputData[e.Index].Clear();
                         _inputData[e.Index] = null; // deallocated list
                         _inputData.Remove(e.Index);
@@ -571,6 +668,9 @@ namespace MHTP_API
                 }
                 Helper.Logger("MHTP_API.MHTP.intfKit_SensorChange::InterfaceKit Sensors Changed (" + e.Index + "): " + e.Value);
             }
+
+            // Fire an event for this pressure sensor
+            OnPressureInput(null, e.Index, e.Value);
         }
 
     }
