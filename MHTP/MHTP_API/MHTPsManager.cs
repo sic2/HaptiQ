@@ -307,6 +307,8 @@ namespace MHTP_API
             else
             {
                 MHTP mhtp = _mhtpsDictionary[_inputIdentifiersToMHTPs[inputIdentifier]];
+                mhtp.position = point;
+                mhtp.orientation = orientation;
                 handleBehaviours(mhtp, point, orientation);
             }
         }
@@ -343,13 +345,14 @@ namespace MHTP_API
             }
         }
 
-        private void mhtp_Changed(object sender, EventArgs e, uint id, List<Tuple<DateTime, double>> list)
+        // FIXME - some of the parameters are not used ?
+        private void mhtp_Changed(object sender, EventArgs e, Point position, uint id, List<Tuple<DateTime, double>> list)
         {
             // Notify observers
             lock (_syncObj)
             {
                 Parallel.ForEach(_hapticObjectObservers, observer => 
-                    observer.handlePress());
+                    observer.handlePress(position));
             }
         }
 

@@ -15,6 +15,8 @@ namespace MHTP_API
         private double lowPosition;
 
         private const int NUMBER_ACTUATORS_DIVIDER = 4;
+        private const int FOUR_ACTUATORS = 4;
+        private const int EIGHT_ACTUATORS = 8;
 
         private List<Tuple<Point, Point>> _lines;
 
@@ -28,6 +30,11 @@ namespace MHTP_API
                             new int[]{132, 72}// 8-MHTP 1-line
                         };
 
+        /// <summary>
+        /// Constructor for direction behaviour. 
+        /// </summary>
+        /// <param name="lines">Geometric lines indicating the direction</param>
+        /// <param name="orientation">Orientation of the device in radians</param>
         public DirectionBehaviour(List<Tuple<Point, Point>> lines, double orientation)
         {
             _lines = lines;
@@ -54,7 +61,7 @@ namespace MHTP_API
 
             // Normalise number of actuators. This is necessary, otherwise the methods used 
             // below do not behave correctly
-            int numberActuators = actuators.Count <= 4 ? 4 : 8; // TODO - do not use magic numbers
+            int numberActuators = actuators.Count <= FOUR_ACTUATORS ? FOUR_ACTUATORS : EIGHT_ACTUATORS;
             bool isCorner = _lines.Count == 2 ? true : false;
             if (isCorner)
             {
@@ -65,11 +72,10 @@ namespace MHTP_API
                 segmentBehaviour(actuators, pressureData, numberActuators, ref retval);
             }
 
-            System.Threading.Thread.Sleep(100);
+            System.Threading.Thread.Sleep(200);
             return retval;
         }
 
-        // TODO - rename method 
         private void segmentBehaviour(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
             Dictionary<int, double> pressureData, int numberActuators, ref Dictionary<int, double> output)
         {
@@ -90,60 +96,87 @@ namespace MHTP_API
             if (sector % 2 == 0) // Static sector
             {
                 int activeActs = staticActuatorsMatrix[matrixIndex];
-                activeActs = shiftActs(activeActs, sector, numberActuators, limit);
-                bitsToActuators(activeActs, numberActuators, false, ref output);
+                activeActs = shiftActs(activeActs, (int)(sector / 2), numberActuators, limit);
+                bitsToActuators(activeActs, numberActuators, false, true, ref output);
             }
             else // Pulsing sector
             {
                 int[] acts = dynamicActuatorsMatrix[matrixIndex];
-                acts[0] = shiftActs(acts[0], sector, numberActuators, limit);
-                acts[1] = shiftActs(acts[1], sector, numberActuators, limit);
+                acts[0] = shiftActs(acts[0], (int)(sector / 2), numberActuators, limit);
+                acts[1] = shiftActs(acts[1], (int)(sector / 2), numberActuators, limit);
 
-                bitsToActuators(acts[0], numberActuators, TIME % 2 == 0, ref output);
-                bitsToActuators(acts[1], numberActuators, TIME % 2 != 0, ref output);
+                bitsToActuators(acts[0], numberActuators, TIME % 2 == 0, true, ref output);
+                bitsToActuators(acts[1], numberActuators, TIME % 2 != 0, true, ref output);
             }
         }
 
         private void cornerBehaviour(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
             Dictionary<int, double> pressureData, int numberActuators, ref Dictionary<int, double> output)
         {
-            // http://stackoverflow.com/questions/3365171/calculating-the-angle-between-two-lines-without-having-to-calculate-the-slope
             int limit = (int)(Math.Pow(2, numberActuators));
-
-            // Determines angle between lines in radians
-            double angle1 = Math.Atan2(_lines[0].Item1.Y - _lines[0].Item2.Y,
-                                        _lines[0].Item1.X - _lines[0].Item2.X);
-            double angle2 = Math.Atan2(_lines[1].Item1.Y - _lines[1].Item2.Y,
-                                        _lines[1].Item1.X - _lines[1].Item2.X);
-            double angle = angle1 - angle2;
-           
-            // Map angle to 0-(2*PI)
-            angle = (angle > 0 ? angle : (2 * Math.PI + angle));
-            Console.WriteLine("Angle is {0:f}", angle);
-            angle += _orientation; // Total angle between lines and device orientation
-            // Normalise angle
             double sectorRange = (2 * Math.PI) / (2.0 * numberActuators);
-            double normAngle = angle + (sectorRange / 2.0);
+            double normAngle = _orientation + (sectorRange / 2.0);
             int sector = (int)Math.Floor(normAngle / sectorRange) % numberActuators;
 
-            int matrixIndex = numberActuators / NUMBER_ACTUATORS_DIVIDER - 1;
+            int actuator1 = vectorToActuator(_lines[0], numberActuators);
+            int actuator2 = shiftActs(actuator1, 1, numberActuators, limit);
+            if (sector % 2 == 0)
+            {
+                actuator1 += actuator2;
+                actuator1 = shiftActs(actuator1, (int)(sector / 2), numberActuators, limit);
+                bitsToActuators(actuator1, numberActuators, false, true, ref output);
+            }
+            else
+            {
+                int actuator3 = shiftActs(actuator2, 1, numberActuators, limit);
 
-            // TODO
+                actuator1 = shiftActs(actuator1, (int)(sector / 2), numberActuators, limit);
+                actuator2 = shiftActs(actuator2, (int)(sector / 2), numberActuators, limit);
+                actuator3 = shiftActs(actuator3, (int)(sector / 2), numberActuators, limit);
 
+                bitsToActuators(actuator1, numberActuators, TIME % 2 == 0, false, ref output);
+                bitsToActuators(actuator2, numberActuators, TIME % 2 != 0, false, ref output);
+                bitsToActuators(actuator3, numberActuators, TIME % 2 == 0, false, ref output);
+            }
         }
 
-        private int detectCorner()
+        // [ ASSUMPTION ] only angles at 90 degrees for 4 actuators
+        // and angles at 90 and 135 degrees for 8 actuators
+        // Order of points in segment is important. 
+        // The coordinates used negate y (as in most graphics programs)
+        // So the origin is to the top-left corner.
+        private int vectorToActuator(Tuple<Point, Point> segment, int numberActuators)
         {
+            if (numberActuators == 4)
+            {
+                if (segment.Item1.X == segment.Item2.X && segment.Item1.Y > segment.Item2.Y) return 1;
+                if (segment.Item1.X < segment.Item2.X && segment.Item1.Y == segment.Item2.Y) return 2;
+                if (segment.Item1.X == segment.Item2.X && segment.Item1.Y < segment.Item2.Y) return 4;
+                if (segment.Item1.X > segment.Item2.X && segment.Item1.Y == segment.Item2.Y) return 8;
+            }
+            else // 8-MHTP
+            {
+                // right degrees angles
+                if (segment.Item1.X == segment.Item2.X && segment.Item1.Y > segment.Item2.Y) return 1;
+                if (segment.Item1.X < segment.Item2.X && segment.Item1.Y == segment.Item2.Y) return 4;
+                if (segment.Item1.X == segment.Item2.X && segment.Item1.Y < segment.Item2.Y) return 16;
+                if (segment.Item1.X > segment.Item2.X && segment.Item1.Y == segment.Item2.Y) return 64;
+                // 45 degrees angles
+                if (segment.Item1.X < segment.Item2.X && segment.Item1.Y > segment.Item2.Y) return 2;
+                if (segment.Item1.X > segment.Item2.X && segment.Item1.Y > segment.Item2.Y) return 128;
+                if (segment.Item1.X < segment.Item2.X && segment.Item1.Y < segment.Item2.Y) return 8;
+                if (segment.Item1.X > segment.Item2.X && segment.Item1.Y < segment.Item2.Y) return 32;
+            }
             return -1;
         }
 
-        private int shiftActs(int acts, int sector, int numberActuators, int limit)
+        private int shiftActs(int acts, int offset, int numberActuators, int limit)
         {
-            return (acts << (int)(sector / 2) |
-                    acts >> (numberActuators - (int)(sector / 2))) & (limit - 1);
+            return (acts << offset |
+                    acts >> (numberActuators - offset)) & (limit - 1);
         }
 
-        private void bitsToActuators(int activeActuators, int numberActuators, bool switchPositionOrder, ref Dictionary<int, double> output)
+        private void bitsToActuators(int activeActuators, int numberActuators, bool switchPositionOrder, bool setZeros, ref Dictionary<int, double> output)
         {
             double pos0 = highPosition;
             double pos1 = lowPosition;
@@ -159,86 +192,13 @@ namespace MHTP_API
                 {
                     output[i] = pos0;
                 }
-                else
+                else if (setZeros)
                 {
                     output[i] = pos1;
                 }
                 activeActuators = activeActuators >> 1;
             }
         }
-
-
-        // TODO - refactor
-        /*
-        public Dictionary<int, double> play(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
-            Dictionary<int, double> pressureData)
-        {
-            Dictionary<int, double> retval = new Dictionary<int, double>();
-
-            TIME++;
-
-            if (_direction != -1)
-            {
-                int[] acts = directionMatrix[_direction][_orientation];
-                if (acts[0] == 1)
-                    _pulse = true;
-            }
-            else
-            {
-                _pulse = false;
-            }
-
-            if (_pulse)
-            {
-                if (TIME % 2 == 0)
-                {
-                    double tmp = highPosition;
-                    highPosition = lowPosition;
-                    lowPosition = tmp;
-                }
-            }
-            else
-            {
-                highPosition = 170;
-                lowPosition = 135;
-            }
-
-            if (_direction == -1)
-            {
-                for (int i = 0; i < actuators.Count; i++)
-                {
-                    retval[i] = highPosition;
-                }
-            }
-            else
-            {
-                int[] acts = directionMatrix[_direction][_orientation]; // TODO - double actuators array if necessary
-                foreach (KeyValuePair<int, SerializableTuple<int, int>> entry in actuators)
-                {
-                    switch (acts[entry.Key + 1])
-                    {
-                        case -1:
-                            retval[entry.Key] = actuators[entry.Key].Item1;
-                            break;
-                        case 0:
-                            retval[entry.Key] = lowPosition;
-                            break;
-                        case 1:
-                            retval[entry.Key] = highPosition;
-                            break;
-                        default:
-                            Helper.Logger("MHTP_API.DirectionBehaviour.Play:: (entry.key + 1: " 
-                                + (entry.Key + 1) + ") not valid. Direction: " + _direction +
-                                "; orientation: " + _orientation);
-                            break;
-                    }
-                }
-            }
-
-            System.Threading.Thread.Sleep(100);
-            return retval;
-        }
-         * */
         
         public override bool Equals(System.Object obj)
         {

@@ -7,18 +7,28 @@ using System.Windows.Media;
 
 using Input_API;
 using MHTP_API;
+using System.Globalization;
 
 namespace HapticClientAPI
 {
     public class HapticRectangle : HapticShape
     {
-        private const int BORDERS_TOLLERANCE = 10;
+        // Constant used to display border tollerance of rectangle
+        private const int BORDERS_TOLLERANCE = (int) (NEARNESS_TOLLERANCE / 2);
 
         private double x;
         private double y;
         private double width;
         private double height;
 
+        /// <summary>
+        /// Constructor for HapticRectangle
+        /// x, y represent the top-left coordinates relative to the main window
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
         public HapticRectangle(double x, double y, double width, double height) : base()
         {
             this.x = x; this.y = y; this.width = width; this.height = height;
@@ -31,7 +41,8 @@ namespace HapticClientAPI
         }
 
         /// <summary>
-        /// 
+        /// Handle input for an haptic rectangle.
+        /// If point is inside the rectangle, an appropriate behaviour is calculated and returned.
         /// </summary>
         /// <param name="point"></param>
         /// <param name="orientation"></param>
@@ -68,9 +79,15 @@ namespace HapticClientAPI
             return new Tuple<int, IBehaviour, IBehaviour>(1, _currentBehaviour, null);
         }
 
-        public override void handlePress()
+        /// <summary>
+        /// Output information content via audio if input was received 
+        /// for a device currently in this haptic rectangle
+        /// </summary>
+        /// <param name="point"></param>
+        public override void handlePress(Point point)
         {
-            // TODO - speak
+            if (pointIsInside(point) && state == STATE.down)
+                SpeechOutput.Instance.speak(information);
         }
 
         private bool pointIsInside(Point point)
@@ -94,43 +111,43 @@ namespace HapticClientAPI
                 Point topRight = new Point(x + width, y);
 
                 List<Tuple<Point, Point>> lines = new List<Tuple<Point, Point>>();
-                if (pointIsCloseToLine(point, bottomLeft, bottomRight) && 
-                    pointIsCloseToLine(point, topLeft, bottomLeft)) // bottom-left corner
+                if (pointIsCloseToLine(point, bottomLeft, bottomRight, CORNER_NEARNESS_TOLLERANCE) &&
+                    pointIsCloseToLine(point, bottomLeft, topLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-left corner
                 {
                     lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
-                    lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
+                    lines.Add(new Tuple<Point, Point>(bottomLeft, topLeft));
                 }
-                else if (pointIsCloseToLine(point, topLeft, topRight) &&
-                        pointIsCloseToLine(point, topLeft, bottomLeft)) // top-left corner
+                else if (pointIsCloseToLine(point, topLeft, topRight, CORNER_NEARNESS_TOLLERANCE) &&
+                        pointIsCloseToLine(point, topLeft, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // top-left corner
                 {
                     lines.Add(new Tuple<Point, Point>(topLeft, topRight));
                     lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
                 }
-                else if (pointIsCloseToLine(point, topLeft, topRight) &&
-                    pointIsCloseToLine(point, topRight, bottomRight)) // top-right corner
+                else if (pointIsCloseToLine(point, topRight, topLeft, CORNER_NEARNESS_TOLLERANCE) &&
+                    pointIsCloseToLine(point, topRight, bottomRight, CORNER_NEARNESS_TOLLERANCE)) // top-right corner
                 {
-                    lines.Add(new Tuple<Point, Point>(topLeft, topRight));
+                    lines.Add(new Tuple<Point, Point>(topRight, topLeft));
                     lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
                 }
-                else if (pointIsCloseToLine(point, topRight, bottomRight) &&
-                    pointIsCloseToLine(point, bottomLeft, bottomRight)) // bottom-right corner
+                else if (pointIsCloseToLine(point, bottomRight, topRight, CORNER_NEARNESS_TOLLERANCE) &&
+                    pointIsCloseToLine(point, bottomRight, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-right corner
                 {
-                    lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
+                    lines.Add(new Tuple<Point, Point>(bottomRight, topRight));
+                    lines.Add(new Tuple<Point, Point>(bottomRight, bottomLeft));
+                }
+                else if (pointIsCloseToLine(point, bottomLeft, bottomRight, NEARNESS_TOLLERANCE)) // horizontal
+                {
                     lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
                 }
-                else if (pointIsCloseToLine(point, bottomLeft, bottomRight)) // horizontal
-                {
-                    lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
-                }
-                else if (pointIsCloseToLine(point, topLeft, topRight)) // horizontal
+                else if (pointIsCloseToLine(point, topLeft, topRight, NEARNESS_TOLLERANCE)) // horizontal
                 {
                     lines.Add(new Tuple<Point, Point>(topLeft, topRight));
                 }
-                else if (pointIsCloseToLine(point, topLeft, bottomLeft)) // vertical
+                else if (pointIsCloseToLine(point, topLeft, bottomLeft, NEARNESS_TOLLERANCE)) // vertical
                 {
                     lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
                 }
-                else if (pointIsCloseToLine(point, topRight, bottomRight)) // vertical
+                else if (pointIsCloseToLine(point, topRight, bottomRight, NEARNESS_TOLLERANCE)) // vertical
                 {
                     lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
                 }
@@ -156,10 +173,18 @@ namespace HapticClientAPI
         /// <param name="drawingContext"></param>
         protected override void OnRender(DrawingContext drawingContext)
         {
+            
             base.OnRender(drawingContext);
             drawingContext.DrawRectangle(null, new Pen(Brushes.Red, 1.0),
                 new System.Windows.Rect(x - BORDERS_TOLLERANCE, y - BORDERS_TOLLERANCE, 
                     width + 2*BORDERS_TOLLERANCE, height + 2*BORDERS_TOLLERANCE));
+
+            drawingContext.DrawText(new FormattedText(information,
+              CultureInfo.GetCultureInfo("en-us"),
+              0,
+              new Typeface("Verdana"),
+              12, System.Windows.Media.Brushes.White),
+              new System.Windows.Point(x, y));
         }
     }
    

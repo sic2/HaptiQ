@@ -35,7 +35,10 @@ namespace MHTP_API
         ///</returns>
         Tuple<int, IBehaviour, IBehaviour> handleInput(Point point, double orientation); // TODO - add number of actuators as parameter
 
-        // TODO - method abstract structure still not completely defined.
-        void handlePress();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="point"></param>
+        void handlePress(Point point);
     }
 }

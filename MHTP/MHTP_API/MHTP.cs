@@ -17,7 +17,7 @@ namespace MHTP_API
     /// <param name="e"></param>
     /// <param name="id">id of the MHTP generating the event</param>
     /// <param name="list">list of recent pressure values</param>
-    public delegate void PressureInputEventHandler(object sender, EventArgs e, uint id, List<Tuple<DateTime, double>> list);
+    public delegate void PressureInputEventHandler(object sender, EventArgs e, Point position, uint id, List<Tuple<DateTime, double>> list);
 
     /// <summary>
     /// This class represent an MHTP.
@@ -162,7 +162,6 @@ namespace MHTP_API
             _advServo.close();
             _advServo = null; //set the object to null to get it out of memory
             Helper.Logger("MHTP_API.MHTP.close::MHTP (" + _id + ") ServoBoard (" + configuration.idServoBoard + ") disconnected");
-
         }
 
         private void closeInterfaceKitBoard()
@@ -405,6 +404,7 @@ namespace MHTP_API
 
         private bool hasActuators()
         {
+            if (_advServo == null || _actuators == null) return false;
             return _advServo.Attached && _actuators.Count > 0;
         }
 
@@ -489,13 +489,13 @@ namespace MHTP_API
         /// This method raises a PressureInputEventHandler event.
         /// </summary>
         /// <param name="e"></param>
-        /// <param name="id"></param>
-        /// <param name="list"></param>
+        /// <param name="id">actuator id</param>
+        /// <param name="list">list of all pressure data collected for this event</param>
         protected virtual void OnChanged(EventArgs e, uint id, List<Tuple<DateTime, double>> list)
         {
             if (Changed != null)
             {
-                Changed(this, e, id, list);
+                Changed(this, e, position, id, list);
             }
         }
 

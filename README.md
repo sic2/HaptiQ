@@ -45,7 +45,7 @@ My hypothesis is that the extended HTP will facilitate the recognition of direct
 
 # Collaborating
 
-This project is currently under beta development and the designing is constantly changing.
+This project is currently under alpha development and the designing is constantly changing.
 
 Please do create a branch of the project if a new feature has to be implemented. Also, use the issue tracking on GitHub if any bug is found or new functionality is wanted.
 

@@ -30,15 +30,15 @@ namespace HapticClientAPI
         protected enum STATE { down, move, up};
         protected STATE state;
         protected Geometry geometry;
-        private const double NEARNESS_TOLLERANCE = 20.0;
+        protected const double NEARNESS_TOLLERANCE = 20.0;
+        protected const double CORNER_NEARNESS_TOLLERANCE = 40;
+
+        protected String information = "No information available";
 
         protected Object behaviourLock = new Object();
-
-        protected String information;
+        protected IBehaviour _currentBehaviour;
 
         public List<Point> connectionPoints;
-
-        protected IBehaviour _currentBehaviour;
         
         /// <summary>
         /// Default constructor for HapticShape. 
@@ -81,20 +81,18 @@ namespace HapticClientAPI
         }
 
         /// <summary>
-        /// Returns true if a given point is near a straight line defined by two end points.
-        /// TODO - add nearness tollerance as parameter
-        /// TODO - move this function to helper? 
+        /// Returns true if a given point is near a straight line defined by two end points. 
         /// </summary>
         /// <param name="point"></param>
         /// <param name="startLine"></param>
         /// <param name="endLine"></param>
         /// <returns></returns>
-        protected bool pointIsCloseToLine(Point point, Point startLine, Point endLine)
+        protected bool pointIsCloseToLine(Point point, Point startLine, Point endLine, double TOLLERANCE)
         {
             double d = Math.Abs(((endLine.X - startLine.X) * (startLine.Y - point.Y) -
                 (startLine.X - point.X) * (endLine.Y - startLine.Y)) /
                 (Math.Sqrt(Math.Pow(endLine.X - startLine.X, 2) + Math.Pow(endLine.Y - startLine.Y, 2))));
-            return d <= NEARNESS_TOLLERANCE;
+            return d <= TOLLERANCE;
         }
 
         /// <summary>
@@ -104,7 +102,12 @@ namespace HapticClientAPI
         /// <param name="orientation"></param>
         public abstract Tuple<int, IBehaviour, IBehaviour> handleInput(Point point, double orientation);
 
-        // TODO - method abstract structure still not completely defined.
-        public abstract void handlePress();
+        /// <summary>
+        /// Handle an actuator press. 
+        /// [ TODO ] Currently this event is called only when an actuator is pressed.
+        /// Multiple presses are not supported. 
+        /// </summary>
+        /// <param name="point"></param>
+        public abstract void handlePress(Point point);
     }
 }

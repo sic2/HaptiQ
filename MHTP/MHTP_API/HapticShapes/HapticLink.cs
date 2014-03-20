@@ -48,7 +48,7 @@ namespace HapticClientAPI
         /// <param name="orientation"></param>
         public override Tuple<int, IBehaviour, IBehaviour> handleInput(Point point, double orientation)
         {
-            if (pointIsCloseToLine(point, _pair.Item1, _pair.Item2))
+            if (pointIsCloseToLine(point, _pair.Item1, _pair.Item2, NEARNESS_TOLLERANCE))
             {
                 if (state == STATE.up)
                 {
@@ -79,7 +79,7 @@ namespace HapticClientAPI
             return new Tuple<int, IBehaviour, IBehaviour>(1, _currentBehaviour, null);
         }
 
-        public override void handlePress()
+        public override void handlePress(Point point)
         {
             // TODO
         }
