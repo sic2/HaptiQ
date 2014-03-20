@@ -1,104 +1,175 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Input_API;
+
 namespace MHTP_API
 {
     public class DirectionBehaviour : IBehaviour
     {
         private int TIME;
         private int _direction { get; set; }
-        private int _orientation;
+        private double _orientation;
 
         private double highPosition;
         private double lowPosition;
-        private bool _pulse;
 
-        // First bit in array indicated whether actuators alternate or not
-        // -1 means that actuator does not move when pulsing. 
-        // Note - this works for MHTP that has 4 actuators only with a precision of 45degrees
-        private int[][][] directionMatrix = new int[][][]
-                    {  new int[][]{                 // vertical 
-                        new int[]{0, 1, 0, 1, 0}, 
-                        new int[]{1, 1, 1, 0, 0}, 
-                        new int[]{0, 0, 1, 0, 1}, 
-                        new int[]{1, 1, 0, 0, 1}, 
-                        new int[]{0, 1, 0, 1, 0}, 
-                        new int[]{1, 1, 1, 0, 0}, 
-                        new int[]{0, 0, 1, 0, 1}, 
-                        new int[]{1, 1, 0, 0, 1}}, 
-                    new int[][]{                    // horizontal
-                        new int[]{0, 0, 1, 0, 1},
-                        new int[]{1, 1, 0, 0, 1},
-                        new int[]{0, 1, 0, 1, 0},
-                        new int[]{1, 1, 1, 0, 0},
-                        new int[]{0, 0, 1, 0, 1},
-                        new int[]{1, 1, 0, 0, 1},
-                        new int[]{0, 1, 0, 1, 0},
-                        new int[]{1, 1, 1, 0, 0}},
-                    new int[][]{                    // bottom-left
-                        new int[]{0, 1, 1, 0, 0},
-                        new int[]{1, 1, 0, -1, 0},
-                        new int[]{0, 1, 0, 0, 1},
-                        new int[]{1, 0, -1, 0, 1}, 
-                        new int[]{0, 0, 0, 1, 1},
-                        new int[]{1, -1, 0, 1, 0},
-                        new int[]{0, 0, 1, 1, 0},
-                        new int[]{1, 0, 1, 0, -1}},
-                    new int[][]{                    // bottom-right
-                        new int[]{0, 1, 0, 0, 1},
-                        new int[]{1, 0, -1, 0, 1},
-                        new int[]{0, 0, 0, 1, 1},
-                        new int[]{1, -1, 0, 1, 0},
-                        new int[]{0, 0, 1, 1, 0},
-                        new int[]{1, 0, 1, 0, -1},
-                        new int[]{0, 1, 1, 0, 0},
-                        new int[]{1, 1, 0, -1, 0},}, 
-                    new int[][]{                    // top-right
-                        new int[]{0, 0, 0, 1, 1},
-                        new int[]{1, -1, 0, 1, 0},
-                        new int[]{0, 0, 1, 1, 0},
-                        new int[]{1, 0, 1, 0, -1},
-                        new int[]{0, 1, 1, 0, 0},
-                        new int[]{1, 1, 0, -1, 0},
-                        new int[]{0, 1, 0, 0, 1},
-                        new int[]{1, 0, -1, 0, 1},}, 
-                    new int[][]{                    // top-left
-                        new int[]{0, 0, 1, 1, 0},
-                        new int[]{1, 0, 1, 0, -1},
-                        new int[]{0, 1, 1, 0, 0},
-                        new int[]{1, 1, 0, -1, 0},
-                        new int[]{0, 1, 0, 0, 1},
-                        new int[]{1, 0, -1, 0, 1},
-                        new int[]{0, 0, 0, 1, 1},
-                        new int[]{1, -1, 0, 1, 0}}, 
-                    };
-                     
-        /// <summary>
-        /// direction values are:
-        /// - 0 vertical
-        /// - 1 horizontal
-        /// - 2 bottom-left
-        /// - 3 bottom-right
-        /// - 4 top-right
-        /// - 5 top-left
-        /// - (-1) all
-        /// </summary>
-        /// <param name="direction"></param>
-        /// <param name="orientation"></param>
-        /// <param name="pulse"></param>
-        public DirectionBehaviour(int direction, int orientation, bool pulse) 
+        private const int NUMBER_ACTUATORS_DIVIDER = 4;
+
+        private List<Tuple<Point, Point>> _lines;
+
+        private int[] staticActuatorsMatrix = new int[] 
+                         { 10, // 4-MHTP 1-line
+                           68}; // 8 -MHTP 1-line
+
+        private int[][] dynamicActuatorsMatrix = new int[][]
+                        {
+                            new int[]{12, 3}, // 4-MHTP 1-line
+                            new int[]{132, 72}// 8-MHTP 1-line
+                        };
+
+        public DirectionBehaviour(List<Tuple<Point, Point>> lines, double orientation)
         {
-            _direction = direction;
-            _orientation = orientation % 8;
-           
-            TIME = 0;
-            _pulse = pulse;
+            _lines = lines;
+            _orientation = orientation;
 
+            TIME = 0;
+
+            // TODO - do not use these absolute values
             highPosition = 160;
             lowPosition = 135;
         }
 
+        /// <summary>
+        /// Play this behaviour. 
+        /// </summary>
+        /// <param name="actuators"></param>
+        /// <param name="pressureData"></param>
+        /// <returns></returns>
+        public Dictionary<int, double> play(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
+            Dictionary<int, double> pressureData)
+        {
+            Dictionary<int, double> retval = new Dictionary<int, double>();
+            TIME++;
+
+            // Normalise number of actuators. This is necessary, otherwise the methods used 
+            // below do not behave correctly
+            int numberActuators = actuators.Count <= 4 ? 4 : 8; // TODO - do not use magic numbers
+            bool isCorner = _lines.Count == 2 ? true : false;
+            if (isCorner)
+            {
+                cornerBehaviour(actuators, pressureData, numberActuators, ref retval);
+            }
+            else
+            {
+                segmentBehaviour(actuators, pressureData, numberActuators, ref retval);
+            }
+
+            System.Threading.Thread.Sleep(100);
+            return retval;
+        }
+
+        // TODO - rename method 
+        private void segmentBehaviour(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
+            Dictionary<int, double> pressureData, int numberActuators, ref Dictionary<int, double> output)
+        {
+            int limit = (int)(Math.Pow(2, numberActuators));
+
+            // Determines angle between lines in radians
+            double angle = Math.Atan2(_lines[0].Item1.Y - _lines[0].Item2.Y,
+                                        _lines[0].Item1.X - _lines[0].Item2.X);
+            // Map angle to 0-(2*PI)
+            angle = (angle > 0 ? angle : (2 * Math.PI + angle));
+            angle += _orientation; // Total angle between lines and device orientation
+            // Normalise angle
+            double sectorRange = (2 * Math.PI) / (2.0 * numberActuators);
+            double normAngle = angle + (sectorRange / 2.0);
+            int sector = (int)Math.Floor(normAngle / sectorRange) % numberActuators;
+
+            int matrixIndex = numberActuators / NUMBER_ACTUATORS_DIVIDER - 1;
+            if (sector % 2 == 0) // Static sector
+            {
+                int activeActs = staticActuatorsMatrix[matrixIndex];
+                activeActs = shiftActs(activeActs, sector, numberActuators, limit);
+                bitsToActuators(activeActs, numberActuators, false, ref output);
+            }
+            else // Pulsing sector
+            {
+                int[] acts = dynamicActuatorsMatrix[matrixIndex];
+                acts[0] = shiftActs(acts[0], sector, numberActuators, limit);
+                acts[1] = shiftActs(acts[1], sector, numberActuators, limit);
+
+                bitsToActuators(acts[0], numberActuators, TIME % 2 == 0, ref output);
+                bitsToActuators(acts[1], numberActuators, TIME % 2 != 0, ref output);
+            }
+        }
+
+        private void cornerBehaviour(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
+            Dictionary<int, double> pressureData, int numberActuators, ref Dictionary<int, double> output)
+        {
+            // http://stackoverflow.com/questions/3365171/calculating-the-angle-between-two-lines-without-having-to-calculate-the-slope
+            int limit = (int)(Math.Pow(2, numberActuators));
+
+            // Determines angle between lines in radians
+            double angle1 = Math.Atan2(_lines[0].Item1.Y - _lines[0].Item2.Y,
+                                        _lines[0].Item1.X - _lines[0].Item2.X);
+            double angle2 = Math.Atan2(_lines[1].Item1.Y - _lines[1].Item2.Y,
+                                        _lines[1].Item1.X - _lines[1].Item2.X);
+            double angle = angle1 - angle2;
+           
+            // Map angle to 0-(2*PI)
+            angle = (angle > 0 ? angle : (2 * Math.PI + angle));
+            Console.WriteLine("Angle is {0:f}", angle);
+            angle += _orientation; // Total angle between lines and device orientation
+            // Normalise angle
+            double sectorRange = (2 * Math.PI) / (2.0 * numberActuators);
+            double normAngle = angle + (sectorRange / 2.0);
+            int sector = (int)Math.Floor(normAngle / sectorRange) % numberActuators;
+
+            int matrixIndex = numberActuators / NUMBER_ACTUATORS_DIVIDER - 1;
+
+            // TODO
+
+        }
+
+        private int detectCorner()
+        {
+            return -1;
+        }
+
+        private int shiftActs(int acts, int sector, int numberActuators, int limit)
+        {
+            return (acts << (int)(sector / 2) |
+                    acts >> (numberActuators - (int)(sector / 2))) & (limit - 1);
+        }
+
+        private void bitsToActuators(int activeActuators, int numberActuators, bool switchPositionOrder, ref Dictionary<int, double> output)
+        {
+            double pos0 = highPosition;
+            double pos1 = lowPosition;
+            if (switchPositionOrder)
+            {
+                double tmp = pos0;
+                pos0 = pos1;
+                pos1 = tmp;
+            }
+            for (int i = 0; i < numberActuators; i++)
+            {
+                if ((activeActuators & 1) != 0)
+                {
+                    output[i] = pos0;
+                }
+                else
+                {
+                    output[i] = pos1;
+                }
+                activeActuators = activeActuators >> 1;
+            }
+        }
+
+
         // TODO - refactor
+        /*
         public Dictionary<int, double> play(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
             Dictionary<int, double> pressureData)
         {
@@ -167,19 +238,7 @@ namespace MHTP_API
             System.Threading.Thread.Sleep(100);
             return retval;
         }
-
-        private int[] extendMatrix(int[] matrix)
-        {
-            int[] retVal = new int[matrix.Length * 2];
-
-            for (int i = 0; i < matrix.Length; i++)
-            {
-                retVal[i * 2] = matrix[i];
-            }
-
-            return retVal;
-        }
-
+         * */
         
         public override bool Equals(System.Object obj)
         {

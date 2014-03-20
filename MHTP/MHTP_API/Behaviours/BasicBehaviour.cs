@@ -83,14 +83,14 @@ namespace MHTP_API
             int limit = (int)(Math.Pow(2, numberActuators));
             if (TIME % 2 == 0)
             {
-                _currentActiveActuators = (_currentActiveActuators - _prevActiveActuators) & ~limit;
+                _currentActiveActuators = (_currentActiveActuators - _prevActiveActuators) & (limit - 1);
                 _prevActiveActuators = _currentActiveActuators;
             }
             else
             {
                 _currentActiveActuators = ((_currentActiveActuators << 1) |
                                     (_currentActiveActuators >> (numberActuators - 1)) |
-                                    _currentActiveActuators) & ~limit;
+                                    _currentActiveActuators) & (limit - 1);
             }
 
             int tmp = _currentActiveActuators;

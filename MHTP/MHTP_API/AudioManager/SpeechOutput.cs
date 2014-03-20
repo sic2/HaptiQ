@@ -21,7 +21,7 @@ namespace MHTP_API
             _synth = new SpeechSynthesizer();  
             _synth.SelectVoiceByHints(VoiceGender.Female);
             _synth.Rate = 1;
-            _synth.Volume = 0; 
+            _synth.Volume = 100; 
         }
 
         public static SpeechOutput Instance

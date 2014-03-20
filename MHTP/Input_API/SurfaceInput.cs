@@ -34,7 +34,6 @@ namespace Input_API
             {
                 if (touch.IsTagRecognized)
                 {
-
                     InputIdentifier inputIdentifier = new InputIdentifier(InputIdentifier.TYPE.tag, -1, (ulong)touch.Tag.Value);
                     OnChanged(inputIdentifier, new Point(touch.CenterX, touch.CenterY), touch.Orientation, EventArgs.Empty);  
                 }

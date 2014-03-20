@@ -83,60 +83,69 @@ namespace HapticClientAPI
 
         private IBehaviour chooseBehaviour(Point point, double orientation)
         {
-            IBehaviour behaviour;
+            IBehaviour behaviour = null;
             lock (behaviourLock)
             {
                 state = STATE.move;
-                double orientationDeg = Helper.radsToDegrees(orientation);
-                double shift = orientationDeg >= 0 ? (orientationDeg + 22.5) / 45.0 : 360 + (orientationDeg + 22.5) / 45.0; // XXX use 45 degrees because 8 zones are identified in a full circle.
-
-                int actuators = -1; // no direction specified - apply default haptic gesture
 
                 Point bottomLeft = new Point(x, y + height);
                 Point bottomRight = new Point(x + width, y + height);
                 Point topLeft = new Point(x, y);
                 Point topRight = new Point(x + width, y);
 
-                if (pointIsCloseToLine(point, bottomLeft, bottomRight) &&
+                List<Tuple<Point, Point>> lines = new List<Tuple<Point, Point>>();
+                if (pointIsCloseToLine(point, bottomLeft, bottomRight) && 
                     pointIsCloseToLine(point, topLeft, bottomLeft)) // bottom-left corner
                 {
-                    actuators = 2;
+                    lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
+                    lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
                 }
                 else if (pointIsCloseToLine(point, topLeft, topRight) &&
                         pointIsCloseToLine(point, topLeft, bottomLeft)) // top-left corner
                 {
-                    actuators = 5;
+                    lines.Add(new Tuple<Point, Point>(topLeft, topRight));
+                    lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
                 }
                 else if (pointIsCloseToLine(point, topLeft, topRight) &&
                     pointIsCloseToLine(point, topRight, bottomRight)) // top-right corner
                 {
-                    actuators = 4;
+                    lines.Add(new Tuple<Point, Point>(topLeft, topRight));
+                    lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
                 }
                 else if (pointIsCloseToLine(point, topRight, bottomRight) &&
                     pointIsCloseToLine(point, bottomLeft, bottomRight)) // bottom-right corner
                 {
-                    actuators = 3;
+                    lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
+                    lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
                 }
-                else if (pointIsCloseToLine(point, bottomLeft, bottomRight) ||
-                    pointIsCloseToLine(point, topLeft, topRight)) // horizontal
+                else if (pointIsCloseToLine(point, bottomLeft, bottomRight)) // horizontal
                 {
-                    actuators = 1;
+                    lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
                 }
-                else if (pointIsCloseToLine(point, topLeft, bottomLeft) || 
-                    pointIsCloseToLine(point, topRight, bottomRight)) // vertical
+                else if (pointIsCloseToLine(point, topLeft, topRight)) // horizontal
                 {
-                    actuators = 0;
+                    lines.Add(new Tuple<Point, Point>(topLeft, topRight));
                 }
-
-                if (actuators == -1)
+                else if (pointIsCloseToLine(point, topLeft, bottomLeft)) // vertical
                 {
-                    behaviour = new BasicBehaviour(BasicBehaviour.TYPES.notification);
+                    lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
+                }
+                else if (pointIsCloseToLine(point, topRight, bottomRight)) // vertical
+                {
+                    lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
                 }
                 else
                 {
-                    behaviour = new DirectionBehaviour(actuators, (int)shift, false);
+                    behaviour = new BasicBehaviour(BasicBehaviour.TYPES.notification);
                 }
+                   
+                if (behaviour == null)
+                {
+                    behaviour = new DirectionBehaviour(lines, orientation);
+                }
+                
                 state = STATE.down;
+                
             }
             return behaviour;
         }

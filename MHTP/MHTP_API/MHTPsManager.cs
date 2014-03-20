@@ -307,7 +307,6 @@ namespace MHTP_API
             else
             {
                 MHTP mhtp = _mhtpsDictionary[_inputIdentifiersToMHTPs[inputIdentifier]];
-
                 handleBehaviours(mhtp, point, orientation);
             }
         }
