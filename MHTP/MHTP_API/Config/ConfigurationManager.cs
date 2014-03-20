@@ -39,7 +39,8 @@ namespace MHTP_API
         {
             configuration.serializableInputIdentifier = configuration.inputIdentifier.getSerializableInputIdentifier();
             configurations.Add(configuration);
-            Helper.SerializeToXML(configuration, "test.xml");
+            String configurationFile = configuration.mhtpName.Replace(" ", string.Empty) + ".xml";
+            Helper.SerializeToXML(configuration, "test.xml"); // XXX - need to implement a method to retrieve all xml files from current directory
         }
 
     }
