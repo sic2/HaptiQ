@@ -30,10 +30,9 @@ namespace MHTP_API
     /// <param name="sender"></param>
     /// <param name="e"></param>
     /// <param name="id">This MHTP id</param>
-    /// <param name="position"></param>
     /// <param name="actuatorId"></param>
     /// <param name="pressureValue"></param>
-    public delegate void PressureInputEventHandler(object sender, EventArgs e, uint id, Point position, int actuatorId, int pressureValue);
+    public delegate void PressureInputEventHandler(object sender, EventArgs e, uint id, int actuatorId, int pressureValue);
 
     /// <summary>
     /// Delegate for Position (and Orientation) events.
@@ -46,6 +45,16 @@ namespace MHTP_API
     public delegate void PositionEventHandler(object sender, EventArgs e, uint id, Point position, double orientation);
 
     /// <summary>
+    /// Delegate for Actuator position events. 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <param name="id"></param>
+    /// <param name="actuatorId"></param>
+    /// <param name="position"></param>
+    public delegate void ActuatorPositionEventHandler(object sender, EventArgs e, uint id, int actuatorId, double position);
+
+    /// <summary>
     /// This class represent an MHTP.
     /// </summary>
     public class MHTP
@@ -54,22 +63,27 @@ namespace MHTP_API
          * EVENTS
          */
         /// <summary>
-        /// The PressureGestureEventHandler event is used to notify that a relevant input was input
+        /// Notify that a relevant input was input
         /// via the pressure sensors
         /// </summary>
         public event PressureGestureEventHandler PressureGesture;
 
         /// <summary>
-        /// The PressureInputEventHandler event is used to notify that the pressure input of one of the sensors
+        /// Notify that the pressure input of one of the sensors
         /// has changed
         /// </summary>
         public event PressureInputEventHandler PressureInput;
 
         /// <summary>
-        /// The PositionEventHandler event is used to notify that either the position
+        /// Notify that either the position
         /// or the orientation (or both) of this MHTP have changed.
         /// </summary>
         public event PositionEventHandler PositionChanged;
+
+        /// <summary>
+        /// Notify that the position of one of the actuators of this MHTP has changed.
+        /// </summary>
+        public event ActuatorPositionEventHandler ActuatorPositionChanged;
         /*
          * END EVENTS 
          */
@@ -186,6 +200,7 @@ namespace MHTP_API
             _advServo.Attach += new AttachEventHandler(advServo_Attach);
             _advServo.Detach += new DetachEventHandler(advServo_Detach);
             _advServo.Error += new ErrorEventHandler(advServo_Error);
+            _advServo.PositionChange += new PositionChangeEventHandler(advServo_PositionChange);
 
             _advServo.open(configuration.idServoBoard);
             Helper.Logger("MHTP_API.MHTP.MHTP::Waiting for MHTP (" + _id + ") ServoBoard(" + configuration.idServoBoard + ") to be attached.");
@@ -233,6 +248,7 @@ namespace MHTP_API
             _advServo.Attach -= new AttachEventHandler(advServo_Attach);
             _advServo.Detach -= new DetachEventHandler(advServo_Detach);
             _advServo.Error -= new ErrorEventHandler(advServo_Error);
+            _advServo.PositionChange -= new PositionChangeEventHandler(advServo_PositionChange);
             _advServo.close();
             _advServo = null; //set the object to null to get it out of memory
             Helper.Logger("MHTP_API.MHTP.close::MHTP (" + _id + ") ServoBoard (" + configuration.idServoBoard + ") disconnected");
@@ -580,7 +596,7 @@ namespace MHTP_API
         {
             if (PressureInput != null)
             {
-                PressureInput(this, e, _id, _position, actuatorId, pressureValue);
+                PressureInput(this, e, _id, actuatorId, pressureValue);
             }
         }
 
@@ -588,11 +604,25 @@ namespace MHTP_API
         /// This method raises a PositionEventHandler event.
         /// </summary>
         /// <param name="e"></param>
-        protected virtual void OnPositionChanged(EventArgs e)
+        private void OnPositionChanged(EventArgs e)
         {
             if (PositionChanged != null)
             {
                 PositionChanged(this, e, _id, _position, _orientation);
+            }
+        }
+
+        /// <summary>
+        /// This method raises an ActuatorPositionChanged event.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="actuatorId"></param>
+        /// <param name="position"></param>
+        private void OnActuatorPositionChanged(EventArgs e, int actuatorId, double position)
+        {
+            if (ActuatorPositionChanged != null)
+            {
+                ActuatorPositionChanged(this, e, _id, actuatorId, position);
             }
         }
 
@@ -627,6 +657,12 @@ namespace MHTP_API
         private void advServo_Error(object sender, ErrorEventArgs e)
         {
             Helper.Logger("MHTP_API.MHTP.advServo_Error::AdvancedServo Error: " + e.Description);
+        }
+
+        private void advServo_PositionChange(object sender, PositionChangeEventArgs e)
+        {
+            // Do not log, since this could be considered not useful information
+            OnActuatorPositionChanged(null, e.Index, e.Position);
         }
 
         private void intfKit_Attach(object sender, AttachEventArgs e)

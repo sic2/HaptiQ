@@ -17,10 +17,9 @@ namespace MHTP_API
     /// <param name="sender"></param>
     /// <param name="e"></param>
     /// <param name="id">This MHTP id</param>
-    /// <param name="position"></param>
     /// <param name="actuatorId"></param>
     /// <param name="pressureValue"></param>
-    public delegate void MHTPPressureInputEventHandler(object sender, EventArgs e, uint id, Point position, int actuatorId, int pressureValue);
+    public delegate void MHTPPressureInputEventHandler(object sender, EventArgs e, uint id, int actuatorId, int pressureValue);
 
     /// <summary>
     /// Delegate for Position (and Orientation) events.
@@ -31,6 +30,16 @@ namespace MHTP_API
     /// <param name="position"></param>
     /// <param name="orientation"></param>
     public delegate void MHTPPositionEventHandler(object sender, EventArgs e, uint id, Point position, double orientation);
+
+    /// <summary>
+    /// Delegate for Actuator position events.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="E"></param>
+    /// <param name="id"></param>
+    /// <param name="actuatorId"></param>
+    /// <param name="position"></param>
+    public delegate void MHTPActuatorPositionEventHandler(object sender, EventArgs E, uint id, int actuatorId, double position);
 
     // Singleton pattern
     // see http://stackoverflow.com/questions/4203634/singleton-with-parameters
@@ -55,8 +64,18 @@ namespace MHTP_API
         /*
         * EVENTS - fired whenever an MHTP changes position, orientation or pressure input values
         */
+        /// <summary>
+        /// Pressure event
+        /// </summary>
         public event MHTPPressureInputEventHandler PressureInput;
+        /// <summary>
+        /// Position and orientation event
+        /// </summary>
         public event MHTPPositionEventHandler PositionChanged;
+        /// <summary>
+        /// Actuator position event
+        /// </summary>
+        public event MHTPActuatorPositionEventHandler ActuatorPositionChanged;
         /*
         * END EVENTS 
         */
@@ -422,6 +441,8 @@ namespace MHTP_API
             {
                 mhtp.PositionChanged += new PositionEventHandler(mhtp_PositionChanged);
                 mhtp.PressureInput += new PressureInputEventHandler(mhtp_PressureInput);
+                mhtp.ActuatorPositionChanged += new ActuatorPositionEventHandler(mhtp_ActuatorPositionChanged);
+
                 _mhtpsDictionary.Add(_nextID, mhtp);
                 _inputIdentifiersToMHTPs.Add(mhtp.configuration.inputIdentifier, _nextID);
                 return _nextID++;
@@ -442,6 +463,8 @@ namespace MHTP_API
             {
                 _mhtpsDictionary[mhtpID].PositionChanged -= new PositionEventHandler(mhtp_PositionChanged);
                 _mhtpsDictionary[mhtpID].PressureInput -= new PressureInputEventHandler(mhtp_PressureInput);
+                _mhtpsDictionary[mhtpID].ActuatorPositionChanged -= new ActuatorPositionEventHandler(mhtp_ActuatorPositionChanged);
+
                 _mhtpsDictionary.Remove(mhtpID);
             }
         }
@@ -506,11 +529,19 @@ namespace MHTP_API
             }
         }
 
-        private void mhtp_PressureInput(object sender, EventArgs e, uint id, Point position, int actuatorId, int pressureValue)
+        private void mhtp_PressureInput(object sender, EventArgs e, uint id, int actuatorId, int pressureValue)
         {
             if (PressureInput != null)
             {
-                PressureInput(this, e, id, position, actuatorId, pressureValue);
+                PressureInput(this, e, id, actuatorId, pressureValue);
+            }
+        }
+
+        private void mhtp_ActuatorPositionChanged(object sender, EventArgs e, uint id, int actuatorId, double position)
+        {
+            if (ActuatorPositionChanged != null)
+            {
+                ActuatorPositionChanged(this, e, id, actuatorId, position);
             }
         }
 
