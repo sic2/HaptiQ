@@ -14,6 +14,7 @@ Miguel A. Nacenta and his team at the University of Calgary, now a Lecturer in S
 The aim of this project is to extend the HTP concept and overcome some of its limitations for its use for people with visual disabilities. The extension will consist into using multiple servo motors and rods as well as redesigning the API to support new functionalities (haptic objects, behaviours, etc).
  
 My hypothesis is that the extended HTP will facilitate the recognition of directions and edges of displayed objects. The first main objective is to create a physical prototype that is adapted for the specific needs of people with visual disabilities. 
+
 -------------------------------------------------------------------------------
 
 # Objectives
