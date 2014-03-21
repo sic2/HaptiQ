@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 
 using System.Windows.Media;
+using System.Globalization;
 
 using Input_API;
 using MHTP_API;
-using System.Globalization;
 
 namespace HapticClientAPI
 {
@@ -81,7 +81,9 @@ namespace HapticClientAPI
                 }
                 return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
             }
-            return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(BEHAVIOUR_RULES.REMOVE, _currentBehaviour, null);
+            Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> retval = new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(BEHAVIOUR_RULES.REMOVE, _currentBehaviour, null);
+            _currentBehaviour = null;
+            return retval;
         }
 
         /// <summary>
@@ -158,7 +160,7 @@ namespace HapticClientAPI
                 }
                 else
                 {
-                    behaviour = new BasicBehaviour(BasicBehaviour.TYPES.notification);
+                    behaviour = new BasicBehaviour(BasicBehaviour.TYPES.max);
                 }
                    
                 if (behaviour == null)
@@ -188,7 +190,7 @@ namespace HapticClientAPI
               CultureInfo.GetCultureInfo("en-us"),
               0,
               new Typeface("Verdana"),
-              12, System.Windows.Media.Brushes.White),
+              12, System.Windows.Media.Brushes.Black),
               new System.Windows.Point(x, y));
         }
     }

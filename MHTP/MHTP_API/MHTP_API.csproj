@@ -67,6 +67,7 @@
     <Compile Include="Config\ConfigurationManager.cs" />
     <Compile Include="CustomADT\SerializableDictionary.cs" />
     <Compile Include="CustomADT\SerializableTuple.cs" />
+    <Compile Include="HapticShapes\HapticCircle.cs" />
     <Compile Include="HapticShapes\HapticLink.cs" />
     <Compile Include="HapticShapes\HapticRectangle.cs" />
     <Compile Include="HapticShapes\HapticShape.cs" />

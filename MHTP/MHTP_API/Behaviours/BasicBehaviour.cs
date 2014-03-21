@@ -13,9 +13,12 @@ namespace MHTP_API
     {
         public int TIME { get; set; }
   
-        private double position;
-        private int _currentActiveActuators;
-        private int _prevActiveActuators;
+        private double _position;
+        private int _numberActuators;
+        private double _frequency;
+
+        public int currentActiveActuators { get; set; }
+        public int prevActiveActuators { get; set; }
 
         /// <summary>
         /// This enum is used to specify the type of BasicBehaviour
@@ -24,7 +27,11 @@ namespace MHTP_API
             /// <summary>
             /// A flat behaviour puts all actuators to their minimum position
             /// </summary>
-            flat, 
+            flat,
+            /// <summary>
+            /// A max behaviour moves all actuators to their maximum position
+            /// </summary>
+            max,
             /// <summary>
             /// A notification behaviour moves all the actuators alternatively
             /// </summary>
@@ -36,12 +43,21 @@ namespace MHTP_API
         /// Constructor for a BasicBehaviour
         /// </summary>
         /// <param name="type"></param>
-        public BasicBehaviour(TYPES type)
+        public BasicBehaviour(TYPES type) : this(type, 1, 1, 1) {}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="frequency"></param>
+        public BasicBehaviour(TYPES type, int current, int prev, double frequency)
         {
             _type = type;
-            _currentActiveActuators = 1;
+            currentActiveActuators = current;
+            prevActiveActuators = prev;
             TIME = 0;
-            position = 40;
+            _position = 40;
+            _frequency = frequency;
         }
 
         /// <summary>
@@ -63,6 +79,12 @@ namespace MHTP_API
                         retval[entry.Key] = actuators[entry.Key].Item1;
                     }
                     break;
+                case TYPES.max:
+                    foreach (KeyValuePair<int, SerializableTuple<int, int>> entry in actuators)
+                    {
+                        retval[entry.Key] = actuators[entry.Key].Item2;
+                    }
+                    break;
                 case TYPES.notification:
                     retval = playNotification(actuators, pressureData);
                     break;
@@ -71,7 +93,7 @@ namespace MHTP_API
                     break;
             }
 
-            System.Threading.Thread.Sleep(100);
+            System.Threading.Thread.Sleep((int) (200 * _frequency));
             return retval;
         }
 
@@ -80,28 +102,16 @@ namespace MHTP_API
         {
             Dictionary<int, double> retval = new Dictionary<int, double>();
 
-            int numberActuators = actuators.Count;
-            int limit = (int)(Math.Pow(2, numberActuators));
-            if (TIME % 2 == 0)
-            {
-                _currentActiveActuators = (_currentActiveActuators - _prevActiveActuators) & (limit - 1);
-                _prevActiveActuators = _currentActiveActuators;
-            }
-            else
-            {
-                _currentActiveActuators = ((_currentActiveActuators << 1) |
-                                    (_currentActiveActuators >> (numberActuators - 1)) |
-                                    _currentActiveActuators) & (limit - 1);
-            }
-
-            int tmp = _currentActiveActuators;
-            for (int i = 0; i < numberActuators; i++)
+            _numberActuators = actuators.Count;
+            nextCurrentActiveActuators();
+            int tmp = currentActiveActuators;
+            for (int i = 0; i < _numberActuators; i++)
             {
                 if ((tmp & 1) != 0)
                 {
-                    position = position > actuators[i].Item2 ? actuators[i].Item2 : position;
+                    _position = _position > actuators[i].Item2 ? actuators[i].Item2 : _position;
                     double adjustedPosition = pressureData == null ? 
-                            position : position * (1 / 3.0 * Math.Cos(pressureData[i] * Math.PI / 1000) + 2 / 3.0); // XXX - assume pressure range is 1000
+                            _position : _position * (1 / 3.0 * Math.Cos(pressureData[i] * Math.PI / 1000) + 2 / 3.0); // XXX - assume pressure range is 1000
                     retval[i] = actuators[i].Item1 + adjustedPosition;    
                 }
                 else
@@ -113,6 +123,21 @@ namespace MHTP_API
             return retval;
         }
 
+        private void nextCurrentActiveActuators()
+        {
+            int limit = (int)(Math.Pow(2, _numberActuators));
+            if (TIME % 2 == 0)
+            {
+                currentActiveActuators = (currentActiveActuators - prevActiveActuators) & (limit - 1);
+                prevActiveActuators = currentActiveActuators;
+            }
+            else
+            {
+                currentActiveActuators = ((currentActiveActuators << 1) |
+                                    (currentActiveActuators >> (_numberActuators - 1)) |
+                                    currentActiveActuators) & (limit - 1);
+            }
+        }
 
         public override bool Equals(System.Object obj)
         {
@@ -124,7 +149,8 @@ namespace MHTP_API
             if ((System.Object)p == null) return false;
 
             // Return true if the fields match
-            return (p._type == this._type);
+            return (p._type == this._type &&
+                p._frequency == this._frequency);
         }
 
         // @see: http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
@@ -134,6 +160,7 @@ namespace MHTP_API
             {
                 int hash = 17;
                 hash = hash * 23 + this._type.GetHashCode();
+                hash = hash * 23 + this._frequency.GetHashCode();
                 return hash;
             }
         }

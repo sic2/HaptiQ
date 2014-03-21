@@ -67,7 +67,7 @@ namespace MHTP_API
             } 
             set 
             {
-                if (_servo != null && value >= _minPosition && value < _maxPosition)
+                if (_servo != null && value >= _minPosition && value <= _maxPosition)
                     {
                         enable();
                         _servo.Position = value;

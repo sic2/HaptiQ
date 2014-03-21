@@ -87,8 +87,10 @@ namespace HapticClientAPI
                     rule = BEHAVIOUR_RULES.NOPE;
                 }
                 return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
-            }
-            return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(BEHAVIOUR_RULES.REMOVE, _currentBehaviour, null);
+            } 
+            Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> retval = new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(BEHAVIOUR_RULES.REMOVE, _currentBehaviour, null);
+            _currentBehaviour = null;
+            return retval;
         }
 
         /// <summary>
