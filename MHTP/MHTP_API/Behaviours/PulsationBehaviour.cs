@@ -24,12 +24,12 @@ namespace MHTP_API
         private Tuple<Point, Point> _segment;
         private int[] singleActuatorsMatrix = new int[] 
                          { 2, // 4-MHTP 1-line
-                           4}; // 8 -MHTP 1-line
+                           4}; // 8 -MHTP 1-line - FIXME
 
         private int[][] dynamicActuatorsMatrix = new int[][]
                         {
-                            new int[]{12, 3}, // 4-MHTP 1-line
-                            new int[]{132, 72}// 8-MHTP 1-line
+                            new int[]{1, 2}, // 4-MHTP 1-line
+                            new int[]{132, 72}// 8-MHTP 1-line - FIXME
                         };
 
         /// <summary>
@@ -66,8 +66,7 @@ namespace MHTP_API
            Dictionary<int, double> pressureData, int numberActuators, ref Dictionary<int, double> output)
         {
             // Determines angle between lines in radians
-            // (Math.PI - angle) is necessary because y is inverted
-            double angle = Math.PI - Math.Atan2(_segment.Item1.Y - _segment.Item2.Y,
+            double angle = Math.Atan2(_segment.Item1.Y - _segment.Item2.Y,
                                         _segment.Item1.X - _segment.Item2.X);
             // Map angle to 0-(2*PI)
             angle = (angle > 0 ? angle : (2 * Math.PI + angle));
@@ -75,23 +74,26 @@ namespace MHTP_API
             // Normalise angle
             double sectorRange = (2 * Math.PI) / (2.0 * numberActuators);
             double normAngle = angle + (sectorRange / 2.0);
-            int sector = (int)Math.Floor(normAngle / sectorRange) % numberActuators;
+            int sector = (int)Math.Floor(normAngle / sectorRange) % (numberActuators * 2);
 
             int matrixIndex = numberActuators / NUMBER_ACTUATORS_DIVIDER - 1;
             if (sector % 2 == 0) // Single actuators sector
             {
                 int activeActs = singleActuatorsMatrix[matrixIndex];
-                activeActs = shiftActs(activeActs, (int)(sector / 2), numberActuators);
+                activeActs = RshiftActs(activeActs, (int)(sector / 2), numberActuators);
                 bitsToActuators(actuators, activeActs, TIME % 2 == 0, false, ref output);
+                setZerosToMinimum(actuators, ~activeActs, ref output); 
             }
             else // Pulsing sector
             {
-                int[] acts = dynamicActuatorsMatrix[matrixIndex];
-                acts[0] = shiftActs(acts[0], (int)(sector / 2), numberActuators);
-                acts[1] = shiftActs(acts[1], (int)(sector / 2), numberActuators);
+                int[] acts = (int[]) dynamicActuatorsMatrix[matrixIndex].Clone();
+                acts[0] = RshiftActs(acts[0], (int)(sector / 2), numberActuators);
+                acts[1] = RshiftActs(acts[1], (int)(sector / 2), numberActuators);
 
-                bitsToActuators(actuators, acts[0], TIME % 2 == 0, true, ref output);
-                bitsToActuators(actuators, acts[1], TIME % 2 != 0, true, ref output);
+                // FIXME - issue with alternating actuators
+                bitsToActuators(actuators, acts[0], TIME % 2 == 0, false, ref output);
+                bitsToActuators(actuators, acts[1], TIME % 2 != 0, false, ref output);
+                setZerosToMinimum(actuators, ~(acts[0] | acts[1]), ref output); 
             }
         }
 
@@ -103,11 +105,18 @@ namespace MHTP_API
         /// <param name="offset"></param>
         /// <param name="numberActuators"></param>
         /// <returns></returns>
-        private int shiftActs(int acts, int offset, int numberActuators)
+        private int LshiftActs(int acts, int offset, int numberActuators)
         {
             int limit = (int)(Math.Pow(2, numberActuators));
             return (acts << offset |
                     acts >> (numberActuators - offset)) & (limit - 1);
+        }
+
+        private int RshiftActs(int acts, int offset, int numberActuators)
+        {
+            int limit = (int)(Math.Pow(2, numberActuators));
+            return (acts >> offset |
+                    acts << (numberActuators - offset)) & (limit - 1);
         }
 
         private void bitsToActuators(SerializableDictionary<int, SerializableTuple<int, int>> actuators, int activeActuators, bool switchPositionOrder, bool setZeros, ref Dictionary<int, double> output)
@@ -122,16 +131,27 @@ namespace MHTP_API
             }
             for (int i = 0; i < actuators.Count; i++)
             {
-                output[i] = actuators[i].Item1;
                 if ((activeActuators & 1) != 0)
                 {
-                    output[i] += pos0;
+                    output[i] = actuators[i].Item1 + pos0;
                 }
                 else if (setZeros)
                 {
-                    output[i] += pos1;
+                    output[i] = actuators[i].Item1 + pos1;
                 }
                 activeActuators = activeActuators >> 1;
+            }
+        }
+
+        private void setZerosToMinimum(SerializableDictionary<int, SerializableTuple<int, int>> actuators, int zeros, ref Dictionary<int, double> output)
+        {
+            for (int i = 0; i < actuators.Count; i++)
+            {
+                if ((zeros & 1) != 0)
+                {
+                    output[i] = actuators[i].Item1;
+                }
+                zeros = zeros >> 1;
             }
         }
         
