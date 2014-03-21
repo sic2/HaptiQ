@@ -7,9 +7,9 @@ namespace MHTP_API
 {
     public class DirectionBehaviour : IBehaviour
     {
-        private int TIME;
-        private double _orientation;
+        public int TIME { get; set; }
 
+        private double _orientation;
         private double highPosition;
         private double lowPosition;
 
@@ -76,7 +76,8 @@ namespace MHTP_API
             Dictionary<int, double> pressureData, int numberActuators, ref Dictionary<int, double> output)
         {
             // Determines angle between lines in radians
-            double angle = Math.Atan2(_lines[0].Item1.Y - _lines[0].Item2.Y,
+            // (Math.PI - angle) is necessary because y is inverted
+            double angle = Math.PI - Math.Atan2(_lines[0].Item1.Y - _lines[0].Item2.Y,
                                         _lines[0].Item1.X - _lines[0].Item2.X);
             // Map angle to 0-(2*PI)
             angle = (angle > 0 ? angle : (2 * Math.PI + angle));

@@ -11,7 +11,8 @@ namespace MHTP_API
     /// </summary>
     public class BasicBehaviour : IBehaviour
     {
-        private int TIME;
+        public int TIME { get; set; }
+  
         private double position;
         private int _currentActiveActuators;
         private int _prevActiveActuators;

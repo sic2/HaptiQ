@@ -62,6 +62,11 @@ namespace HapticClientAPI
                 {
                     rule = BEHAVIOUR_RULES.NOPE;
                 }
+                else
+                {
+                    // Updating behaviour time to allow continuous pulsing
+                    _currentBehaviour.TIME = prevBehaviour != null ? prevBehaviour.TIME++ : 0;
+                }
                 return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
             }
             else if (state == STATE.down)

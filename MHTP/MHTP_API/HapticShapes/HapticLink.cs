@@ -20,6 +20,12 @@ namespace HapticClientAPI
 
         private Tuple<Point, Point> _pair;
 
+        /// <summary>
+        /// Constructor for HapticLink. 
+        /// </summary>
+        /// <param name="hapticShapeSrc"></param>
+        /// <param name="hapticShapeDst"></param>
+        /// <param name="hadDirection"></param>
         public HapticLink(HapticShape hapticShapeSrc, HapticShape hapticShapeDst, bool hadDirection) : base()
         {
             _hapticShapeSrc = hapticShapeSrc;
@@ -42,7 +48,8 @@ namespace HapticClientAPI
         } 
 
         /// <summary>
-        /// 
+        /// Handle a received position input. 
+        /// Return appropriate behaviour if point is inside this haptic link
         /// </summary>
         /// <param name="point"></param>
         /// <param name="orientation"></param>
@@ -62,6 +69,11 @@ namespace HapticClientAPI
                 {
                     rule = BEHAVIOUR_RULES.NOPE;
                 }
+                else
+                {
+                    // Updating behaviour time to allow pulsing
+                    _currentBehaviour.TIME = prevBehaviour != null ? prevBehaviour.TIME++ : 0;
+                }
                 return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
             }
             else if (state == STATE.down)
@@ -79,9 +91,14 @@ namespace HapticClientAPI
             return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(BEHAVIOUR_RULES.REMOVE, _currentBehaviour, null);
         }
 
+        /// <summary>
+        /// Handle a press.
+        /// This method needs to be implemented if a new feature is wanted.
+        /// </summary>
+        /// <param name="point"></param>
         public override void handlePress(Point point)
         {
-            // TODO
+            // Do nothing
         }
 
         private IBehaviour chooseBehaviour(Point point, double orientation)
@@ -89,13 +106,12 @@ namespace HapticClientAPI
             IBehaviour behaviour;
             lock (behaviourLock)
             {
+                // TODO - what about item2? do not hardcode this 
                 // XXX - apply non-linear function !?
-                double highFrequency = 100 * (Helper.distanceBetweenTwoPoints(point, _pair.Item1) / Helper.distanceBetweenTwoPoints(_pair.Item2, _pair.Item1)); // TODO - what about item2? do not hardcode this
-                double orientationDeg = Helper.radsToDegrees(orientation);
-                double shift = orientationDeg >= 0 ? (orientationDeg + 22.5) / 45.0 : 360 + (orientationDeg + 22.5) / 45.0; // XXX use 45 degrees because 8 zones are identified in a full circle.
-                
-                // TODO - establish actuators based on orientation of hapticlink too
-                behaviour = new PulsationBehaviour((int)shift, highFrequency);
+                double highFrequency = 100 * (Helper.distanceBetweenTwoPoints(point, _pair.Item1) / 
+                    Helper.distanceBetweenTwoPoints(_pair.Item2, _pair.Item1));
+                behaviour = new PulsationBehaviour(new Tuple<Point, Point>(_pair.Item2, _pair.Item1),
+                            orientation, highFrequency);
                 state = STATE.down;
             }
             return behaviour;

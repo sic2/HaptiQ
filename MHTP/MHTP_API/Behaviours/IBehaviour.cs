@@ -12,6 +12,12 @@ namespace MHTP_API
     public interface IBehaviour
     {
         /// <summary>
+        /// Behaviour relative time.
+        /// Should be used for pulsing effects
+        /// </summary>
+        int TIME { get; set; }
+
+        /// <summary>
         /// Return to the MHTP the gesture by defining 
         /// what actuators to move and by how much.
         /// Frequency must be managed by the behaviour. 
