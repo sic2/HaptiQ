@@ -8,7 +8,6 @@ namespace MHTP_API
     public class DirectionBehaviour : IBehaviour
     {
         private int TIME;
-        private int _direction { get; set; }
         private double _orientation;
 
         private double highPosition;
@@ -214,7 +213,7 @@ namespace MHTP_API
             if ((System.Object)p == null) return false;
 
             // Return true if the fields match
-            return (p._direction == this._direction && 
+            return (p._lines == this._lines && 
                 p._orientation == this._orientation);
         }
 
@@ -224,7 +223,7 @@ namespace MHTP_API
             unchecked 
             {
                 int hash = 17;
-                hash = hash * 23 + this._direction.GetHashCode();
+                hash = hash * 23 + this._lines.GetHashCode();
                 hash = hash * 23 + this._orientation.GetHashCode();
                 return hash;
             }

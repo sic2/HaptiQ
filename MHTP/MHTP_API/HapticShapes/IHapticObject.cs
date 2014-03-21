@@ -33,7 +33,7 @@ namespace MHTP_API
         /// - 1 REMOVE (first behaviour in tuple)
         /// - 2 SUBSTITUTE (second behaviour in tuple with first one)
         ///</returns>
-        Tuple<int, IBehaviour, IBehaviour> handleInput(Point point, double orientation); // TODO - add number of actuators as parameter
+        Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(Point point, double orientation); // TODO - add number of actuators as parameter
 
         /// <summary>
         /// 

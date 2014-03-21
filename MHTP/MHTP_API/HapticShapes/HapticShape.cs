@@ -81,18 +81,33 @@ namespace HapticClientAPI
         }
 
         /// <summary>
-        /// Returns true if a given point is near a straight line defined by two end points. 
+        /// Returns true if a given point is near a segment. 
         /// </summary>
         /// <param name="point"></param>
         /// <param name="startLine"></param>
         /// <param name="endLine"></param>
+        /// <param name="TOLLERANCE"></param>
         /// <returns></returns>
-        protected bool pointIsCloseToLine(Point point, Point startLine, Point endLine, double TOLLERANCE)
+        protected bool pointIsCloseToSegment(Point point, Point startLine, Point endLine, double TOLLERANCE)
         {
-            double d = Math.Abs(((endLine.X - startLine.X) * (startLine.Y - point.Y) -
-                (startLine.X - point.X) * (endLine.Y - startLine.Y)) /
-                (Math.Sqrt(Math.Pow(endLine.X - startLine.X, 2) + Math.Pow(endLine.Y - startLine.Y, 2))));
+            double d = Math.Sqrt(distanceToSegmentSquared(point, startLine, endLine));
             return d <= TOLLERANCE;
+        }
+
+        private double distanceSquared(Point v, Point w)
+        {
+            return Math.Pow(v.X - w.X, 2) + Math.Pow(v.Y - w.Y, 2);
+        }
+
+        // @see: // http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+        private double distanceToSegmentSquared(Point p, Point v, Point w)
+        {
+            double segmentLenghtSqr = distanceSquared(v, w);
+            if (segmentLenghtSqr == 0) return distanceSquared(p, v);
+            double t = ((p.X - v.X) * (w.X - v.X) + (p.Y - v.Y) * (w.Y - v.Y)) / segmentLenghtSqr;
+            if (t < 0) return distanceSquared(p, v);
+            if (t > 1) return distanceSquared(p, w);
+            return distanceSquared(p, new Point(v.X + t * (w.X - v.X), v.Y + t * (w.Y - v.Y)));
         }
 
         /// <summary>
@@ -100,7 +115,7 @@ namespace HapticClientAPI
         /// </summary>
         /// <param name="point"></param>
         /// <param name="orientation"></param>
-        public abstract Tuple<int, IBehaviour, IBehaviour> handleInput(Point point, double orientation);
+        public abstract Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(Point point, double orientation);
 
         /// <summary>
         /// Handle an actuator press. 

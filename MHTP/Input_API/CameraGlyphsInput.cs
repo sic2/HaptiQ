@@ -70,9 +70,6 @@ namespace Input_API
             }
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
         protected override void handleRawInput()
         {
             EnableRawImage();
@@ -81,6 +78,11 @@ namespace Input_API
         protected override void unhandleRawInput()
         {
             cam.Stop();
+        }
+
+        protected override void initialiseWindowTarget()
+        {
+            throw new NotImplementedException();
         }
 
     }

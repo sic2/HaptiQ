@@ -46,10 +46,24 @@ namespace MHTP_API
         /// Get/Set height of this actuator.
         /// It is not possible to set an actuator to an height that does not 
         /// satisfies the min/max constraints.
+        /// Return -1 if position cannot be retrieved
         /// </summary>
         public double height
         {
-            get { return _servo.Position; } 
+            get 
+            {
+                double h = -1;
+                try
+                {
+                    h = _servo.Position;
+                }
+                catch (PhidgetException e)
+                {
+                    Helper.Logger("MHTP_API.Actuator.height.get:: (" + _id + ")" +
+                                "PhidgetException. Cannot get height from servo motor.");
+                }
+                return h;
+            } 
             set 
             {
                 if (_servo != null && value >= _minPosition && value < _maxPosition)

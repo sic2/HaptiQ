@@ -5,6 +5,10 @@ using Microsoft.Surface.Core;
 
 namespace Input_API
 {
+    /// <summary>
+    /// This class defines the methods to get input through ByteTags as 
+    /// defined in the SurfaceSDK
+    /// </summary>
     public class SurfaceInput : Input
     {
         private TouchTarget touchTarget;
@@ -13,9 +17,7 @@ namespace Input_API
 
         public SurfaceInput(String windowName) : base(windowName)
         {
-            // Create a target for surface input.
-            touchTarget = new TouchTarget(_windowHandle, EventThreadChoice.OnBackgroundThread);
-            touchTarget.EnableInput();
+            touchTarget = null;
         }
 
         public override void checkInput()
@@ -24,7 +26,7 @@ namespace Input_API
             {
                 ReadOnlyTouchPointCollection touches = touchTarget.GetState();
                 manageTouches(touches);
-                System.Threading.Thread.Sleep(100); // Add delay to avoid a busy round-robin
+                System.Threading.Thread.Sleep(50); // Add delay to avoid a busy round-robin
             }
         }
 
@@ -42,8 +44,14 @@ namespace Input_API
 
         public override void dispose()
         {
-            // XXX - lock? 
             getInput = false;
+        }
+
+        protected override void initialiseWindowTarget()
+        {
+            // Create a target for surface input.
+            touchTarget = new TouchTarget(_windowHandle, EventThreadChoice.OnBackgroundThread);
+            touchTarget.EnableInput();
         }
     }
 }

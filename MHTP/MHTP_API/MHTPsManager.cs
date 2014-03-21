@@ -41,6 +41,12 @@ namespace MHTP_API
     /// <param name="position"></param>
     public delegate void MHTPActuatorPositionEventHandler(object sender, EventArgs E, uint id, int actuatorId, double position);
 
+
+    /// <summary>
+    /// Behaviour enum for the rules used when adding new/removing behaviours
+    /// </summary>
+    public enum BEHAVIOUR_RULES { ADD, REMOVE, SUBS, NOPE };
+
     // Singleton pattern
     // see http://stackoverflow.com/questions/4203634/singleton-with-parameters
     /// <summary>
@@ -381,21 +387,21 @@ namespace MHTP_API
             {
                 Parallel.ForEach(_hapticObjectObservers, observer =>
                 {
-                    Tuple<int, IBehaviour, IBehaviour> behaviour = observer.handleInput(point, orientation);
+                    Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> behaviour = observer.handleInput(point, orientation);
                     switch (behaviour.Item1)
                     {
-                        case 0:
+                        case BEHAVIOUR_RULES.ADD:
                             mhtp.addBehaviour(behaviour.Item2);
                             break;
-                        case 1:
+                        case BEHAVIOUR_RULES.REMOVE:
                             mhtp.removeBehaviour(behaviour.Item2);
                             break;
-                        case 2:
+                        case BEHAVIOUR_RULES.SUBS:
                             // Substitute behaviours
                             mhtp.removeBehaviour(behaviour.Item3);
                             mhtp.addBehaviour(behaviour.Item2);
                             break;
-                        case 3:
+                        case BEHAVIOUR_RULES.NOPE:
                             // Do nothing
                             break;
                         default:

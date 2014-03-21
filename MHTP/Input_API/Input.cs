@@ -45,6 +45,7 @@ namespace Input_API
         #endregion
 
         protected IntPtr _windowHandle;
+        private String _windowName;
 
         /// <summary>
         /// Initialise an Input object for a given window.
@@ -52,8 +53,7 @@ namespace Input_API
         /// <param name="windowName"></param>
         public Input(String windowName)
         {
-            IntPtr hWnd = FindWindow(null, windowName);
-            this._windowHandle = hWnd;
+            _windowName = windowName;
         }
         /// <summary>
         /// Event fired when an input is detected
@@ -69,6 +69,33 @@ namespace Input_API
         }
 
         /// <summary>
+        /// Updates the window handle.
+        /// </summary>
+        protected void updateWindowHandle()
+        {
+            IntPtr hWnd = FindWindow(null, _windowName);
+            this._windowHandle = hWnd;
+        }
+
+        public void start()
+        {
+            while (true)
+            {
+                if (_windowHandle == IntPtr.Zero)
+                {
+                    updateWindowHandle();
+                }
+                else
+                {
+                    initialiseWindowTarget();
+                    break;
+                }
+                System.Threading.Thread.Sleep(100); // Note - decrease for higher FPS
+            }
+            checkInput();
+        }
+
+        /// <summary>
         /// Cyclically check the input and fire an event of type #ChangedEventHandler 
         /// </summary>
         public abstract void checkInput();
@@ -77,5 +104,10 @@ namespace Input_API
         /// Dispose the input. This should stop the system from acquiring anymore input.
         /// </summary>
         public abstract void dispose();
+
+        /// <summary>
+        /// Initialise window target
+        /// </summary>
+        protected abstract void initialiseWindowTarget();
     }
 }

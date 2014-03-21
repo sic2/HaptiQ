@@ -46,9 +46,9 @@ namespace HapticClientAPI
         /// </summary>
         /// <param name="point"></param>
         /// <param name="orientation"></param>
-        public override Tuple<int, IBehaviour, IBehaviour> handleInput(Point point, double orientation)
+        public override Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(Point point, double orientation)
         {
-            if (pointIsCloseToLine(point, _pair.Item1, _pair.Item2, NEARNESS_TOLLERANCE))
+            if (pointIsCloseToSegment(point, _pair.Item1, _pair.Item2, NEARNESS_TOLLERANCE))
             {
                 if (state == STATE.up)
                 {
@@ -57,26 +57,26 @@ namespace HapticClientAPI
                 }
                 IBehaviour prevBehaviour = _currentBehaviour;
                 _currentBehaviour = chooseBehaviour(point, orientation);
-                int rule = 2;
+                BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
                 if (_currentBehaviour.Equals(prevBehaviour))
                 {
-                    rule = 3;
+                    rule = BEHAVIOUR_RULES.NOPE;
                 }
-                return new Tuple<int, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
+                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
             }
             else if (state == STATE.down)
             {
                 state = STATE.up;
                 IBehaviour prevBehaviour = _currentBehaviour;
-                _currentBehaviour = new BasicBehaviour(BasicBehaviour.TYPES.flat); // TODO - or remove behaviour?
-                int rule = 2;
+                _currentBehaviour = new BasicBehaviour(BasicBehaviour.TYPES.flat);
+                BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
                 if (_currentBehaviour.Equals(prevBehaviour))
                 {
-                    rule = 3;
+                    rule = BEHAVIOUR_RULES.NOPE;
                 }
-                return new Tuple<int, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
+                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
             }
-            return new Tuple<int, IBehaviour, IBehaviour>(1, _currentBehaviour, null);
+            return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(BEHAVIOUR_RULES.REMOVE, _currentBehaviour, null);
         }
 
         public override void handlePress(Point point)
@@ -108,7 +108,13 @@ namespace HapticClientAPI
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-            // TODO
+            drawingContext.DrawEllipse(null, new Pen(Brushes.Red, 1.0), 
+                _pair.Item1.toSysWinPoint(), NEARNESS_TOLLERANCE, NEARNESS_TOLLERANCE);
+            drawingContext.DrawEllipse(null, new Pen(Brushes.Red, 1.0), 
+                _pair.Item2.toSysWinPoint(), NEARNESS_TOLLERANCE, NEARNESS_TOLLERANCE);
+
+            drawingContext.DrawEllipse(null, new Pen(Brushes.Red, 1.0),
+                new Point(0, 0).toSysWinPoint(), NEARNESS_TOLLERANCE, NEARNESS_TOLLERANCE);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Input_API
 
             Input input = (Input)Activator.CreateInstance(currentType, new object[] { windowName });
 
-            Thread oThread = new Thread(new ThreadStart(input.checkInput));
+            Thread oThread = new Thread(new ThreadStart(input.start));
             oThread.Start();
 
             return input;

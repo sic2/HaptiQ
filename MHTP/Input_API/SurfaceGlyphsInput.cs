@@ -16,12 +16,7 @@ namespace Input_API
         private byte[] normalizedImage;
 
         public SurfaceGlyphsInput(String windowName)
-            : base(windowName)
-        {
-            // Create a target for surface input.
-            touchTarget = new TouchTarget(_windowHandle, EventThreadChoice.OnBackgroundThread);
-            touchTarget.EnableInput();
-        }
+            : base(windowName) {}
 
         // @see: http://msdn.microsoft.com/en-us/library/ff727886.aspx 
         private void OnTouchTargetFrameReceived(object sender, Microsoft.Surface.Core.FrameReceivedEventArgs e)
@@ -80,6 +75,13 @@ namespace Input_API
         {
             touchTarget.FrameReceived -= new EventHandler<FrameReceivedEventArgs>(OnTouchTargetFrameReceived);
             touchTarget.Dispose();
+        }
+
+        protected override void initialiseWindowTarget()
+        {
+            // Create a target for surface input.
+            touchTarget = new TouchTarget(_windowHandle, EventThreadChoice.OnBackgroundThread);
+            touchTarget.EnableInput();
         }
 
         // XXX - calculate ratio once for all, rather than every frame?

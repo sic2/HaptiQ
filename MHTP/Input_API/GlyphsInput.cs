@@ -72,7 +72,6 @@ namespace Input_API
                 // Re-enable collecting raw images.
                 EnableRawImage();
             }
-
         }
 
         /// <summary>
@@ -184,5 +183,7 @@ namespace Input_API
         /// Stop recording images
         /// </summary>
         protected abstract void unhandleRawInput();
+
+        
     }
 }

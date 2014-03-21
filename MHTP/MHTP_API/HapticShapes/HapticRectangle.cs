@@ -46,7 +46,7 @@ namespace HapticClientAPI
         /// </summary>
         /// <param name="point"></param>
         /// <param name="orientation"></param>
-        public override Tuple<int, IBehaviour, IBehaviour> handleInput(Point point, double orientation)
+        public override Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(Point point, double orientation)
         {
             if (pointIsInside(point))
             {
@@ -57,26 +57,26 @@ namespace HapticClientAPI
                 }
                 IBehaviour prevBehaviour = _currentBehaviour;
                 _currentBehaviour = chooseBehaviour(point, orientation);
-                int rule = 2;
+                BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
                 if (_currentBehaviour.Equals(prevBehaviour))
                 {
-                    rule = 3;
+                    rule = BEHAVIOUR_RULES.NOPE;
                 }
-                return new Tuple<int, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
+                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
             }
             else if (state == STATE.down)
             {
                 state = STATE.up;
                 IBehaviour prevBehaviour = _currentBehaviour;
                 _currentBehaviour = new BasicBehaviour(BasicBehaviour.TYPES.flat);
-                int rule = 2;
+                BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
                 if (_currentBehaviour.Equals(prevBehaviour))
                 {
-                    rule = 3;
+                    rule = BEHAVIOUR_RULES.NOPE;
                 }
-                return new Tuple<int, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
+                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
             }
-            return new Tuple<int, IBehaviour, IBehaviour>(1, _currentBehaviour, null);
+            return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(BEHAVIOUR_RULES.REMOVE, _currentBehaviour, null);
         }
 
         /// <summary>
@@ -111,43 +111,43 @@ namespace HapticClientAPI
                 Point topRight = new Point(x + width, y);
 
                 List<Tuple<Point, Point>> lines = new List<Tuple<Point, Point>>();
-                if (pointIsCloseToLine(point, bottomLeft, bottomRight, CORNER_NEARNESS_TOLLERANCE) &&
-                    pointIsCloseToLine(point, bottomLeft, topLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-left corner
+                if (pointIsCloseToSegment(point, bottomLeft, bottomRight, CORNER_NEARNESS_TOLLERANCE) &&
+                    pointIsCloseToSegment(point, bottomLeft, topLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-left corner
                 {
                     lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
                     lines.Add(new Tuple<Point, Point>(bottomLeft, topLeft));
                 }
-                else if (pointIsCloseToLine(point, topLeft, topRight, CORNER_NEARNESS_TOLLERANCE) &&
-                        pointIsCloseToLine(point, topLeft, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // top-left corner
+                else if (pointIsCloseToSegment(point, topLeft, topRight, CORNER_NEARNESS_TOLLERANCE) &&
+                        pointIsCloseToSegment(point, topLeft, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // top-left corner
                 {
                     lines.Add(new Tuple<Point, Point>(topLeft, topRight));
                     lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
                 }
-                else if (pointIsCloseToLine(point, topRight, topLeft, CORNER_NEARNESS_TOLLERANCE) &&
-                    pointIsCloseToLine(point, topRight, bottomRight, CORNER_NEARNESS_TOLLERANCE)) // top-right corner
+                else if (pointIsCloseToSegment(point, topRight, topLeft, CORNER_NEARNESS_TOLLERANCE) &&
+                    pointIsCloseToSegment(point, topRight, bottomRight, CORNER_NEARNESS_TOLLERANCE)) // top-right corner
                 {
                     lines.Add(new Tuple<Point, Point>(topRight, topLeft));
                     lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
                 }
-                else if (pointIsCloseToLine(point, bottomRight, topRight, CORNER_NEARNESS_TOLLERANCE) &&
-                    pointIsCloseToLine(point, bottomRight, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-right corner
+                else if (pointIsCloseToSegment(point, bottomRight, topRight, CORNER_NEARNESS_TOLLERANCE) &&
+                    pointIsCloseToSegment(point, bottomRight, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-right corner
                 {
                     lines.Add(new Tuple<Point, Point>(bottomRight, topRight));
                     lines.Add(new Tuple<Point, Point>(bottomRight, bottomLeft));
                 }
-                else if (pointIsCloseToLine(point, bottomLeft, bottomRight, NEARNESS_TOLLERANCE)) // horizontal
+                else if (pointIsCloseToSegment(point, bottomLeft, bottomRight, NEARNESS_TOLLERANCE)) // horizontal
                 {
                     lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
                 }
-                else if (pointIsCloseToLine(point, topLeft, topRight, NEARNESS_TOLLERANCE)) // horizontal
+                else if (pointIsCloseToSegment(point, topLeft, topRight, NEARNESS_TOLLERANCE)) // horizontal
                 {
                     lines.Add(new Tuple<Point, Point>(topLeft, topRight));
                 }
-                else if (pointIsCloseToLine(point, topLeft, bottomLeft, NEARNESS_TOLLERANCE)) // vertical
+                else if (pointIsCloseToSegment(point, topLeft, bottomLeft, NEARNESS_TOLLERANCE)) // vertical
                 {
                     lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
                 }
-                else if (pointIsCloseToLine(point, topRight, bottomRight, NEARNESS_TOLLERANCE)) // vertical
+                else if (pointIsCloseToSegment(point, topRight, bottomRight, NEARNESS_TOLLERANCE)) // vertical
                 {
                     lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
                 }
