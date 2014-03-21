@@ -60,7 +60,8 @@ namespace MHTP_API
                 catch (PhidgetException e)
                 {
                     Helper.Logger("MHTP_API.Actuator.height.get:: (" + _id + ")" +
-                                "PhidgetException. Cannot get height from servo motor.");
+                                "PhidgetException " + e.Description +
+                                ". Cannot get height from servo motor.");
                 }
                 return h;
             } 
@@ -72,6 +73,16 @@ namespace MHTP_API
                         _servo.Position = value;
                     }
             }
+        }
+
+        /// <summary>
+        /// Set height by percentage
+        /// </summary>
+        /// <param name="percentage">Value between 0 and 1</param>
+        /// <returns></returns>
+        public void setHeight(double percentage)
+        {
+            this.height = _minPosition + (_maxPosition - _minPosition) * percentage;
         }
 
         /// <summary>
@@ -121,7 +132,7 @@ namespace MHTP_API
         /// Set the maximum position allowed for this actuator
         /// </summary>
         /// <param name="maxPosition"></param>
-        public void setMaxPosition(double maxPosition)
+        protected void setMaxPosition(double maxPosition)
         {
             _maxPosition = maxPosition < _servo.PositionMax ? maxPosition : _servo.PositionMax;
         }
@@ -130,7 +141,7 @@ namespace MHTP_API
         /// Set the minimum position allowed for this actuator
         /// </summary>
         /// <param name="minPosition"></param>
-        public void setMinPosition(double minPosition)
+        protected void setMinPosition(double minPosition)
         {
             _minPosition = minPosition > _servo.PositionMin ? minPosition : _servo.PositionMin;
         }
