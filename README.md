@@ -1,4 +1,4 @@
-A Haptic Device for Graph and Text Exploration by People with Visual Disabilities
+# A Haptic Device for Graph and Text Exploration by People with Visual Disabilities
 
 ===============================================================================
 
@@ -27,12 +27,10 @@ My hypothesis is that the extended HTP will facilitate the recognition of direct
     - Develop an API for WPF client applications
 
 ## Secondary
-
     - Design and implement an application for Cartesian Graph exploration
     - Increase the haptic device resolution
 
 ## Tertiary
-
     - Enable the haptic device to be used collaboratively
     - Enable the haptic device to sense textures
 
@@ -41,7 +39,7 @@ My hypothesis is that the extended HTP will facilitate the recognition of direct
 - Phidgets ServoBoard and InterfaceKit
 - Phidgets Servo Motors
 - Pressure Sensors
-- Etc
+- 3D-Printed models 
 
 # Collaborating
 
@@ -50,16 +48,23 @@ This project is currently under alpha development and the designing is constantl
 Please do create a branch of the project if a new feature has to be implemented. Also, use the issue tracking on GitHub if any bug is found or new functionality is wanted.
 
 ## Bugs
-Whenever a bug is found please state the following:
+Whenever a bug is found please: 
 - Assign a short, clear and meaningful name to the bug
-- Be precise
-- Be clear: explain how to reproduce the problem, step by step, so others can reproduce the bug
+- Be precise and clear
 - Include only one problem per report
-- Attach any screenshot or Log trace if necessary 
+
+And follow a similar scheme
+
+    +-------------+---------------------------------------------------+
+    | Description | Describe the issue (step by step)                 |
+    | Workaround  | Explain a way to temporarily solve the problem    |
+    | Solution    | Explain what the solution should be               |
+    | Attachments | Attach any relevant Log/Screenshot file if needed |
+    +-------------+---------------------------------------------------+
+    Label: bug, duplicate, invalid, etc..
 
 -------------------------------------------------------------------------------
 
 # Known issues
 
-- DirectionBehaviour and PulsationBehaviour work only on a 4-MHTP.
 - PrinterModels/ does not contain the latest models (18/03/2014).
