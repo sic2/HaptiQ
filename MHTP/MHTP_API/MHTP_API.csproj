@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Actuator.cs" />
     <Compile Include="AudioManager\SpeechOutput.cs" />
+    <Compile Include="Behaviours\Behaviour.cs" />
     <Compile Include="Behaviours\PulsationBehaviour.cs" />
     <Compile Include="Config\Configuration.cs" />
     <Compile Include="Config\ConfigurationForm.cs">

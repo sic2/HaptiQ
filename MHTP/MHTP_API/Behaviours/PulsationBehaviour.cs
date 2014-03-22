@@ -6,16 +6,15 @@ using Input_API;
 
 namespace MHTP_API
 {
-    // TODO - remove all code duplicated from DirectionBehaviour
     /// <summary>
     /// 
     /// </summary>
-    public class PulsationBehaviour : IBehaviour
+    public class PulsationBehaviour : Behaviour
     {
         public int TIME { get; set; }
 
-        private double highPosition;
-        private double lowPosition;
+        //private double highPosition;
+        //private double lowPosition;
         private double _orientation;
         private double _frequency;
 
@@ -24,12 +23,12 @@ namespace MHTP_API
         private Tuple<Point, Point> _segment;
         private int[] singleActuatorsMatrix = new int[] 
                          { 2, // 4-MHTP 1-line
-                           4}; // 8 -MHTP 1-line - FIXME
+                           4}; // 8 -MHTP 1-line
 
         private int[][] dynamicActuatorsMatrix = new int[][]
                         {
                             new int[]{1, 2}, // 4-MHTP 1-line
-                            new int[]{132, 72}// 8-MHTP 1-line - FIXME
+                            new int[]{1, 4}// 8-MHTP 1-line
                         };
 
         /// <summary>
@@ -49,7 +48,13 @@ namespace MHTP_API
             lowPosition = 0;
         }
 
-        public Dictionary<int, double> play(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
+        /// <summary>
+        /// Plays this behaviour
+        /// </summary>
+        /// <param name="actuators"></param>
+        /// <param name="pressureData"></param>
+        /// <returns></returns>
+        public override Dictionary<int, double> play(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
             Dictionary<int, double> pressureData)
         {
             Dictionary<int, double> retval = new Dictionary<int, double>();
@@ -62,96 +67,32 @@ namespace MHTP_API
             return retval;
         }
 
+        /// <summary>
+        /// Segment behaviour with pulsation
+        /// </summary>
+        /// <param name="actuators"></param>
+        /// <param name="pressureData"></param>
+        /// <param name="numberActuators"></param>
+        /// <param name="output"></param>
         private void segmentBehaviour(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
            Dictionary<int, double> pressureData, int numberActuators, ref Dictionary<int, double> output)
         {
-            // Determines angle between lines in radians
-            double angle = Math.Atan2(_segment.Item1.Y - _segment.Item2.Y,
-                                        _segment.Item1.X - _segment.Item2.X);
-            // Map angle to 0-(2*PI)
-            angle = (angle > 0 ? angle : (2 * Math.PI + angle));
-            angle += _orientation; // Total angle between lines and device orientation
-            // Normalise angle
-            double sectorRange = (2 * Math.PI) / (2.0 * numberActuators);
-            double normAngle = angle + (sectorRange / 2.0);
-            int sector = (int)Math.Floor(normAngle / sectorRange) % (numberActuators * 2);
-
+            int sector = getSector(_segment, _orientation, numberActuators, numberActuators * 2);
             int matrixIndex = numberActuators / NUMBER_ACTUATORS_DIVIDER - 1;
-            if (sector % 2 == 0) // Single actuators sector
+            if (sector % 2 == 0) // Single pulsating actuators sector
             {
                 int activeActs = singleActuatorsMatrix[matrixIndex];
                 activeActs = RshiftActs(activeActs, (int)(sector / 2), numberActuators);
                 bitsToActuators(actuators, activeActs, TIME % 2 == 0, false, ref output);
-                setZerosToMinimum(actuators, ~activeActs, ref output); 
+                setZerosToMinimum(actuators, activeActs, ref output); 
             }
-            else // Pulsing sector
+            else // Double pulsating actuators sector
             {
                 int[] acts = (int[]) dynamicActuatorsMatrix[matrixIndex].Clone();
-                acts[0] = RshiftActs(acts[0], (int)(sector / 2), numberActuators);
-                acts[1] = RshiftActs(acts[1], (int)(sector / 2), numberActuators);
-
-                // FIXME - issue with alternating actuators
-                bitsToActuators(actuators, acts[0], TIME % 2 == 0, false, ref output);
-                bitsToActuators(actuators, acts[1], TIME % 2 != 0, false, ref output);
-                setZerosToMinimum(actuators, ~(acts[0] | acts[1]), ref output); 
-            }
-        }
-
-        /// <summary>
-        /// Shift acts to the left with carry by offset.
-        /// Number of bits is determined by numberActuators.
-        /// </summary>
-        /// <param name="acts"></param>
-        /// <param name="offset"></param>
-        /// <param name="numberActuators"></param>
-        /// <returns></returns>
-        private int LshiftActs(int acts, int offset, int numberActuators)
-        {
-            int limit = (int)(Math.Pow(2, numberActuators));
-            return (acts << offset |
-                    acts >> (numberActuators - offset)) & (limit - 1);
-        }
-
-        private int RshiftActs(int acts, int offset, int numberActuators)
-        {
-            int limit = (int)(Math.Pow(2, numberActuators));
-            return (acts >> offset |
-                    acts << (numberActuators - offset)) & (limit - 1);
-        }
-
-        private void bitsToActuators(SerializableDictionary<int, SerializableTuple<int, int>> actuators, int activeActuators, bool switchPositionOrder, bool setZeros, ref Dictionary<int, double> output)
-        {
-            double pos0 = highPosition;
-            double pos1 = lowPosition;
-            if (switchPositionOrder)
-            {
-                double tmp = pos0;
-                pos0 = pos1;
-                pos1 = tmp;
-            }
-            for (int i = 0; i < actuators.Count; i++)
-            {
-                if ((activeActuators & 1) != 0)
-                {
-                    output[i] = actuators[i].Item1 + pos0;
-                }
-                else if (setZeros)
-                {
-                    output[i] = actuators[i].Item1 + pos1;
-                }
-                activeActuators = activeActuators >> 1;
-            }
-        }
-
-        private void setZerosToMinimum(SerializableDictionary<int, SerializableTuple<int, int>> actuators, int zeros, ref Dictionary<int, double> output)
-        {
-            for (int i = 0; i < actuators.Count; i++)
-            {
-                if ((zeros & 1) != 0)
-                {
-                    output[i] = actuators[i].Item1;
-                }
-                zeros = zeros >> 1;
+                acts[0] = RshiftActs(acts[0], (int)((sector - 1) / 2), numberActuators);
+                acts[1] = RshiftActs(acts[1], (int)((sector - 1) / 2), numberActuators);
+                bitsToActuators(actuators, acts[0] | acts[1], TIME % 2 == 0, false, ref output);
+                setZerosToMinimum(actuators, (acts[0] | acts[1]), ref output); 
             }
         }
         

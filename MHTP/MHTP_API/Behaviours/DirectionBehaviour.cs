@@ -5,13 +5,11 @@ using Input_API;
 
 namespace MHTP_API
 {
-    public class DirectionBehaviour : IBehaviour
+    public class DirectionBehaviour : Behaviour
     {
         public int TIME { get; set; }
 
         private double _orientation;
-        private double highPosition;
-        private double lowPosition;
 
         private const int NUMBER_ACTUATORS_DIVIDER = 4;
         private const int FOUR_ACTUATORS = 4;
@@ -49,7 +47,7 @@ namespace MHTP_API
         /// <param name="actuators"></param>
         /// <param name="pressureData"></param>
         /// <returns></returns>
-        public Dictionary<int, double> play(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
+        public override Dictionary<int, double> play(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
             Dictionary<int, double> pressureData)
         {
             Dictionary<int, double> retval = new Dictionary<int, double>();
@@ -75,32 +73,22 @@ namespace MHTP_API
         private void segmentBehaviour(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
             Dictionary<int, double> pressureData, int numberActuators, ref Dictionary<int, double> output)
         {
-            // Determines angle between lines in radians
-            double angle = Math.Atan2(_lines[0].Item1.Y - _lines[0].Item2.Y,
-                                        _lines[0].Item1.X - _lines[0].Item2.X);
-            // Map angle to 0-(2*PI)
-            angle = (angle > 0 ? angle : (2 * Math.PI + angle));
-            angle += _orientation; // Total angle between lines and device orientation
-            // Normalise angle
-            double sectorRange = (2 * Math.PI) / (2.0 * numberActuators);
-            double normAngle = angle + (sectorRange / 2.0);
-            int sector = (int)Math.Floor(normAngle / sectorRange) % numberActuators;
-
+            int sector = getSector(_lines[0], _orientation, numberActuators, numberActuators);
             int matrixIndex = numberActuators / NUMBER_ACTUATORS_DIVIDER - 1;
             if (sector % 2 == 0) // Static sector
             {
                 int activeActs = staticActuatorsMatrix[matrixIndex];
-                activeActs = shiftActs(activeActs, (int)(sector / 2), numberActuators);
+                activeActs = RshiftActs(activeActs, (int)(sector / 2), numberActuators);
                 bitsToActuators(actuators, activeActs, false, true, ref output);
             }
             else // Pulsing sector
             {
                 int[] acts = dynamicActuatorsMatrix[matrixIndex];
-                acts[0] = shiftActs(acts[0], (int)(sector / 2), numberActuators);
-                acts[1] = shiftActs(acts[1], (int)(sector / 2), numberActuators);
-
-                bitsToActuators(actuators, acts[0], TIME % 2 == 0, true, ref output);
-                bitsToActuators(actuators, acts[1], TIME % 2 != 0, true, ref output);
+                acts[0] = RshiftActs(acts[0], (int)((sector - 1) / 2), numberActuators);
+                acts[1] = RshiftActs(acts[1], (int)((sector - 1) / 2), numberActuators);
+                bitsToActuators(actuators, acts[0], TIME % 2 == 0, false, ref output);
+                bitsToActuators(actuators, acts[1], TIME % 2 != 0, false, ref output);
+                setZerosToMinimum(actuators, (acts[0] | acts[1]), ref output); 
             }
         }
 
@@ -112,24 +100,25 @@ namespace MHTP_API
             int sector = (int)Math.Floor(normAngle / sectorRange) % numberActuators;
 
             int actuator1 = vectorToActuator(_lines[0], numberActuators);
-            int actuator2 = shiftActs(actuator1, 1, numberActuators);
+            int actuator2 = vectorToActuator(_lines[1], numberActuators);
             if (sector % 2 == 0)
             {
                 actuator1 += actuator2;
-                actuator1 = shiftActs(actuator1, (int)(sector / 2), numberActuators);
+                actuator1 = LshiftActs(actuator1, (int)(sector / 2), numberActuators);
                 bitsToActuators(actuators, actuator1, false, true, ref output);
             }
             else
             {
-                int actuator3 = shiftActs(actuator2, 1, numberActuators);
+                int actuator3 = LshiftActs(actuator2, 1, numberActuators);
 
-                actuator1 = shiftActs(actuator1, (int)(sector / 2), numberActuators);
-                actuator2 = shiftActs(actuator2, (int)(sector / 2), numberActuators);
-                actuator3 = shiftActs(actuator3, (int)(sector / 2), numberActuators);
+                actuator1 = LshiftActs(actuator1, (int)(sector / 2), numberActuators);
+                actuator2 = LshiftActs(actuator2, (int)(sector / 2), numberActuators);
+                actuator3 = LshiftActs(actuator3, (int)(sector / 2), numberActuators);
 
                 bitsToActuators(actuators, actuator1, TIME % 2 == 0, false, ref output);
                 bitsToActuators(actuators, actuator2, TIME % 2 != 0, false, ref output);
                 bitsToActuators(actuators, actuator3, TIME % 2 == 0, false, ref output);
+                setZerosToMinimum(actuators, (actuator1 | actuator2 | actuator3), ref output); 
             }
         }
 
@@ -163,46 +152,6 @@ namespace MHTP_API
             return -1;
         }
 
-        /// <summary>
-        /// Shift acts to the left with carry by offset.
-        /// Number of bits is determined by numberActuators.
-        /// </summary>
-        /// <param name="acts"></param>
-        /// <param name="offset"></param>
-        /// <param name="numberActuators"></param>
-        /// <returns></returns>
-        private int shiftActs(int acts, int offset, int numberActuators)
-        {
-            int limit = (int)(Math.Pow(2, numberActuators));
-            return (acts << offset |
-                    acts >> (numberActuators - offset)) & (limit - 1);
-        }
-
-        private void bitsToActuators(SerializableDictionary<int, SerializableTuple<int, int>> actuators, int activeActuators, bool switchPositionOrder, bool setZeros, ref Dictionary<int, double> output)
-        {
-            double pos0 = highPosition;
-            double pos1 = lowPosition;
-            if (switchPositionOrder)
-            {
-                double tmp = pos0;
-                pos0 = pos1;
-                pos1 = tmp;
-            }
-            for (int i = 0; i < actuators.Count; i++)
-            {
-                output[i] = actuators[i].Item1;
-                if ((activeActuators & 1) != 0)
-                {
-                    output[i] += pos0;
-                }
-                else if (setZeros)
-                {
-                    output[i] += pos1;
-                }
-                activeActuators = activeActuators >> 1;
-            }
-        }
-        
         public override bool Equals(System.Object obj)
         {
             // If parameter is null return false

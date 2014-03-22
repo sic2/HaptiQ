@@ -9,8 +9,14 @@ namespace MHTP_API
     /// BasicBehaviours define a set of behaviours general enough to be used by 
     /// any application. 
     /// </summary>
-    public class BasicBehaviour : IBehaviour
+    public class BasicBehaviour : Behaviour
     {
+        private const int DEFAULT_FREQUENCY = 1;
+        private const int INIT_CURRENT_ACTIVE_ACTS = 1;
+        private const int INIT_PREV_ACTIVE_ACTS = 1;
+        private const int DEFAULT_RELATIVE_POS = 40;
+        private const int DEFAULT_WAITING_MS = 200;
+
         public int TIME { get; set; }
   
         private double _position;
@@ -43,12 +49,15 @@ namespace MHTP_API
         /// Constructor for a BasicBehaviour
         /// </summary>
         /// <param name="type"></param>
-        public BasicBehaviour(TYPES type) : this(type, 1, 1, 1) {}
+        public BasicBehaviour(TYPES type) 
+            : this(type, INIT_CURRENT_ACTIVE_ACTS, INIT_PREV_ACTIVE_ACTS, DEFAULT_FREQUENCY) { }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="type"></param>
+        /// <param name="current"></param>
+        /// <param name="prev"></param>
         /// <param name="frequency"></param>
         public BasicBehaviour(TYPES type, int current, int prev, double frequency)
         {
@@ -56,7 +65,7 @@ namespace MHTP_API
             currentActiveActuators = current;
             prevActiveActuators = prev;
             TIME = 0;
-            _position = 40;
+            _position = DEFAULT_RELATIVE_POS;
             _frequency = frequency;
         }
 
@@ -65,7 +74,7 @@ namespace MHTP_API
         /// </summary>
         /// <param name="actuators"></param>
         /// <returns></returns>
-        public Dictionary<int, double> play(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
+        public override Dictionary<int, double> play(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
             Dictionary<int, double> pressureData)
         {
             Dictionary<int, double> retval = new Dictionary<int, double>();
@@ -74,16 +83,10 @@ namespace MHTP_API
             switch (_type)
             {
                 case TYPES.flat:
-                    foreach (KeyValuePair<int, SerializableTuple<int, int>> entry in actuators)
-                    {
-                        retval[entry.Key] = actuators[entry.Key].Item1;
-                    }
+                    retval = playFlat(actuators);
                     break;
                 case TYPES.max:
-                    foreach (KeyValuePair<int, SerializableTuple<int, int>> entry in actuators)
-                    {
-                        retval[entry.Key] = actuators[entry.Key].Item2;
-                    }
+                    retval = playMax(actuators);
                     break;
                 case TYPES.notification:
                     retval = playNotification(actuators, pressureData);
@@ -93,7 +96,27 @@ namespace MHTP_API
                     break;
             }
 
-            System.Threading.Thread.Sleep((int) (200 * _frequency));
+            System.Threading.Thread.Sleep((int)(DEFAULT_WAITING_MS * _frequency));
+            return retval;
+        }
+
+        private Dictionary<int, double> playFlat(SerializableDictionary<int, SerializableTuple<int, int>> actuators)
+        {
+            Dictionary<int, double> retval = new Dictionary<int, double>();
+            foreach (KeyValuePair<int, SerializableTuple<int, int>> entry in actuators)
+            {
+                retval[entry.Key] = actuators[entry.Key].Item1;
+            }
+            return retval;
+        }
+
+        private Dictionary<int, double> playMax(SerializableDictionary<int, SerializableTuple<int, int>> actuators)
+        {
+            Dictionary<int, double> retval = new Dictionary<int, double>();
+            foreach (KeyValuePair<int, SerializableTuple<int, int>> entry in actuators)
+            {
+                retval[entry.Key] = actuators[entry.Key].Item2;
+            }
             return retval;
         }
 
