@@ -1,57 +1,27 @@
 \chapter{Introduction}
-\par
-The use of technology for the blind and the visually impaired is not obvious. Being able to presenting information in a correct, fast and easy to access manner to the visually impaired is a fundamental challenge in the classic field of text and graph visualisation and recently in the area of Human-Computer Interaction (HCI) too. "These problems often mean that the visually impaired travel less, which influences their personal and professional life and can lead to exclusion from society"\cite{brock2010usage}.
-\newline
-So far, Braille can be considered the most used form of tactile graphics since the XIX century. Braille is a coding system for alphanumeric symbols, with each braille character being a combination of raised dots or tactile bumps positioned within a fixed grid. While Braille has been shown in the past to be excellent for textual information, the trend is changing. \par
+The use of technology for the blind and the visually impaired is not obvious. The digital divide gap is significant and has an evident impact not only on the life style of the visually impaired, but also on how they interact with others and the surrounding environment. This can lead to one's exclusion from society. Therefore, presenting information in a correct, fast and easy-to-access manner to the visually impaired is a fundamental challenge in a world where technology evolves at an exponential rate. \par
 
-Nowadays, the amount of data produced everyday is more than ever. Most of the time it is not feasibe to represent data and its information as textual, whether it is a small data set or big data. Therefore, in the last couple of decades data visualisation has been playing a crucial role in many areas, such as economics, physics, and chemistry. Nonetheless, graphical visualisation can also aid users to better understand more abstract concepts, such as graphs and functions behaviour. 
-The progress in information visualisation and presentation has been substantial in the last 20 years, with the increase in computational power and larger displays. However, this progress has not had a similar strong positive impact on the way blind people interact with technology.
-\par 
+So far, Braille can be considered the most used form of tactile graphics since the XIX century\cite{andrea2009history}. Braille is a coding system for alphanumeric symbols, with each braille character being a combination of raised dots or tactile bumps positioned within a fixed grid. While Braille has been shown in the past to be excellent for textual information, the trend is changing. In fact, touch screen devices, which are becoming always more pervasive, do not allow Braille to be reproduced. \par
 
-It is then necessary to undertake such challenge in order to minimise the digital divide for the visually impaired. Traditional devices include screen readers, like JAWS and dynamic Braille displays \todo{add reference for both JAWS and dyanmic disp}. These tools, however, are generally very expensive and lack of flexibility and adaptability. Currently researchers and industry are increasing their effort toward briding this gap. This project is based on the work of Marquardt et al.(2009)\nocite{marquardt2009haptic}, who developed the Haptic Tabletop Puck (HTP), an inexpensive tactile feedback input device to be used on digital tabletop surfaces. Friction, height, texture, and malleability are communicated through a combination of properties of the HTP: a rod and a brake pad controlled by two servo motors, and a pressure sensor on the rod. The HTP, however, uses only one actuator on a finger to convey information to the user, which makes it unsuitable for use by people with visual disabilities, since people cannot detect directions and edges of tactile objects. \par
+In addition to technology revolution we are experiencing, nowadays, the amount of data  daily produced is more than ever. Most of the time it is not feasibe to represent data and its information as textual, whether it is a small data set or big data. Therefore, in the last couple of decades data visualisation has been playing a crucial role in many areas, such as economics, physics, and chemistry aiding scholars and professionals to better understand problems and show their results to the public. Graphical visualisation can also help users to better understand more abstract concepts, such as graphs (i.e. Automata, Tree, etc) and functions behaviour. 
+The progress in information visualisation and presentation has been substantial in the last 20 years, with the increase in computational power and larger displays. However, this progress has not had a similar strong positive impact on the way the visually impaired interact with technology. \par 
 
-In this report I present the Multi-Haptic Tabletop Puck (MHTP), a tactile feedback input device which tries to solve some of the limitations of the HTP, together with an easy-to-use API. An alternative to the classic Braille grid is also presented together with a new set of dynamic Tactons. This project will be available to download as Free Software in accordance to one of the objectives of the project: building an accessible, inexpensive and easy-to-build device for the visually impaired. \par
+It is then necessary to undertake such challenge in order to minimise the digital divide for the visually impaired. Traditional devices include screen readers, like JAWS\cite{JAWS} and dynamic Braille displays\cite{HumanWare, shimada2010development, blindMaps}. However, these tools are generally very expensive, bulky and lack of flexibility and adaptability. For instance, screen readers cannot be used for graphics, while dynamic displays can represent only a small portion of a display and being able to locate their relative position can become very hard.
+Currently researchers and industry are increasing their effort toward briding this gap. This project is based on the work of Marquardt et al.(2009)\nocite{marquardt2009haptic}, who developed the Haptic Tabletop Puck (HTP), an inexpensive tactile feedback input device to be used on digital tabletop surfaces. Friction, height, texture, and malleability are communicated through a combination of properties of the HTP: a rod and a brake pad controlled by two servo motors, and a pressure sensor on the rod. The HTP, however, uses only one actuator on a finger to convey information to the user, which makes it unsuitable for use by people with visual disabilities, since people cannot detect directions and edges of tactile objects. \par
 
-
-\textbf{NOTES:}
-
-\begin{itemize}
-	\item use of technology for the visually impaired is not obvious
-    \item the issue is both a social and a research challenge
-    \item From Broke's : "these problems often mean that the visually impaired travel less, which influences their personal and professional life and can lead to exclusion from society".
-    \item Ungar's paper --> conjoint retention hypothesis: combining spatial and linguistic information
-    \item Ungar's paper --> "overall performance increases because the dual perceptual/linguistic representation provides a richer cueing and retrieval base for the learner to draw from during recall"
-    \item Ungar's paper does not show any strong evidence that linguistic representation might add more to the perceptual one. However, that's a study from 2001
-    \item MHTP can be classified as TUI but dynamic (see Ullmer 2005)
-\end{itemize}
-
-\begin{enumerate}
-    	\item Address what the problem is
-        \item Current devices for visually impaired are expensive (examples)
-        \item Explain the vision of the MHTP
-  	\end{enumerate}
-    
-DISCUSS THE DIGITAL DIVIDE? 
-    
-\section{Aims}
-
-The aim of this project is to build an haptic device for the visually impaired with the following:
-	\begin{enumerate}
-    	\item not expensive
-        \item possible to build at home
-        \item easy to use API (low and high level)
-        
-    \end{enumerate}
+Here I present the Multi-Haptic Tabletop Puck (MHTP), a Tangible User Interface (TUI)\cite{ishii1997tangible} with tactile feedback input which solves some of the limitations of the HTP and an easy-to-use API. A new set of dynamic Tactons is also presented. Tactons are "structured, abstract, tactile messages which can be used to communicate information non-visually"\cite{brown2005first}.\par
+This project will be available to download under Free Software License in accordance to one of the aims of the project: building an accessible, inexpensive and easy-to-build device for the visually impaired. \par
 
 \section{Contributions}
 
-What are the contributions of this project to research and also the social aspect of visually impaired and technology? 
-
+The contributions of this project can be summarised in the following points:
 \begin{itemize}
-	\item OpenSource project available to community
-    \item unexpensive device 
-    \item modular and flexible device
+	\item Create an inexpensive haptic feedback device for the visually impaired
+    \item Create a device which can be easily 3D-printed at home
+    \item Create a modular device, allowing further studies to explore different tactons and behaviours
+    \item Design and implement a dual-API (both high and low level) for the device
+    \item Project available to the community under the Free Software License 
 \end{itemize}
 
 \section{Report Outline}
-The remainder of this report is structured as follows. \textbf{Chapter 2} states the overall objectives of this project in order of importance and relevance. In \textbf{Chapter 3} a detailed overview of the related work is presented, in order to get a flavour of the current state of the art and how this project fits in it. \textbf{Chapter 4} covers the requirements for the project. The research and methodology used through the development phase of this project is described in \textbf{Chapter 5}. \textbf{Chapter 6} addresses any ethical considerations. The design, development and implementation aspects of the MHTP, the API and other aspects of this project are described in \textbf{Chapters 7, 8, 9}. The current work is evaluated in \textbf{Chapter 10} together with a prespective of the planned future work. Finally \textbf{Chapter 11} provides a conclusive summary of this project.
+The remainder of this report is structured as follows. \textbf{Chapter 2} states the overall objectives of this project in order of importance and relevance. In \textbf{Chapter 3} a detailed overview of the related work is presented, in order to get a flavour of the current state of the art and how this project fits in it. The research and methodology used through the development phase of this project is described in \textbf{Chapter 4}. \textbf{Chapter 5} addresses any ethical considerations. The design and implementation aspects of the MHTP, the API and other aspects of this project are described in \textbf{Chapters 6, 7}. The current work is evaluated in \textbf{Chapter 8} together with a prespective of the planned future work. Finally \textbf{Chapter 9} provides a conclusive summary of this project.

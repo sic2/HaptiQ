@@ -22,9 +22,22 @@
             \item custom configuration
             \item API allows recognition of glyphs using different devices (touch displayes via surface sdk, webcam, etc)
             \item Limitations: there is a lower bound threshold on how often input can be acquired. this depends on the input device, the input technique used and the "refresh rate" of the MHTP
+            \item texture recognition not impemented because servos cannot act over a certain frequency. Papert \cite{brown2005first} has a part where it says what's the skin frequency range. Solutions could include electro-vibration or haptic vibration motors (http://www.precisionmicrodrives.com/vibrating-vibrator-vibration-motors)
         \end{enumerate}
     \item MHTP API allows both high and low level manipulation of the device (in a similar fashion to HTP toolkit)
     \item Behaviour design
     \item Haptic objects
     \item Text exploration using SpeechSynthetiser - this can be personalised by adding custom haptic shapes which can react differently
 \end{enumerate}
+
+
+\textbf{NOTES:}
+
+\begin{itemize}
+    \item Ungar's paper --> conjoint retention hypothesis: combining spatial and linguistic information
+    \item Ungar's paper --> "overall performance increases because the dual perceptual/linguistic representation provides a richer cueing and retrieval base for the learner to draw from during recall"
+    \item Ungar's paper does not show any strong evidence that linguistic representation might add more to the perceptual one. However, that's a study from 2001
+    \item MHTP can be classified as TUI but dynamic (see Ullmer 2005)
+\end{itemize}
+
+\missingfigure{add device picture}
