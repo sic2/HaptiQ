@@ -68,16 +68,13 @@ namespace HapticClientAPI
 
         protected override IBehaviour chooseBehaviour(MHTP mhtp)
         {
-            IBehaviour behaviour;
-            lock (behaviourLock)
-            {
-                // TODO - what about item2? do not hardcode this 
-                // XXX - apply non-linear function !?
-                double highFrequency = 100 * (Helper.distanceBetweenTwoPoints(mhtp.position, _pair.Item1) / 
-                    Helper.distanceBetweenTwoPoints(_pair.Item2, _pair.Item1));
-                behaviour = new PulsationBehaviour(mhtp, new Tuple<Point, Point>(_pair.Item2, _pair.Item1), highFrequency);
-                state = STATE.down;
-            }
+            // TODO - what about item2? do not hardcode this 
+            // XXX - apply non-linear function !?
+            double highFrequency = 100 * (Helper.distanceBetweenTwoPoints(mhtp.position, _pair.Item1) / 
+                Helper.distanceBetweenTwoPoints(_pair.Item2, _pair.Item1));
+            IBehaviour behaviour = new PulsationBehaviour(mhtp, new Tuple<Point, Point>(_pair.Item2, _pair.Item1), highFrequency);
+            state = STATE.down;
+            
             return behaviour;
         }
 

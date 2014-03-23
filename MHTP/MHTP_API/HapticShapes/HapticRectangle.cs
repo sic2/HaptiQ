@@ -72,69 +72,66 @@ namespace HapticClientAPI
         protected override IBehaviour chooseBehaviour(MHTP mhtp)
         {
             IBehaviour behaviour = null;
-            lock (behaviourLock)
+            state = STATE.move;
+
+            Point bottomLeft = new Point(x, y + height);
+            Point bottomRight = new Point(x + width, y + height);
+            Point topLeft = new Point(x, y);
+            Point topRight = new Point(x + width, y);
+
+            List<Tuple<Point, Point>> lines = new List<Tuple<Point, Point>>();
+            if (pointIsCloseToSegment(mhtp.position, bottomLeft, bottomRight, CORNER_NEARNESS_TOLLERANCE) &&
+                pointIsCloseToSegment(mhtp.position, bottomLeft, topLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-left corner
             {
-                state = STATE.move;
-
-                Point bottomLeft = new Point(x, y + height);
-                Point bottomRight = new Point(x + width, y + height);
-                Point topLeft = new Point(x, y);
-                Point topRight = new Point(x + width, y);
-
-                List<Tuple<Point, Point>> lines = new List<Tuple<Point, Point>>();
-                if (pointIsCloseToSegment(mhtp.position, bottomLeft, bottomRight, CORNER_NEARNESS_TOLLERANCE) &&
-                    pointIsCloseToSegment(mhtp.position, bottomLeft, topLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-left corner
-                {
-                    lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
-                    lines.Add(new Tuple<Point, Point>(bottomLeft, topLeft));
-                }
-                else if (pointIsCloseToSegment(mhtp.position, topLeft, topRight, CORNER_NEARNESS_TOLLERANCE) &&
-                        pointIsCloseToSegment(mhtp.position, topLeft, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // top-left corner
-                {
-                    lines.Add(new Tuple<Point, Point>(topLeft, topRight));
-                    lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
-                }
-                else if (pointIsCloseToSegment(mhtp.position, topRight, topLeft, CORNER_NEARNESS_TOLLERANCE) &&
-                    pointIsCloseToSegment(mhtp.position, topRight, bottomRight, CORNER_NEARNESS_TOLLERANCE)) // top-right corner
-                {
-                    lines.Add(new Tuple<Point, Point>(topRight, topLeft));
-                    lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
-                }
-                else if (pointIsCloseToSegment(mhtp.position, bottomRight, topRight, CORNER_NEARNESS_TOLLERANCE) &&
-                    pointIsCloseToSegment(mhtp.position, bottomRight, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-right corner
-                {
-                    lines.Add(new Tuple<Point, Point>(bottomRight, topRight));
-                    lines.Add(new Tuple<Point, Point>(bottomRight, bottomLeft));
-                }
-                else if (pointIsCloseToSegment(mhtp.position, bottomLeft, bottomRight, NEARNESS_TOLLERANCE)) // horizontal
-                {
-                    lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
-                }
-                else if (pointIsCloseToSegment(mhtp.position, topLeft, topRight, NEARNESS_TOLLERANCE)) // horizontal
-                {
-                    lines.Add(new Tuple<Point, Point>(topLeft, topRight));
-                }
-                else if (pointIsCloseToSegment(mhtp.position, topLeft, bottomLeft, NEARNESS_TOLLERANCE)) // vertical
-                {
-                    lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
-                }
-                else if (pointIsCloseToSegment(mhtp.position, topRight, bottomRight, NEARNESS_TOLLERANCE)) // vertical
-                {
-                    lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
-                }
-                else
-                {
-                    behaviour = new BasicBehaviour(mhtp, BasicBehaviour.TYPES.max);
-                }
-                   
-                if (behaviour == null)
-                {
-                    behaviour = new DirectionBehaviour(mhtp, lines);
-                }
-                
-                state = STATE.down;
-                
+                lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
+                lines.Add(new Tuple<Point, Point>(bottomLeft, topLeft));
             }
+            else if (pointIsCloseToSegment(mhtp.position, topLeft, topRight, CORNER_NEARNESS_TOLLERANCE) &&
+                    pointIsCloseToSegment(mhtp.position, topLeft, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // top-left corner
+            {
+                lines.Add(new Tuple<Point, Point>(topLeft, topRight));
+                lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
+            }
+            else if (pointIsCloseToSegment(mhtp.position, topRight, topLeft, CORNER_NEARNESS_TOLLERANCE) &&
+                pointIsCloseToSegment(mhtp.position, topRight, bottomRight, CORNER_NEARNESS_TOLLERANCE)) // top-right corner
+            {
+                lines.Add(new Tuple<Point, Point>(topRight, topLeft));
+                lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
+            }
+            else if (pointIsCloseToSegment(mhtp.position, bottomRight, topRight, CORNER_NEARNESS_TOLLERANCE) &&
+                pointIsCloseToSegment(mhtp.position, bottomRight, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-right corner
+            {
+                lines.Add(new Tuple<Point, Point>(bottomRight, topRight));
+                lines.Add(new Tuple<Point, Point>(bottomRight, bottomLeft));
+            }
+            else if (pointIsCloseToSegment(mhtp.position, bottomLeft, bottomRight, NEARNESS_TOLLERANCE)) // horizontal
+            {
+                lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
+            }
+            else if (pointIsCloseToSegment(mhtp.position, topLeft, topRight, NEARNESS_TOLLERANCE)) // horizontal
+            {
+                lines.Add(new Tuple<Point, Point>(topLeft, topRight));
+            }
+            else if (pointIsCloseToSegment(mhtp.position, topLeft, bottomLeft, NEARNESS_TOLLERANCE)) // vertical
+            {
+                lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
+            }
+            else if (pointIsCloseToSegment(mhtp.position, topRight, bottomRight, NEARNESS_TOLLERANCE)) // vertical
+            {
+                lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
+            }
+            else
+            {
+                behaviour = new BasicBehaviour(mhtp, BasicBehaviour.TYPES.max);
+            }
+                   
+            if (behaviour == null)
+            {
+                behaviour = new DirectionBehaviour(mhtp, lines);
+            }
+                
+            state = STATE.down;
+
             return behaviour;
         }
 

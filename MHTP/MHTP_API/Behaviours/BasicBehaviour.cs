@@ -136,7 +136,7 @@ namespace MHTP_API
         {
             base.updateNext(behaviour);
             BasicBehaviour basicBehaviour = behaviour as BasicBehaviour;
-            if (basicBehaviour != null)
+            if (basicBehaviour != null && basicBehaviour._type == this._type)
             {
                 this.positions = basicBehaviour.positions;
             }

@@ -31,18 +31,22 @@ namespace HapticClientAPI
         /// STATE enum used for indicating the current state of an haptic shape
         /// </summary>
         protected enum STATE { down, move, up};
+
         /// <summary>
         /// State of this shape
         /// </summary>
         protected STATE state;
+
         /// <summary>
         /// Geometry used to render this shape
         /// </summary>
         protected Geometry geometry;
+
         /// <summary>
         /// Tollerance value for lines
         /// </summary>
         protected const double NEARNESS_TOLLERANCE = 20.0;
+
         /// <summary>
         /// Tollerance value for corners (two adjacent lines)
         /// </summary>
@@ -53,11 +57,15 @@ namespace HapticClientAPI
         /// </summary>
         protected String information = "No information available";
 
-        protected Object behaviourLock = new Object();
         /// <summary>
         /// Current behaviour for this shape
         /// </summary>
         protected IBehaviour _currentBehaviour;
+
+        /// <summary>
+        /// Associate an MHTP with a specific current behaviour
+        /// </summary>
+        protected Dictionary<uint, IBehaviour> _mhtpBehaviours;
 
         /// <summary>
         /// Points structure for this shape
@@ -72,6 +80,7 @@ namespace HapticClientAPI
         public HapticShape()
         {
             connectionPoints = new List<Point>();
+            _mhtpBehaviours = new Dictionary<uint, IBehaviour>();
 
             state = STATE.up;
             MHTPsManager.Instance.addObserver(this);
@@ -137,6 +146,12 @@ namespace HapticClientAPI
             return distanceSquared(p, new Point(v.X + t * (w.X - v.X), v.Y + t * (w.Y - v.Y)));
         }
 
+        /// <summary>
+        /// Handle behaviours on input
+        /// </summary>
+        /// <param name="mhtp"></param>
+        /// <param name="pointIsInside"></param>
+        /// <returns></returns>
         public Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(MHTP mhtp, bool pointIsInside)
         {
             if (pointIsInside)
@@ -145,32 +160,36 @@ namespace HapticClientAPI
                 {
                     state = STATE.down;
                 }
-                IBehaviour prevBehaviour = _currentBehaviour;
-                _currentBehaviour = chooseBehaviour(mhtp);
-                _currentBehaviour.updateNext(prevBehaviour);
+                IBehaviour prevBehaviour = _mhtpBehaviours.ContainsKey(mhtp.getID()) ? _mhtpBehaviours[mhtp.getID()] : null;
+                IBehaviour currentBehaviour = chooseBehaviour(mhtp);
+                currentBehaviour.updateNext(prevBehaviour);
 
                 BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
-                if (_currentBehaviour.Equals(prevBehaviour))
+                if (currentBehaviour.Equals(prevBehaviour))
                 {
                     rule = BEHAVIOUR_RULES.NOPE;
                 }
-                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
+                _mhtpBehaviours[mhtp.getID()] = currentBehaviour;
+                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, currentBehaviour, prevBehaviour);
             }
             else if (state == STATE.down)
             {
                 state = STATE.up;
-                IBehaviour prevBehaviour = _currentBehaviour;
-                _currentBehaviour = new BasicBehaviour(mhtp, BasicBehaviour.TYPES.flat);
+                IBehaviour prevBehaviour = _mhtpBehaviours.ContainsKey(mhtp.getID()) ? _mhtpBehaviours[mhtp.getID()] : null; ;
+                IBehaviour currentBehaviour = new BasicBehaviour(mhtp, BasicBehaviour.TYPES.flat);
                 BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
-                if (_currentBehaviour.Equals(prevBehaviour))
+                if (currentBehaviour.Equals(prevBehaviour))
                 {
                     rule = BEHAVIOUR_RULES.NOPE;
                 }
-                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
+                _mhtpBehaviours[mhtp.getID()] = currentBehaviour;
+                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, currentBehaviour, prevBehaviour);
             }
 
-            Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> retval = new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(BEHAVIOUR_RULES.REMOVE, _currentBehaviour, null);
-            _currentBehaviour = null;
+            Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> retval = 
+                new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(BEHAVIOUR_RULES.REMOVE,
+                    _mhtpBehaviours.ContainsKey(mhtp.getID()) ? _mhtpBehaviours[mhtp.getID()] : null, null);
+            _mhtpBehaviours[mhtp.getID()] = null;
             return retval;
 
         }
