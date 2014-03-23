@@ -19,6 +19,7 @@ namespace MHTP_API
         private double _maxPosition;
 
         private AdvancedServoServo _servo;
+        private bool _enabled;
 
         /// <summary>
         /// Creates an actuator
@@ -38,6 +39,7 @@ namespace MHTP_API
             _servo = servo;
             _id = id;
             _pressure = 0;
+            _servo.Engaged = _enabled = true;
             setMinPosition(minPosition);
             setMaxPosition(maxPosition);
          }
@@ -67,7 +69,7 @@ namespace MHTP_API
             } 
             set 
             {
-                if (_servo != null && value >= _minPosition && value <= _maxPosition)
+                if (_enabled && _servo != null && value >= _minPosition && value <= _maxPosition)
                     {
                         enable();
                         _servo.Position = value;
@@ -189,7 +191,8 @@ namespace MHTP_API
         /// </summary>
         public void disable()
         {
-            _servo.Engaged = false;
+            if (_enabled)
+                _servo.Engaged = _enabled = false;
         }
 
         /// <summary>
@@ -197,7 +200,8 @@ namespace MHTP_API
         /// </summary>
         public void enable()
         {
-            _servo.Engaged = true;
+            if (!_enabled)
+                _servo.Engaged = _enabled = true;
         }
     }
 }
