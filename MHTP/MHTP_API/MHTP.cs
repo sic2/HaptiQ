@@ -578,22 +578,24 @@ namespace MHTP_API
         {
             lock (_behaviours)
             {
-                Dictionary<int, double> actuators = new Dictionary<int,double>();
+                Dictionary<int, Tuple<double, int>> actuators = new Dictionary<int, Tuple<double, int>>();
                 foreach(IBehaviour behaviour in _behaviours)
                 {
                     Dictionary<int, double> tmp = behaviour.play(_configuration.actuators, _currentPressureData);
                     foreach (KeyValuePair<int, double> pair in tmp)
                     {
-                        // TODO - normalise actuator position
-                        actuators[pair.Key] = actuators.ContainsKey(pair.Key) ? 
-                                            actuators[pair.Key] + pair.Value : pair.Value;
+                        actuators[pair.Key] = new Tuple<double, int>
+                            (actuators.ContainsKey(pair.Key) ? actuators[pair.Key].Item1 + pair.Value : pair.Value, 
+                            actuators.ContainsKey(pair.Key) ? actuators[pair.Key].Item2 + 1 : 1);
                     }
                 }
+
                 if (actuators != null)
                 {
                     Parallel.ForEach(actuators, entry => 
                     {
-                        this.setActuatorPositionByPercentage(entry.Key, entry.Value);
+                        // Normalise actuators positions by averaging values
+                        this.setActuatorPositionByPercentage(entry.Key, entry.Value.Item1 / entry.Value.Item2);
                     });
                 } 
             }
