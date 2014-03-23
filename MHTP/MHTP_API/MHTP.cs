@@ -269,6 +269,15 @@ namespace MHTP_API
         }
 
         /// <summary>
+        /// Return unique ID of this MHTP
+        /// </summary>
+        /// <returns></returns>
+        public uint getID()
+        {
+            return _id;
+        }
+
+        /// <summary>
         /// Set an actuator to a given position.
         /// </summary>
         /// <param name="index"></param>
@@ -343,6 +352,11 @@ namespace MHTP_API
             }
         }
 
+        /// <summary>
+        /// Set a specific actuator's position in percentage
+        /// </summary>
+        /// <param name="actuator"></param>
+        /// <param name="percentage"></param>
         public void setActuatorPositionByPercentage(Actuator actuator, double percentage)
         {
             if (actuator == null)
@@ -581,7 +595,7 @@ namespace MHTP_API
                 Dictionary<int, Tuple<double, int>> actuators = new Dictionary<int, Tuple<double, int>>();
                 foreach(IBehaviour behaviour in _behaviours)
                 {
-                    Dictionary<int, double> tmp = behaviour.play(_configuration.actuators, _currentPressureData);
+                    Dictionary<int, double> tmp = behaviour.play();
                     foreach (KeyValuePair<int, double> pair in tmp)
                     {
                         actuators[pair.Key] = new Tuple<double, int>

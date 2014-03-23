@@ -45,7 +45,23 @@ namespace MHTP_API
     /// <summary>
     /// Behaviour enum for the rules used when adding new/removing behaviours
     /// </summary>
-    public enum BEHAVIOUR_RULES { ADD, REMOVE, SUBS, NOPE };
+    public enum BEHAVIOUR_RULES { 
+        /// <summary>
+        /// Adds a behaviour
+        /// </summary>
+        ADD, 
+        /// <summary>
+        /// Removes a behaviour
+        /// </summary>
+        REMOVE, 
+        /// <summary>
+        /// Substitute a behaviour with another one
+        /// </summary>
+        SUBS, 
+        /// <summary>
+        /// Do nothing
+        /// </summary>
+        NOPE };
 
     // Singleton pattern
     // see http://stackoverflow.com/questions/4203634/singleton-with-parameters
@@ -387,7 +403,7 @@ namespace MHTP_API
             {
                 Parallel.ForEach(_hapticObjectObservers, observer =>
                 {
-                    Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> behaviour = observer.handleInput(point, orientation);
+                    Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> behaviour = observer.handleInput(mhtp);
                     switch (behaviour.Item1)
                     {
                         case BEHAVIOUR_RULES.ADD:

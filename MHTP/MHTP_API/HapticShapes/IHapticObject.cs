@@ -24,8 +24,7 @@ namespace MHTP_API
         /// This method should handle a given input (position and orientation) returning 
         /// an appropriate behaviour. 
         /// </summary>
-        /// <param name="point">Position of a device</param>
-        /// <param name="orientation">Orientation of device in radians</param>
+        /// <param name="mhtp"></param>
         /// <returns>Tuple with three elements.
         /// The first element in tuple indicates one of the following rules for 
         /// the two behaviours in the tuple:
@@ -33,10 +32,10 @@ namespace MHTP_API
         /// - 1 REMOVE (first behaviour in tuple)
         /// - 2 SUBSTITUTE (second behaviour in tuple with first one)
         ///</returns>
-        Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(Point point, double orientation); // TODO - add number of actuators as parameter
+        Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(MHTP mhtp);
 
         /// <summary>
-        /// 
+        /// Handles pressure input
         /// </summary>
         /// <param name="point"></param>
         void handlePress(Point point);

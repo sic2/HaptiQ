@@ -44,11 +44,10 @@ namespace HapticClientAPI
         /// Handle input for an haptic rectangle.
         /// If point is inside the rectangle, an appropriate behaviour is calculated and returned.
         /// </summary>
-        /// <param name="point"></param>
-        /// <param name="orientation"></param>
-        public override Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(Point point, double orientation)
+        /// <param name="mhtp"></param>
+        public override Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(MHTP mhtp)
         {
-            if (pointIsInside(point))
+            if (pointIsInside(mhtp.position))
             {
                 if (state == STATE.up)
                 {
@@ -56,16 +55,13 @@ namespace HapticClientAPI
                     state = STATE.down;
                 }
                 IBehaviour prevBehaviour = _currentBehaviour;
-                _currentBehaviour = chooseBehaviour(point, orientation);
+                _currentBehaviour = chooseBehaviour(mhtp);
+                _currentBehaviour.updateNext(prevBehaviour);
+
                 BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
                 if (_currentBehaviour.Equals(prevBehaviour))
                 {
                     rule = BEHAVIOUR_RULES.NOPE;
-                }
-                else
-                {
-                    // Updating behaviour time to allow continuous pulsing
-                    _currentBehaviour.TIME = prevBehaviour != null ? prevBehaviour.TIME++ : 0;
                 }
                 return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
             }
@@ -73,7 +69,7 @@ namespace HapticClientAPI
             {
                 state = STATE.up;
                 IBehaviour prevBehaviour = _currentBehaviour;
-                _currentBehaviour = new BasicBehaviour(BasicBehaviour.TYPES.flat);
+                _currentBehaviour = new BasicBehaviour(mhtp, BasicBehaviour.TYPES.flat);
                 BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
                 if (_currentBehaviour.Equals(prevBehaviour))
                 {
@@ -105,7 +101,7 @@ namespace HapticClientAPI
                 point.Y <= (y + height + BORDERS_TOLLERANCE));
         }
 
-        private IBehaviour chooseBehaviour(Point point, double orientation)
+        private IBehaviour chooseBehaviour(MHTP mhtp)
         {
             IBehaviour behaviour = null;
             lock (behaviourLock)
@@ -118,54 +114,54 @@ namespace HapticClientAPI
                 Point topRight = new Point(x + width, y);
 
                 List<Tuple<Point, Point>> lines = new List<Tuple<Point, Point>>();
-                if (pointIsCloseToSegment(point, bottomLeft, bottomRight, CORNER_NEARNESS_TOLLERANCE) &&
-                    pointIsCloseToSegment(point, bottomLeft, topLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-left corner
+                if (pointIsCloseToSegment(mhtp.position, bottomLeft, bottomRight, CORNER_NEARNESS_TOLLERANCE) &&
+                    pointIsCloseToSegment(mhtp.position, bottomLeft, topLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-left corner
                 {
                     lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
                     lines.Add(new Tuple<Point, Point>(bottomLeft, topLeft));
                 }
-                else if (pointIsCloseToSegment(point, topLeft, topRight, CORNER_NEARNESS_TOLLERANCE) &&
-                        pointIsCloseToSegment(point, topLeft, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // top-left corner
+                else if (pointIsCloseToSegment(mhtp.position, topLeft, topRight, CORNER_NEARNESS_TOLLERANCE) &&
+                        pointIsCloseToSegment(mhtp.position, topLeft, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // top-left corner
                 {
                     lines.Add(new Tuple<Point, Point>(topLeft, topRight));
                     lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
                 }
-                else if (pointIsCloseToSegment(point, topRight, topLeft, CORNER_NEARNESS_TOLLERANCE) &&
-                    pointIsCloseToSegment(point, topRight, bottomRight, CORNER_NEARNESS_TOLLERANCE)) // top-right corner
+                else if (pointIsCloseToSegment(mhtp.position, topRight, topLeft, CORNER_NEARNESS_TOLLERANCE) &&
+                    pointIsCloseToSegment(mhtp.position, topRight, bottomRight, CORNER_NEARNESS_TOLLERANCE)) // top-right corner
                 {
                     lines.Add(new Tuple<Point, Point>(topRight, topLeft));
                     lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
                 }
-                else if (pointIsCloseToSegment(point, bottomRight, topRight, CORNER_NEARNESS_TOLLERANCE) &&
-                    pointIsCloseToSegment(point, bottomRight, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-right corner
+                else if (pointIsCloseToSegment(mhtp.position, bottomRight, topRight, CORNER_NEARNESS_TOLLERANCE) &&
+                    pointIsCloseToSegment(mhtp.position, bottomRight, bottomLeft, CORNER_NEARNESS_TOLLERANCE)) // bottom-right corner
                 {
                     lines.Add(new Tuple<Point, Point>(bottomRight, topRight));
                     lines.Add(new Tuple<Point, Point>(bottomRight, bottomLeft));
                 }
-                else if (pointIsCloseToSegment(point, bottomLeft, bottomRight, NEARNESS_TOLLERANCE)) // horizontal
+                else if (pointIsCloseToSegment(mhtp.position, bottomLeft, bottomRight, NEARNESS_TOLLERANCE)) // horizontal
                 {
                     lines.Add(new Tuple<Point, Point>(bottomLeft, bottomRight));
                 }
-                else if (pointIsCloseToSegment(point, topLeft, topRight, NEARNESS_TOLLERANCE)) // horizontal
+                else if (pointIsCloseToSegment(mhtp.position, topLeft, topRight, NEARNESS_TOLLERANCE)) // horizontal
                 {
                     lines.Add(new Tuple<Point, Point>(topLeft, topRight));
                 }
-                else if (pointIsCloseToSegment(point, topLeft, bottomLeft, NEARNESS_TOLLERANCE)) // vertical
+                else if (pointIsCloseToSegment(mhtp.position, topLeft, bottomLeft, NEARNESS_TOLLERANCE)) // vertical
                 {
                     lines.Add(new Tuple<Point, Point>(topLeft, bottomLeft));
                 }
-                else if (pointIsCloseToSegment(point, topRight, bottomRight, NEARNESS_TOLLERANCE)) // vertical
+                else if (pointIsCloseToSegment(mhtp.position, topRight, bottomRight, NEARNESS_TOLLERANCE)) // vertical
                 {
                     lines.Add(new Tuple<Point, Point>(topRight, bottomRight));
                 }
                 else
                 {
-                    behaviour = new BasicBehaviour(BasicBehaviour.TYPES.max);
+                    behaviour = new BasicBehaviour(mhtp, BasicBehaviour.TYPES.max);
                 }
                    
                 if (behaviour == null)
                 {
-                    behaviour = new DirectionBehaviour(lines, orientation);
+                    behaviour = new DirectionBehaviour(mhtp, lines);
                 }
                 
                 state = STATE.down;

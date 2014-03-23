@@ -24,10 +24,13 @@ namespace MHTP_API
         /// Remember that behaviours' play methods are called every 10ms 
         /// (@see const MHTP.BEHAVIOUR_LOOP_MS)
         /// </summary>
-        /// <param name="actuators"></param>
-        /// <param name="pressureData"></param>
         /// <returns></returns>
-        Dictionary<int, double> play(SerializableDictionary<int, SerializableTuple<int, int>> actuators, 
-            Dictionary<int, double> pressureData);
+        Dictionary<int, double> play();
+
+        /// <summary>
+        /// Updates this behaviour given another behaviour. 
+        /// </summary>
+        /// <param name="behaviour"></param>
+        void updateNext(IBehaviour behaviour);
     }
 }

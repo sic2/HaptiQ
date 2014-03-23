@@ -27,17 +27,41 @@ namespace HapticClientAPI
     /// </summary>
     abstract public class HapticShape : Shape, IHapticObject
     {
+        /// <summary>
+        /// STATE enum used for indicating the current state of an haptic shape
+        /// </summary>
         protected enum STATE { down, move, up};
+        /// <summary>
+        /// State of this shape
+        /// </summary>
         protected STATE state;
+        /// <summary>
+        /// Geometry used to render this shape
+        /// </summary>
         protected Geometry geometry;
+        /// <summary>
+        /// Tollerance value for lines
+        /// </summary>
         protected const double NEARNESS_TOLLERANCE = 20.0;
+        /// <summary>
+        /// Tollerance value for corners (two adjacent lines)
+        /// </summary>
         protected const double CORNER_NEARNESS_TOLLERANCE = 40;
 
+        /// <summary>
+        /// Information contained in this shape
+        /// </summary>
         protected String information = "No information available";
 
         protected Object behaviourLock = new Object();
+        /// <summary>
+        /// Current behaviour for this shape
+        /// </summary>
         protected IBehaviour _currentBehaviour;
 
+        /// <summary>
+        /// Points structure for this shape
+        /// </summary>
         public List<Point> connectionPoints;
         
         /// <summary>
@@ -53,6 +77,9 @@ namespace HapticClientAPI
             MHTPsManager.Instance.addObserver(this);
         }
 
+        /// <summary>
+        /// Return the geometry used for rendering this shape
+        /// </summary>
         protected override Geometry DefiningGeometry
         {
             get
@@ -113,9 +140,8 @@ namespace HapticClientAPI
         /// <summary>
         /// Method definition as in #IHapticObject. 
         /// </summary>
-        /// <param name="point"></param>
-        /// <param name="orientation"></param>
-        public abstract Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(Point point, double orientation);
+        /// <param name="mhtp"></param>
+        public abstract Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(MHTP mhtp);
 
         /// <summary>
         /// Handle an actuator press. 

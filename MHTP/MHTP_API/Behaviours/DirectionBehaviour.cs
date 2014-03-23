@@ -7,13 +7,7 @@ namespace MHTP_API
 {
     public class DirectionBehaviour : Behaviour
     {
-        public int TIME { get; set; }
-
-        private double _orientation;
-
         private const int NUMBER_ACTUATORS_DIVIDER = 4;
-        private const int FOUR_ACTUATORS = 4;
-        private const int EIGHT_ACTUATORS = 8;
         private const double HIGH_POSITION_PERCENTAGE = 0.8;
 
         private List<Tuple<Point, Point>> _lines;
@@ -24,19 +18,18 @@ namespace MHTP_API
 
         private int[][] dynamicActuatorsMatrix = new int[][]
                         {
-                            new int[]{12, 3}, // 4-MHTP 1-line
+                            new int[]{9, 6}, // 4-MHTP 1-line
                             new int[]{132, 72}// 8-MHTP 1-line
                         };
 
         /// <summary>
         /// Constructor for direction behaviour. 
         /// </summary>
+        /// <param name="mhtp"></param>
         /// <param name="lines">Geometric lines indicating the direction</param>
-        /// <param name="orientation">Orientation of the device in radians</param>
-        public DirectionBehaviour(List<Tuple<Point, Point>> lines, double orientation)
+        public DirectionBehaviour(MHTP mhtp, List<Tuple<Point, Point>> lines) : base(mhtp)
         {
             _lines = lines;
-            _orientation = orientation;
             TIME = 0;
             highPosition = HIGH_POSITION_PERCENTAGE;
             lowPosition = MIN_POSITION;
@@ -45,84 +38,78 @@ namespace MHTP_API
         /// <summary>
         /// Play this behaviour. 
         /// </summary>
-        /// <param name="actuators"></param>
-        /// <param name="pressureData"></param>
         /// <returns></returns>
-        public override Dictionary<int, double> play(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
-            Dictionary<int, double> pressureData)
+        public override Dictionary<int, double> play()
         {
             Dictionary<int, double> retval = new Dictionary<int, double>();
             TIME++;
 
-            // Normalise number of actuators. This is necessary, otherwise the methods used 
-            // below do not behave correctly
-            int numberActuators = actuators.Count <= FOUR_ACTUATORS ? FOUR_ACTUATORS : EIGHT_ACTUATORS;
+            // ASSUME number of actuators is either 4 or 8
+            int numberActuators = _actuators.Count;
             bool isCorner = _lines.Count == 2 ? true : false;
             if (isCorner)
             {
-                cornerBehaviour(actuators, pressureData, numberActuators, ref retval);
+                cornerBehaviour(ref retval);
             }
             else
             {
-                segmentBehaviour(actuators, pressureData, numberActuators, ref retval);
+                segmentBehaviour(ref retval);
             }
 
             System.Threading.Thread.Sleep(200);
             return retval;
         }
 
-        private void segmentBehaviour(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
-            Dictionary<int, double> pressureData, int numberActuators, ref Dictionary<int, double> output)
+        private void segmentBehaviour(ref Dictionary<int, double> output)
         {
-            int sector = getSector(_lines[0], _orientation, numberActuators, numberActuators);
-            int matrixIndex = numberActuators / NUMBER_ACTUATORS_DIVIDER - 1;
+            int sector = getSector(_lines[0], _orientation, _actuators.Count, _actuators.Count);
+            int matrixIndex = _actuators.Count / NUMBER_ACTUATORS_DIVIDER - 1;
             if (sector % 2 == 0) // Static sector
             {
                 int activeActs = staticActuatorsMatrix[matrixIndex];
-                activeActs = RshiftActs(activeActs, (int)(sector / 2), numberActuators);
-                bitsToActuators(actuators, activeActs, false, true, ref output);
+                activeActs = RshiftActs(activeActs, (int)(sector / 2), _actuators.Count);
+                bitsToActuators(_actuators.Count, activeActs, false, true, ref output);
             }
             else // Pulsing sector
             {
                 int[] acts = dynamicActuatorsMatrix[matrixIndex];
-                acts[0] = RshiftActs(acts[0], (int)((sector - 1) / 2), numberActuators);
-                acts[1] = RshiftActs(acts[1], (int)((sector - 1) / 2), numberActuators);
-                bitsToActuators(actuators, acts[0], TIME % 2 == 0, false, ref output);
-                bitsToActuators(actuators, acts[1], TIME % 2 != 0, false, ref output);
-                setZerosToMinimum(actuators, (acts[0] | acts[1]), ref output); 
+                acts[0] = RshiftActs(acts[0], (int)((sector - 1) / 2), _actuators.Count);
+                acts[1] = RshiftActs(acts[1], (int)((sector - 1) / 2), _actuators.Count);
+                bitsToActuators(_actuators.Count, acts[0], TIME % 2 == 0, false, ref output);
+                bitsToActuators(_actuators.Count, acts[1], TIME % 2 != 0, false, ref output);
+                setZerosToMinimum(_actuators.Count, (acts[0] | acts[1]), ref output); 
             }
         }
 
-        private void cornerBehaviour(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
-            Dictionary<int, double> pressureData, int numberActuators, ref Dictionary<int, double> output)
+        private void cornerBehaviour(ref Dictionary<int, double> output)
         {
-            double sectorRange = (2 * Math.PI) / (2.0 * numberActuators);
+            double sectorRange = (2 * Math.PI) / (2.0 * _actuators.Count);
             double normAngle = _orientation + (sectorRange / 2.0);
-            int sector = (int)Math.Floor(normAngle / sectorRange) % numberActuators;
+            int sector = (int)Math.Floor(normAngle / sectorRange) % _actuators.Count;
 
-            int actuator1 = vectorToActuator(_lines[0], numberActuators);
-            int actuator2 = vectorToActuator(_lines[1], numberActuators);
+            int actuator1 = vectorToActuator(_lines[0], _actuators.Count);
+            int actuator2 = vectorToActuator(_lines[1], _actuators.Count);
             if (sector % 2 == 0)
             {
                 actuator1 += actuator2;
-                actuator1 = LshiftActs(actuator1, (int)(sector / 2), numberActuators);
-                bitsToActuators(actuators, actuator1, false, true, ref output);
+                actuator1 = LshiftActs(actuator1, (int)(sector / 2), _actuators.Count);
+                bitsToActuators(_actuators.Count, actuator1, false, true, ref output);
             }
             else
             {
-                int actuator3 = LshiftActs(actuator2, 1, numberActuators);
+                int actuator3 = LshiftActs(actuator2, 1, _actuators.Count);
 
-                actuator1 = LshiftActs(actuator1, (int)(sector / 2), numberActuators);
-                actuator2 = LshiftActs(actuator2, (int)(sector / 2), numberActuators);
-                actuator3 = LshiftActs(actuator3, (int)(sector / 2), numberActuators);
+                actuator1 = LshiftActs(actuator1, (int)(sector / 2), _actuators.Count);
+                actuator2 = LshiftActs(actuator2, (int)(sector / 2), _actuators.Count);
+                actuator3 = LshiftActs(actuator3, (int)(sector / 2), _actuators.Count);
 
-                bitsToActuators(actuators, actuator1, TIME % 2 == 0, false, ref output);
-                bitsToActuators(actuators, actuator2, TIME % 2 != 0, false, ref output);
-                bitsToActuators(actuators, actuator3, TIME % 2 == 0, false, ref output);
-                setZerosToMinimum(actuators, (actuator1 | actuator2 | actuator3), ref output); 
+                bitsToActuators(_actuators.Count, actuator1, TIME % 2 == 0, false, ref output);
+                bitsToActuators(_actuators.Count, actuator2, TIME % 2 != 0, false, ref output);
+                bitsToActuators(_actuators.Count, actuator3, TIME % 2 == 0, false, ref output);
+                setZerosToMinimum(_actuators.Count, (actuator1 | actuator2 | actuator3), ref output); 
             }
         }
-
+ 
         // [ ASSUMPTION ] only angles at 90 degrees for 4 actuators
         // and angles at 90 and 135 degrees for 8 actuators
         // Order of points in segment is important. 

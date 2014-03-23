@@ -16,14 +16,9 @@ namespace MHTP_API
         private const int INIT_PREV_ACTIVE_ACTS = 1;
         private const double DEFAULT_POS = 0.7;
         private const int DEFAULT_WAITING_MS = 200;
-
-        public int TIME { get; set; }
   
-        private int _numberActuators;
         private double _frequency;
-
-        public int currentActiveActuators { get; set; }
-        public int prevActiveActuators { get; set; }
+        private double[,] positions; // TODO - use underscore for private field
 
         /// <summary>
         /// This enum is used to specify the type of BasicBehaviour
@@ -45,118 +40,105 @@ namespace MHTP_API
         private TYPES _type;
 
         /// <summary>
-        /// Constructor for a BasicBehaviour
+        /// Constructor for a BasicBehaviour.
         /// </summary>
+        /// <param name="mhtp"></param>
         /// <param name="type"></param>
-        public BasicBehaviour(TYPES type) 
-            : this(type, INIT_CURRENT_ACTIVE_ACTS, INIT_PREV_ACTIVE_ACTS, DEFAULT_FREQUENCY) { }
+        public BasicBehaviour(MHTP mhtp, TYPES type) 
+            : this(mhtp, type, DEFAULT_FREQUENCY) { }
 
         /// <summary>
-        /// 
+        /// Constructor for a BasicBehaviour. 
         /// </summary>
+        /// <param name="mhtp"></param>
         /// <param name="type"></param>
-        /// <param name="current"></param>
-        /// <param name="prev"></param>
         /// <param name="frequency"></param>
-        public BasicBehaviour(TYPES type, int current, int prev, double frequency)
+        public BasicBehaviour(MHTP mhtp, TYPES type, double frequency) : base(mhtp)
         {
             _type = type;
-            currentActiveActuators = current;
-            prevActiveActuators = prev;
             TIME = 0;
             _frequency = frequency;
+
+            positions = new double[_actuators.Count(), 2];
+            double position = 0.0;
+            double direction = 0;
+            for (int i = 0; i < positions.GetLength(0); i++)
+            {
+                switch (type)
+                {
+                    case TYPES.flat:
+                        position = MIN_POSITION;
+                        break;
+                    case TYPES.max:
+                        position = MAX_POSITION;
+                        break;
+                    case TYPES.notification:
+                        position += 1.0 / (positions.GetLength(0) - 1);
+                        direction = 1; // Increasing direction
+                        break;
+                    default:
+                        break;
+                }
+               
+                positions[i, 0] = position;
+                positions[i, 1] = direction;
+            }
         }
 
         /// <summary>
         /// Play basic behaviour. 
         /// </summary>
-        /// <param name="actuators"></param>
         /// <returns></returns>
-        public override Dictionary<int, double> play(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
-            Dictionary<int, double> pressureData)
+        public override Dictionary<int, double> play()
         {
             Dictionary<int, double> retval = new Dictionary<int, double>();
-
             TIME++;
-            switch (_type)
+
+            double offset = 1.0 / (positions.GetLength(0) - 1);
+            for (int i = 0; i < positions.GetLength(0); i++)
             {
-                case TYPES.flat:
-                    retval = playFlat(actuators);
-                    break;
-                case TYPES.max:
-                    retval = playMax(actuators);
-                    break;
-                case TYPES.notification:
-                    retval = playNotification(actuators, pressureData);
-                    break;
-                default:
-                    Helper.Logger("MHTP_API.BasicBehaviours.play::type " + _type + "unknown");
-                    break;
+                if (positions[i, 1] == 1)
+                {
+                    if (positions[i, 0] + offset <= 1.0)
+                    {
+                        positions[i, 0] += offset;
+                    }
+                    else
+                    {
+                        positions[i, 1] = -1;
+                        positions[i, 0] -= offset;
+                    }
+                }
+                else if (positions[i, 1] == -1)
+                {
+                    if (positions[i, 0] - offset >= 0.0)
+                    {
+                        positions[i, 0] -= offset;
+                    }
+                    else
+                    {
+                        positions[i, 1] = 1;
+                        positions[i, 0] += offset;
+                    }
+                }
+                retval[i] = positions[i, 0]; // TODO - apply pressure input !?
             }
 
             System.Threading.Thread.Sleep((int)(DEFAULT_WAITING_MS * _frequency));
             return retval;
         }
 
-        private Dictionary<int, double> playFlat(SerializableDictionary<int, SerializableTuple<int, int>> actuators)
+        /// <summary>
+        /// Updates this behaviour based on an another behaviour
+        /// </summary>
+        /// <param name="behaviour"></param>
+        public override void updateNext(IBehaviour behaviour)
         {
-            Dictionary<int, double> retval = new Dictionary<int, double>();
-            foreach (KeyValuePair<int, SerializableTuple<int, int>> entry in actuators)
+            base.updateNext(behaviour);
+            BasicBehaviour basicBehaviour = behaviour as BasicBehaviour;
+            if (basicBehaviour != null)
             {
-                retval[entry.Key] = MIN_POSITION;
-            }
-            return retval;
-        }
-
-        private Dictionary<int, double> playMax(SerializableDictionary<int, SerializableTuple<int, int>> actuators)
-        {
-            Dictionary<int, double> retval = new Dictionary<int, double>();
-            foreach (KeyValuePair<int, SerializableTuple<int, int>> entry in actuators)
-            {
-                retval[entry.Key] = MAX_POSITION;
-            }
-            return retval;
-        }
-
-        private Dictionary<int, double> playNotification(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
-            Dictionary<int, double> pressureData)
-        {
-            Dictionary<int, double> retval = new Dictionary<int, double>();
-
-            _numberActuators = actuators.Count;
-            nextCurrentActiveActuators();
-            int tmp = currentActiveActuators;
-            for (int i = 0; i < _numberActuators; i++)
-            {
-                if ((tmp & 1) != 0)
-                {
-                    //double adjustedPosition = pressureData == null || !pressureData.ContainsKey(i)? 
-                    //        _position : _position * (1 / 3.0 * Math.Cos(pressureData[i] * Math.PI / 1000) + 2 / 3.0); // XXX - assume pressure range is 1000
-                    //retval[i] = actuators[i].Item1 + adjustedPosition;  
-                    retval[i] = DEFAULT_POS; // TODO - apply pressure input
-                }
-                else
-                {
-                    retval[i] = MIN_POSITION;
-                }
-                tmp = tmp >> 1;
-            }
-            return retval;
-        }
-
-        private void nextCurrentActiveActuators()
-        {
-            int limit = (int)(Math.Pow(2, _numberActuators));
-            if (TIME % 2 == 0)
-            {
-                currentActiveActuators = (currentActiveActuators - prevActiveActuators) & (limit - 1);
-                prevActiveActuators = currentActiveActuators;
-            }
-            else
-            {
-                currentActiveActuators = ((currentActiveActuators << 1) |
-                                    (currentActiveActuators >> (_numberActuators - 1)) |
-                                    currentActiveActuators) & (limit - 1);
+                this.positions = basicBehaviour.positions;
             }
         }
 

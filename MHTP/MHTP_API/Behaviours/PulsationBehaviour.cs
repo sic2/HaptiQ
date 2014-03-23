@@ -7,13 +7,11 @@ using Input_API;
 namespace MHTP_API
 {
     /// <summary>
-    /// 
+    /// Pulsation behaviour defines a set of behaviours where 
+    /// an actuator or a set of actuators pulses
     /// </summary>
     public class PulsationBehaviour : Behaviour
     { 
-        public int TIME { get; set; }
-
-        private double _orientation;
         private double _frequency;
 
         private const int NUMBER_ACTUATORS_DIVIDER = 4;
@@ -34,13 +32,12 @@ namespace MHTP_API
         /// Constructor of the pulsation behaviour.
         /// Make the specified actuators to pulse at a constant interval 
         /// </summary>
+        /// <param name="mhtp"></param>
         /// <param name="segment"></param>
-        /// <param name="orientation"></param>
         /// <param name="frequency"></param>
-        public PulsationBehaviour(Tuple<Point, Point> segment, double orientation, double frequency)
+        public PulsationBehaviour(MHTP mhtp, Tuple<Point, Point> segment, double frequency):base(mhtp)
         {
             _segment = segment;
-            _orientation = orientation;
             _frequency = frequency;
             TIME = 0;
             highPosition = HIGH_POSITION_PERCENTAGE;
@@ -50,17 +47,13 @@ namespace MHTP_API
         /// <summary>
         /// Plays this behaviour
         /// </summary>
-        /// <param name="actuators"></param>
-        /// <param name="pressureData"></param>
         /// <returns></returns>
-        public override Dictionary<int, double> play(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
-            Dictionary<int, double> pressureData)
+        public override Dictionary<int, double> play()
         {
             Dictionary<int, double> retval = new Dictionary<int, double>();
             TIME++;
 
-            int numberActuators = actuators.Count;
-            segmentBehaviour(actuators, pressureData, numberActuators, ref retval);
+            segmentBehaviour(ref retval);
          
             System.Threading.Thread.Sleep((int)(10 * _frequency));
             return retval;
@@ -69,29 +62,25 @@ namespace MHTP_API
         /// <summary>
         /// Segment behaviour with pulsation
         /// </summary>
-        /// <param name="actuators"></param>
-        /// <param name="pressureData"></param>
-        /// <param name="numberActuators"></param>
         /// <param name="output"></param>
-        private void segmentBehaviour(SerializableDictionary<int, SerializableTuple<int, int>> actuators,
-           Dictionary<int, double> pressureData, int numberActuators, ref Dictionary<int, double> output)
+        private void segmentBehaviour(ref Dictionary<int, double> output)
         {
-            int sector = getSector(_segment, _orientation, numberActuators, numberActuators * 2);
-            int matrixIndex = numberActuators / NUMBER_ACTUATORS_DIVIDER - 1;
+            int sector = getSector(_segment, _orientation, _actuators.Count, _actuators.Count * 2);
+            int matrixIndex = _actuators.Count / NUMBER_ACTUATORS_DIVIDER - 1;
             if (sector % 2 == 0) // Single pulsating actuators sector
             {
                 int activeActs = singleActuatorsMatrix[matrixIndex];
-                activeActs = RshiftActs(activeActs, (int)(sector / 2), numberActuators);
-                bitsToActuators(actuators, activeActs, TIME % 2 == 0, false, ref output);
-                setZerosToMinimum(actuators, activeActs, ref output); 
+                activeActs = RshiftActs(activeActs, (int)(sector / 2), _actuators.Count);
+                bitsToActuators(_actuators.Count, activeActs, TIME % 2 == 0, false, ref output);
+                setZerosToMinimum(_actuators.Count, activeActs, ref output); 
             }
             else // Double pulsating actuators sector
             {
                 int[] acts = (int[]) dynamicActuatorsMatrix[matrixIndex].Clone();
-                acts[0] = RshiftActs(acts[0], (int)((sector - 1) / 2), numberActuators);
-                acts[1] = RshiftActs(acts[1], (int)((sector - 1) / 2), numberActuators);
-                bitsToActuators(actuators, acts[0] | acts[1], TIME % 2 == 0, false, ref output);
-                setZerosToMinimum(actuators, (acts[0] | acts[1]), ref output); 
+                acts[0] = RshiftActs(acts[0], (int)((sector - 1) / 2), _actuators.Count);
+                acts[1] = RshiftActs(acts[1], (int)((sector - 1) / 2), _actuators.Count);
+                bitsToActuators(_actuators.Count, acts[0] | acts[1], TIME % 2 == 0, false, ref output);
+                setZerosToMinimum(_actuators.Count, (acts[0] | acts[1]), ref output); 
             }
         }
         
