@@ -53,39 +53,7 @@ namespace HapticClientAPI
         /// </summary>
         public override Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(MHTP mhtp)
         {
-            if (pointIsCloseToSegment(mhtp.position, _pair.Item1, _pair.Item2, NEARNESS_TOLLERANCE))
-            {
-                if (state == STATE.up)
-                {
-                    SpeechOutput.Instance.speak("Haptic Link");
-                    state = STATE.down;
-                }
-                IBehaviour prevBehaviour = _currentBehaviour;
-                _currentBehaviour = chooseBehaviour(mhtp);
-                _currentBehaviour.updateNext(prevBehaviour);
-
-                BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
-                if (_currentBehaviour.Equals(prevBehaviour))
-                {
-                    rule = BEHAVIOUR_RULES.NOPE;
-                }
-                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
-            }
-            else if (state == STATE.down)
-            {
-                state = STATE.up;
-                IBehaviour prevBehaviour = _currentBehaviour;
-                _currentBehaviour = new BasicBehaviour(mhtp, BasicBehaviour.TYPES.flat);
-                BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
-                if (_currentBehaviour.Equals(prevBehaviour))
-                {
-                    rule = BEHAVIOUR_RULES.NOPE;
-                }
-                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
-            } 
-            Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> retval = new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(BEHAVIOUR_RULES.REMOVE, _currentBehaviour, null);
-            _currentBehaviour = null;
-            return retval;
+            return handleInput(mhtp, pointIsCloseToSegment(mhtp.position, _pair.Item1, _pair.Item2, NEARNESS_TOLLERANCE));
         }
 
         /// <summary>
@@ -98,7 +66,7 @@ namespace HapticClientAPI
             // Do nothing
         }
 
-        private IBehaviour chooseBehaviour(MHTP mhtp)
+        protected override IBehaviour chooseBehaviour(MHTP mhtp)
         {
             IBehaviour behaviour;
             lock (behaviourLock)

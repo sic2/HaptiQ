@@ -137,6 +137,51 @@ namespace HapticClientAPI
             return distanceSquared(p, new Point(v.X + t * (w.X - v.X), v.Y + t * (w.Y - v.Y)));
         }
 
+        public Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(MHTP mhtp, bool pointIsInside)
+        {
+            if (pointIsInside)
+            {
+                if (state == STATE.up)
+                {
+                    state = STATE.down;
+                }
+                IBehaviour prevBehaviour = _currentBehaviour;
+                _currentBehaviour = chooseBehaviour(mhtp);
+                _currentBehaviour.updateNext(prevBehaviour);
+
+                BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
+                if (_currentBehaviour.Equals(prevBehaviour))
+                {
+                    rule = BEHAVIOUR_RULES.NOPE;
+                }
+                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
+            }
+            else if (state == STATE.down)
+            {
+                state = STATE.up;
+                IBehaviour prevBehaviour = _currentBehaviour;
+                _currentBehaviour = new BasicBehaviour(mhtp, BasicBehaviour.TYPES.flat);
+                BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
+                if (_currentBehaviour.Equals(prevBehaviour))
+                {
+                    rule = BEHAVIOUR_RULES.NOPE;
+                }
+                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
+            }
+
+            Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> retval = new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(BEHAVIOUR_RULES.REMOVE, _currentBehaviour, null);
+            _currentBehaviour = null;
+            return retval;
+
+        }
+
+        /// <summary>
+        /// Return a behaviour for this haptic shape
+        /// </summary>
+        /// <param name="mhtp"></param>
+        /// <returns></returns>
+        protected abstract IBehaviour chooseBehaviour(MHTP mhtp);
+
         /// <summary>
         /// Method definition as in #IHapticObject. 
         /// </summary>

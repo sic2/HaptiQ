@@ -23,49 +23,19 @@ namespace HapticClientAPI
             this.geometry = new EllipseGeometry(new System.Windows.Point(x, y), radius, radius);
         }
 
-        // TODO - refactor - duplicate code with haptic rectangle and other haptic objects
         public override Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(MHTP mhtp)
         {
-            if (pointIsInside(mhtp.position))
-            {
-                if (state == STATE.up)
-                {
-                    SpeechOutput.Instance.speak("Haptic Circle");
-                    state = STATE.down;
-                }
-                IBehaviour prevBehaviour = _currentBehaviour;
-                _currentBehaviour = new BasicBehaviour(mhtp, BasicBehaviour.TYPES.notification, getFrequency(mhtp.position));
-                _currentBehaviour.updateNext(prevBehaviour);
-
-                BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
-                if (_currentBehaviour.Equals(prevBehaviour))
-                {
-                    rule = BEHAVIOUR_RULES.NOPE;
-                }
-                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
-            }
-            else if (state == STATE.down)
-            {
-                state = STATE.up;
-                IBehaviour prevBehaviour = _currentBehaviour;
-                _currentBehaviour = new BasicBehaviour(mhtp, BasicBehaviour.TYPES.flat);
-                BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
-                if (_currentBehaviour.Equals(prevBehaviour))
-                {
-                    rule = BEHAVIOUR_RULES.NOPE;
-                }
-                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, _currentBehaviour, prevBehaviour);
-            }
-
-            Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> retval = new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(BEHAVIOUR_RULES.REMOVE, _currentBehaviour, null);
-            _currentBehaviour = null;
-            return retval;
-        
+            return handleInput(mhtp, pointIsInside(mhtp.position));
         }
 
         public override void handlePress(Point point)
         {
             // TODO
+        }
+
+        protected override IBehaviour chooseBehaviour(MHTP mhtp)
+        {
+            return new BasicBehaviour(mhtp, BasicBehaviour.TYPES.notification, getFrequency(mhtp.position));
         }
 
         private bool pointIsInside(Point point)
