@@ -45,35 +45,35 @@ namespace MHTP_API
          }
 
         /// <summary>
-        /// Get/Set height of this actuator.
-        /// It is not possible to set an actuator to an height that does not 
-        /// satisfies the min/max constraints.
         /// Return -1 if position cannot be retrieved
         /// </summary>
-        public double height
+        public double getHeight()
         {
-            get 
+            double h = -1;
+            try
             {
-                double h = -1;
-                try
-                {
-                    h = _servo.Position;
-                }
-                catch (PhidgetException e)
-                {
-                    Helper.Logger("MHTP_API.Actuator.height.get:: (" + _id + ")" +
-                                "PhidgetException " + e.Description +
-                                ". Cannot get height from servo motor.");
-                }
-                return h;
-            } 
-            set 
+                h = _servo.Position;
+            }
+            catch (PhidgetException e)
             {
-                if (_enabled && _servo != null && value >= _minPosition && value <= _maxPosition)
-                    {
-                        enable();
-                        _servo.Position = value;
-                    }
+                Helper.Logger("MHTP_API.Actuator.height.get:: (" + _id + ")" +
+                            "PhidgetException " + e.Description +
+                            ". Cannot get height from servo motor.");
+            }
+            return h;
+        }
+
+        /// <summary>
+        /// It is not possible to set an actuator to an height that does not 
+        /// satisfies the min/max constraints.
+        /// </summary>
+        /// <param name="height"></param>
+        internal void setHeight(double height)
+        {
+            if (_enabled && _servo != null && height >= _minPosition && height <= _maxPosition)
+            {
+                enable();
+                _servo.Position = height;
             }
         }
 
@@ -82,9 +82,11 @@ namespace MHTP_API
         /// </summary>
         /// <param name="percentage">Value between 0 and 1</param>
         /// <returns></returns>
-        public void setHeight(double percentage)
+        internal void setHeightByPercentage(double percentage)
         {
-            this.height = _minPosition + (_maxPosition - _minPosition) * percentage;
+            if (percentage < 0) percentage = 0.0;
+            if (percentage > 1) percentage = 1.0;
+            setHeight(_minPosition + (_maxPosition - _minPosition) * percentage);
         }
 
         /// <summary>
@@ -119,7 +121,7 @@ namespace MHTP_API
         /// </summary>
         public void setToMinimum()
         {
-            this.height = _minPosition;
+            setHeight(_minPosition);
         }
 
         /// <summary>
@@ -127,7 +129,7 @@ namespace MHTP_API
         /// </summary>
         public void setToMaximum()
         {
-            this.height = _maxPosition;
+            setHeight(_maxPosition);
         }
 
         /// <summary>

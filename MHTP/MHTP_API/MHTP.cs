@@ -278,7 +278,21 @@ namespace MHTP_API
             lock (_actuators)
             {
                 if (actuatorExist(index))
-                    getActuator(index).height = position;
+                    getActuator(index).setHeight(position);
+            }
+        }
+
+        /// <summary>
+        /// Set an actuator to a given position in percentage.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="percentage"></param>
+        public void setActuatorPositionByPercentage(int index, double percentage)
+        {
+            lock (_actuators)
+            {
+                if (actuatorExist(index))
+                    getActuator(index).setHeightByPercentage(percentage);
             }
         }
 
@@ -324,7 +338,23 @@ namespace MHTP_API
             {
                 lock (_actuators)
                 {
-                    actuator.height = position;
+                    actuator.setHeight(position);
+                }
+            }
+        }
+
+        public void setActuatorPositionByPercentage(Actuator actuator, double percentage)
+        {
+            if (actuator == null)
+            {
+                Helper.Logger("MHTP_API.MHTP.setActuatorPositionByPercentage:: (" + _id + ") actuator is null");
+                throw new ArgumentNullException("MHTP_API.MHTP.setActuatorPosition:: actuator");
+            }
+            else
+            {
+                lock (_actuators)
+                {
+                    actuator.setHeightByPercentage(percentage);
                 }
             }
         }
@@ -379,7 +409,7 @@ namespace MHTP_API
             {
                 Parallel.ForEach(_actuators, actuator =>
                 {
-                    actuator.height = position;
+                    actuator.setHeight(position);
                 });
             }
         }
@@ -563,7 +593,7 @@ namespace MHTP_API
                 {
                     Parallel.ForEach(actuators, entry => 
                     {
-                        this.setActuatorPosition(entry.Key, entry.Value);
+                        this.setActuatorPositionByPercentage(entry.Key, entry.Value);
                     });
                 } 
             }

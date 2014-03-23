@@ -1,5 +1,4 @@
 ﻿using System;
-
 using System.Windows.Media;
 
 using Input_API;
@@ -131,8 +130,6 @@ namespace HapticClientAPI
             drawingContext.DrawEllipse(null, new Pen(Brushes.Red, 1.0), 
                 _pair.Item2.toSysWinPoint(), NEARNESS_TOLLERANCE, NEARNESS_TOLLERANCE);
 
-            drawingContext.DrawEllipse(null, new Pen(Brushes.Red, 1.0),
-                new Point(0, 0).toSysWinPoint(), NEARNESS_TOLLERANCE, NEARNESS_TOLLERANCE);
         }
     }
 }

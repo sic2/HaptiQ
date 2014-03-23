@@ -10,15 +10,14 @@ namespace MHTP_API
     /// 
     /// </summary>
     public class PulsationBehaviour : Behaviour
-    {
+    { 
         public int TIME { get; set; }
 
-        //private double highPosition;
-        //private double lowPosition;
         private double _orientation;
         private double _frequency;
 
         private const int NUMBER_ACTUATORS_DIVIDER = 4;
+        private const double HIGH_POSITION_PERCENTAGE = 0.8;
 
         private Tuple<Point, Point> _segment;
         private int[] singleActuatorsMatrix = new int[] 
@@ -28,7 +27,7 @@ namespace MHTP_API
         private int[][] dynamicActuatorsMatrix = new int[][]
                         {
                             new int[]{1, 2}, // 4-MHTP 1-line
-                            new int[]{1, 4}// 8-MHTP 1-line
+                            new int[]{2, 4}// 8-MHTP 1-line
                         };
 
         /// <summary>
@@ -44,7 +43,7 @@ namespace MHTP_API
             _orientation = orientation;
             _frequency = frequency;
             TIME = 0;
-            highPosition = 40;
+            highPosition = HIGH_POSITION_PERCENTAGE;
             lowPosition = 0;
         }
 
@@ -96,6 +95,11 @@ namespace MHTP_API
             }
         }
         
+        /// <summary>
+        /// Override equals to allow PulsationBehaviour to be compared correctly.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(System.Object obj)
         {
             // If parameter is null return false

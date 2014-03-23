@@ -14,6 +14,7 @@ namespace MHTP_API
         private const int NUMBER_ACTUATORS_DIVIDER = 4;
         private const int FOUR_ACTUATORS = 4;
         private const int EIGHT_ACTUATORS = 8;
+        private const double HIGH_POSITION_PERCENTAGE = 0.8;
 
         private List<Tuple<Point, Point>> _lines;
 
@@ -37,8 +38,8 @@ namespace MHTP_API
             _lines = lines;
             _orientation = orientation;
             TIME = 0;
-            highPosition = 40;
-            lowPosition = 0;
+            highPosition = HIGH_POSITION_PERCENTAGE;
+            lowPosition = MIN_POSITION;
         }
 
         /// <summary>
@@ -152,6 +153,11 @@ namespace MHTP_API
             return -1;
         }
 
+        /// <summary>
+        /// Override equals to allow DirectionBehaviour to be compared correctly.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(System.Object obj)
         {
             // If parameter is null return false

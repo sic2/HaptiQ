@@ -9,9 +9,18 @@ namespace MHTP_API
 {
     abstract public class Behaviour : IBehaviour
     {
+        protected const double MIN_POSITION = 0.0;
+        protected const double MAX_POSITION = 1.0;
+        
         public int TIME { get; set; }
 
+        /// <summary>
+        /// High position of this behaviour
+        /// </summary>
         protected double highPosition;
+        /// <summary>
+        /// Low position of this behaviour
+        /// </summary>
         protected double lowPosition;
 
         /// <summary>
@@ -81,11 +90,11 @@ namespace MHTP_API
             {
                 if ((activeActuators & 1) != 0)
                 {
-                    output[i] = actuators[i].Item1 + pos0;
+                    output[i] = pos0;
                 }
                 else if (setZeros)
                 {
-                    output[i] = actuators[i].Item1 + pos1;
+                    output[i] = pos1;
                 }
                 activeActuators = activeActuators >> 1;
             }
@@ -103,12 +112,21 @@ namespace MHTP_API
             {
                 if ((zeros & 1) == 0)
                 {
-                    output[i] = actuators[i].Item1;
+                    output[i] = MIN_POSITION;
                 }
                 zeros = zeros >> 1;
             }
         }
 
+        /// <summary>
+        /// Return sector of the MHTP given a segment and orientation of the MHTP.
+        /// TODO - Maybe move to MHTP class?
+        /// </summary>
+        /// <param name="segment"></param>
+        /// <param name="orientation"></param>
+        /// <param name="numberActuators"></param>
+        /// <param name="numberSections"></param>
+        /// <returns></returns>
         protected int getSector(Tuple<Point, Point> segment, double orientation, int numberActuators, int numberSections)
         {
             // Determines angle between lines in radians

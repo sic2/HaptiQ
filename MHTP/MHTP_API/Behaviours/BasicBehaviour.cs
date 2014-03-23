@@ -14,12 +14,11 @@ namespace MHTP_API
         private const int DEFAULT_FREQUENCY = 1;
         private const int INIT_CURRENT_ACTIVE_ACTS = 1;
         private const int INIT_PREV_ACTIVE_ACTS = 1;
-        private const int DEFAULT_RELATIVE_POS = 40;
+        private const double DEFAULT_POS = 0.7;
         private const int DEFAULT_WAITING_MS = 200;
 
         public int TIME { get; set; }
   
-        private double _position;
         private int _numberActuators;
         private double _frequency;
 
@@ -65,7 +64,6 @@ namespace MHTP_API
             currentActiveActuators = current;
             prevActiveActuators = prev;
             TIME = 0;
-            _position = DEFAULT_RELATIVE_POS;
             _frequency = frequency;
         }
 
@@ -105,7 +103,7 @@ namespace MHTP_API
             Dictionary<int, double> retval = new Dictionary<int, double>();
             foreach (KeyValuePair<int, SerializableTuple<int, int>> entry in actuators)
             {
-                retval[entry.Key] = actuators[entry.Key].Item1;
+                retval[entry.Key] = MIN_POSITION;
             }
             return retval;
         }
@@ -115,7 +113,7 @@ namespace MHTP_API
             Dictionary<int, double> retval = new Dictionary<int, double>();
             foreach (KeyValuePair<int, SerializableTuple<int, int>> entry in actuators)
             {
-                retval[entry.Key] = actuators[entry.Key].Item2;
+                retval[entry.Key] = MAX_POSITION;
             }
             return retval;
         }
@@ -132,14 +130,14 @@ namespace MHTP_API
             {
                 if ((tmp & 1) != 0)
                 {
-                    _position = _position > actuators[i].Item2 ? actuators[i].Item2 : _position;
-                    double adjustedPosition = pressureData == null ? 
-                            _position : _position * (1 / 3.0 * Math.Cos(pressureData[i] * Math.PI / 1000) + 2 / 3.0); // XXX - assume pressure range is 1000
-                    retval[i] = actuators[i].Item1 + adjustedPosition;    
+                    //double adjustedPosition = pressureData == null || !pressureData.ContainsKey(i)? 
+                    //        _position : _position * (1 / 3.0 * Math.Cos(pressureData[i] * Math.PI / 1000) + 2 / 3.0); // XXX - assume pressure range is 1000
+                    //retval[i] = actuators[i].Item1 + adjustedPosition;  
+                    retval[i] = DEFAULT_POS; // TODO - apply pressure input
                 }
                 else
                 {
-                    retval[i] = actuators[i].Item1;
+                    retval[i] = MIN_POSITION;
                 }
                 tmp = tmp >> 1;
             }
@@ -162,6 +160,11 @@ namespace MHTP_API
             }
         }
 
+        /// <summary>
+        /// Override equals to allow basic behaviour objects to be compared properly
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(System.Object obj)
         {
             // If parameter is null return false
