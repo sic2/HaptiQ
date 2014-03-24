@@ -19,7 +19,7 @@ namespace MHTP_API
         private int[][] dynamicActuatorsMatrix = new int[][]
                         {
                             new int[]{9, 6}, // 4-MHTP 1-line
-                            new int[]{132, 72}// 8-MHTP 1-line
+                            new int[]{66, 36}// 8-MHTP 1-line
                         };
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace MHTP_API
             }
             else // Pulsing sector
             {
-                int[] acts = dynamicActuatorsMatrix[matrixIndex];
+                int[] acts = (int[]) dynamicActuatorsMatrix[matrixIndex].Clone();
                 acts[0] = RshiftActs(acts[0], (int)((sector - 1) / 2), _actuators.Count);
                 acts[1] = RshiftActs(acts[1], (int)((sector - 1) / 2), _actuators.Count);
                 bitsToActuators(_actuators.Count, acts[0], TIME % 2 == 0, false, ref output);
