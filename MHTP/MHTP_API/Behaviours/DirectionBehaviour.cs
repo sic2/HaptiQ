@@ -84,29 +84,35 @@ namespace MHTP_API
         private void cornerBehaviour(ref Dictionary<int, double> output)
         {
             double sectorRange = (2 * Math.PI) / (2.0 * _actuators.Count);
-            double normAngle = _orientation + (sectorRange / 2.0);
-            int sector = (int)Math.Floor(normAngle / sectorRange) % _actuators.Count;
+            double normAngle = (_orientation > 0 ? _orientation : (2 * Math.PI + _orientation)) + (sectorRange / 2.0);
+            int sector = (int)Math.Floor(normAngle / sectorRange) % (_actuators.Count * 2);
 
+            // Two main actuators - Note that shifting is needed to apply orientation
             int actuator1 = vectorToActuator(_lines[0], _actuators.Count);
             int actuator2 = vectorToActuator(_lines[1], _actuators.Count);
-            if (sector % 2 == 0)
+            if (sector % 2 == 0) // Combine the two actuators
             {
-                actuator1 += actuator2;
-                actuator1 = LshiftActs(actuator1, (int)(sector / 2), _actuators.Count);
+                actuator1 = actuator1 | actuator2;
+                actuator1 = RshiftActs(actuator1, (int)(sector / 2), _actuators.Count);
                 bitsToActuators(_actuators.Count, actuator1, false, true, ref output);
             }
-            else
+            else // Combinations of actuators to virtually create corners
             {
-                int actuator3 = LshiftActs(actuator2, 1, _actuators.Count);
+                actuator1 = RshiftActs(actuator1, (int)((sector - 1) / 2), _actuators.Count);
+                actuator2 = RshiftActs(actuator2, (int)((sector - 1) / 2), _actuators.Count);
+                int actuator3 = RshiftActs(actuator1, 1, _actuators.Count);
 
-                actuator1 = LshiftActs(actuator1, (int)(sector / 2), _actuators.Count);
-                actuator2 = LshiftActs(actuator2, (int)(sector / 2), _actuators.Count);
-                actuator3 = LshiftActs(actuator3, (int)(sector / 2), _actuators.Count);
+                int actuator4 = 0;
+                if (_actuators.Count == 8)
+                {
+                    actuator4 = RshiftActs(actuator2, 1, _actuators.Count);
+                    bitsToActuators(_actuators.Count, actuator4, TIME % 2 != 0, false, ref output);
+                }
 
-                bitsToActuators(_actuators.Count, actuator1, TIME % 2 == 0, false, ref output);
-                bitsToActuators(_actuators.Count, actuator2, TIME % 2 != 0, false, ref output);
+                bitsToActuators(_actuators.Count, actuator1, TIME % 2 != 0, false, ref output);
+                bitsToActuators(_actuators.Count, actuator2, TIME % 2 == 0, false, ref output);
                 bitsToActuators(_actuators.Count, actuator3, TIME % 2 == 0, false, ref output);
-                setZerosToMinimum(_actuators.Count, (actuator1 | actuator2 | actuator3), ref output); 
+                setZerosToMinimum(_actuators.Count, (actuator1 | actuator2 | actuator3 | actuator4), ref output); 
             }
         }
  

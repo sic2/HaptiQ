@@ -58,11 +58,6 @@ namespace HapticClientAPI
         protected String information = "No information available";
 
         /// <summary>
-        /// Current behaviour for this shape
-        /// </summary>
-        protected IBehaviour _currentBehaviour;
-
-        /// <summary>
         /// Associate an MHTP with a specific current behaviour
         /// </summary>
         protected Dictionary<uint, IBehaviour> _mhtpBehaviours;
