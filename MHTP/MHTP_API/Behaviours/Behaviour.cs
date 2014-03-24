@@ -23,10 +23,8 @@ namespace MHTP_API
         /// </summary>
         protected double lowPosition;
 
-        /// <summary>
-        /// 
-        /// </summary>
         protected List<Actuator> _actuators;
+        protected Dictionary<int, Actuator> _actuatorsDict; // For fast retrieval
         protected Point _position;
         protected double _orientation;
 
@@ -41,6 +39,12 @@ namespace MHTP_API
             this._actuators = mhtp.getActuators();
             this._position = mhtp.position;
             this._orientation = mhtp.orientation;
+
+            _actuatorsDict = new Dictionary<int, Actuator>();
+            foreach (Actuator actuator in _actuators)
+            {
+                _actuatorsDict[actuator.getId()] = actuator;
+            }
         }
 
         /// <summary>

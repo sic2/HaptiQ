@@ -13,6 +13,8 @@ namespace MHTP_API
     /// </summary>
     public class Actuator
     {
+        internal static int MAX_PRESSURE = 1000;
+
         private int _pressure;
         private int _id; // used to identify which actuator is of the MHTP
         private double _minPosition;

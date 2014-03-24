@@ -121,7 +121,9 @@ namespace MHTP_API
                         positions[i, 0] += offset;
                     }
                 }
-                retval[i] = positions[i, 0]; // TODO - apply pressure input !?
+                // Reduce position by half the pressure percentage
+                retval[i] = positions[i, 0] * 
+                   (1 - _actuatorsDict[i].pressure / (2.0 * Actuator.MAX_PRESSURE));
             }
 
             System.Threading.Thread.Sleep((int)(DEFAULT_WAITING_MS * _frequency));
