@@ -33,18 +33,18 @@ namespace HapticClientAPI
         {
             this.x = x; this.y = y; this.width = width; this.height = height;
             this.geometry = new RectangleGeometry(new System.Windows.Rect(x, y, width, height));
-            
-            // Corners
-            connectionPoints.Add(new Point(x, y));
-            connectionPoints.Add(new Point(x, y + height));
-            connectionPoints.Add(new Point(x + width, y + height));
-            connectionPoints.Add(new Point(x + width, y));
 
             // Mid-points
             connectionPoints.Add(new Point(x + (width / 2.0), y));
             connectionPoints.Add(new Point(x + (width / 2.0), y + height));
             connectionPoints.Add(new Point(x, y + (height / 2.0)));
             connectionPoints.Add(new Point(x + width, y + (height / 2.0)));
+
+            // Corners
+            connectionPoints.Add(new Point(x, y));
+            connectionPoints.Add(new Point(x, y + height));
+            connectionPoints.Add(new Point(x + width, y + height));
+            connectionPoints.Add(new Point(x + width, y));
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace HapticClientAPI
         protected override IBehaviour chooseBehaviour(MHTP mhtp)
         {
             IBehaviour behaviour = null;
-            state = STATE.move; // TODO - is this needed?
+            state = STATE.move;
 
             Point bottomLeft = new Point(x, y + height);
             Point bottomRight = new Point(x + width, y + height);
