@@ -13,19 +13,21 @@ namespace HapticClientAPI
 {
     public class HapticPolyline : HapticShape
     {
+        private List<Point> _points;
 
         public HapticPolyline(List<System.Windows.Point> points)
         {
+            _points = new List<Point>();
             // Use Input_API points
             foreach (System.Windows.Point point in points)
             {
-                connectionPoints.Add(new Point(point.X, point.Y));
+                _points.Add(new Point(point.X, point.Y));
             }
             GeometryGroup group = new GeometryGroup();
-            for (int i = 0; i < connectionPoints.Count() - 1; i++)
+            for (int i = 0; i < _points.Count() - 1; i++)
             {
-                group.Children.Add(new LineGeometry(connectionPoints[i].toSysWinPoint(),
-                   connectionPoints[i + 1].toSysWinPoint()));
+                group.Children.Add(new LineGeometry(_points[i].toSysWinPoint(),
+                   _points[i + 1].toSysWinPoint()));
             }
             this.geometry = group;
         }
@@ -63,16 +65,16 @@ namespace HapticClientAPI
 
         private bool pointIsInPolyline(Point point)
         {
-            for (int i = 0; i < connectionPoints.Count() - 1; i++)
+            for (int i = 0; i < _points.Count() - 1; i++)
             {
-               if (pointIsCloseToSegment(point, connectionPoints[i], connectionPoints[i + 1], NEARNESS_TOLLERANCE))
+                if (pointIsCloseToSegment(point, _points[i], _points[i + 1], NEARNESS_TOLLERANCE))
                    return true;
             }
             // Test corners, which have a different nearness tollerance factor
-            for (int i = 0; i < connectionPoints.Count() - 2; i++)
+            for (int i = 0; i < _points.Count() - 2; i++)
             {
-               if (pointIsCloseToSegment(point, connectionPoints[i], connectionPoints[i + 1], CORNER_NEARNESS_TOLLERANCE) &&
-                   pointIsCloseToSegment(point, connectionPoints[i + 1], connectionPoints[i + 2], CORNER_NEARNESS_TOLLERANCE))
+                if (pointIsCloseToSegment(point, _points[i], _points[i + 1], CORNER_NEARNESS_TOLLERANCE) &&
+                   pointIsCloseToSegment(point, _points[i + 1], _points[i + 2], CORNER_NEARNESS_TOLLERANCE))
                    return true;
             }
 
@@ -82,26 +84,26 @@ namespace HapticClientAPI
         protected override IBehaviour chooseBehaviour(MHTP mhtp)
         {
             List<Tuple<Point, Point>> lines = new List<Tuple<Point, Point>>();
-           
-            for (int i = 0; i < connectionPoints.Count() - 2; i++)
+
+            for (int i = 0; i < _points.Count() - 2; i++)
             {
                 // XXX - pointIsClose to segment is called twice (in this method and from handle input)
-                if (pointIsCloseToSegment(mhtp.position, connectionPoints[i], connectionPoints[i + 1], CORNER_NEARNESS_TOLLERANCE) &&
-                    pointIsCloseToSegment(mhtp.position, connectionPoints[i + 1], connectionPoints[i + 2], CORNER_NEARNESS_TOLLERANCE))
+                if (pointIsCloseToSegment(mhtp.position, _points[i], _points[i + 1], CORNER_NEARNESS_TOLLERANCE) &&
+                    pointIsCloseToSegment(mhtp.position, _points[i + 1], _points[i + 2], CORNER_NEARNESS_TOLLERANCE))
                 {
-                    lines.Add(new Tuple<Point,Point>(connectionPoints[i + 1], connectionPoints[i]));
-                    lines.Add(new Tuple<Point,Point>(connectionPoints[i + 1], connectionPoints[i + 2]));
+                    lines.Add(new Tuple<Point, Point>(_points[i + 1], _points[i]));
+                    lines.Add(new Tuple<Point, Point>(_points[i + 1], _points[i + 2]));
                     break;
                 }
             }
 
             if (lines.Count() == 0)
             {
-                for (int i = 0; i < connectionPoints.Count() - 1; i++)
+                for (int i = 0; i < _points.Count() - 1; i++)
                 {
-                    if (pointIsCloseToSegment(mhtp.position, connectionPoints[i], connectionPoints[i + 1], NEARNESS_TOLLERANCE))
+                    if (pointIsCloseToSegment(mhtp.position, _points[i], _points[i + 1], NEARNESS_TOLLERANCE))
                     {
-                        lines.Add(new Tuple<Point, Point>(connectionPoints[i], connectionPoints[i + 1]));
+                        lines.Add(new Tuple<Point, Point>(_points[i], _points[i + 1]));
                         break;
                     }
                 }
