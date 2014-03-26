@@ -21,6 +21,17 @@ namespace HapticClientAPI
         {
             this.x = x; this.y = y; this.radius = radius;
             this.geometry = new EllipseGeometry(new System.Windows.Point(x, y), radius, radius);
+
+            // Credit to Regis Ongaro-Carcy
+            connectionPoints.Add(new Point(x + radius, y));
+            connectionPoints.Add(new Point(x - radius, y));
+            connectionPoints.Add(new Point(x, y + radius));
+            connectionPoints.Add(new Point(x, y - radius));
+            double sqrtTwo = Math.Sqrt(2) / 2;
+            connectionPoints.Add(new Point(x + sqrtTwo * radius, y + sqrtTwo * radius));
+            connectionPoints.Add(new Point(x + sqrtTwo * radius, y - sqrtTwo * radius));
+            connectionPoints.Add(new Point(x - sqrtTwo * radius, y + sqrtTwo * radius));
+            connectionPoints.Add(new Point(x - sqrtTwo * radius, y - sqrtTwo * radius));
         }
 
         public override Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(MHTP mhtp)
