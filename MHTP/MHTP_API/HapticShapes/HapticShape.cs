@@ -66,6 +66,8 @@ namespace HapticClientAPI
         /// Points structure for this shape
         /// </summary>
         public List<Point> connectionPoints;
+
+        protected IAction _action;
         
         /// <summary>
         /// Default constructor for HapticShape. 
@@ -208,6 +210,11 @@ namespace HapticClientAPI
         /// Multiple presses are not supported. 
         /// </summary>
         /// <param name="point"></param>
-        public abstract void handlePress(Point point);
+        public abstract void handlePress(MHTP mhtp);
+
+        public void registerAction(IAction action)
+        {
+            _action = action;
+        }
     }
 }

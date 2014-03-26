@@ -57,8 +57,8 @@ namespace HapticClientAPI
         /// Handle a press.
         /// This method needs to be implemented if a new feature is wanted.
         /// </summary>
-        /// <param name="point"></param>
-        public override void handlePress(Point point)
+        /// <param name="mhtp"></param>
+        public override void handlePress(MHTP mhtp)
         {
             // Do nothing
         }

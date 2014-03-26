@@ -442,7 +442,7 @@ namespace MHTP_API
             lock (_syncObj)
             {
                 Parallel.ForEach(_hapticObjectObservers, observer => 
-                    observer.handlePress(position));
+                    observer.handlePress(_mhtpsDictionary.ContainsKey(id) ? _mhtpsDictionary[id] : null));
             }
         }
 

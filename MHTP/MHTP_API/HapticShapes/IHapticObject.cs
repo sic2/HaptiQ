@@ -37,7 +37,15 @@ namespace MHTP_API
         /// <summary>
         /// Handles pressure input
         /// </summary>
-        /// <param name="point"></param>
-        void handlePress(Point point);
+        /// <param name="mhtp"></param>
+        void handlePress(MHTP mhtp);
+
+        /// <summary>
+        /// Registers a custom action object. 
+        /// The run method in action is called when there is an input from the user
+        /// If not action is registered then the HapticObject will use its own default action
+        /// </summary>
+        /// <param name="action"></param>
+        void registerAction(IAction action);
     }
 }

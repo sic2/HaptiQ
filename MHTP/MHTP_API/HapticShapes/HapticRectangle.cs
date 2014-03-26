@@ -61,11 +61,18 @@ namespace HapticClientAPI
         /// Output information content via audio if input was received 
         /// for a device currently in this haptic rectangle
         /// </summary>
-        /// <param name="point"></param>
-        public override void handlePress(Point point)
+        /// <param name="mhtp"></param>
+        public override void handlePress(MHTP mhtp)
         {
-            if (pointIsInside(point) && state == STATE.down)
-                SpeechOutput.Instance.speak(information);
+            if (_action != null)
+            {
+                _action.run(mhtp.getID(), mhtp.getCurrentPressureData());
+            }
+            else
+            {
+                if (pointIsInside(mhtp.position) && state == STATE.down)
+                    SpeechOutput.Instance.speak(information);
+            }
         }
 
         private bool pointIsInside(Point point)

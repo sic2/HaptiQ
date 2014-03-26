@@ -542,6 +542,11 @@ namespace MHTP_API
             return _advServo.Attached && _actuators.Count > 0;
         }
 
+        public Dictionary<int, double> getCurrentPressureData()
+        {
+            return _currentPressureData;
+        }
+
         /*********************
          * Behaviours Methods
          *********************/

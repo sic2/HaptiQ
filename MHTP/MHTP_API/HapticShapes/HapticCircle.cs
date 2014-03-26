@@ -39,7 +39,7 @@ namespace HapticClientAPI
             return handleInput(mhtp, pointIsInside(mhtp.position));
         }
 
-        public override void handlePress(Point point)
+        public override void handlePress(MHTP mhtp)
         {
             // TODO
         }
