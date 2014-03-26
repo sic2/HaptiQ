@@ -30,7 +30,7 @@ namespace HapticClientAPI
         /// <summary>
         /// STATE enum used for indicating the current state of an haptic shape
         /// </summary>
-        protected enum STATE { down, up};
+        protected enum STATE { down, up };
 
         /// <summary>
         /// Geometry used to render this shape

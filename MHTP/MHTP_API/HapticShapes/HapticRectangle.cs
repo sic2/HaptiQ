@@ -64,15 +64,17 @@ namespace HapticClientAPI
         /// <param name="mhtp"></param>
         public override void handlePress(MHTP mhtp)
         {
-            if (_action != null)
+            Tuple<STATE, IBehaviour> mhtpState = _mhtpBehaviours.ContainsKey(mhtp.getID()) ? _mhtpBehaviours[mhtp.getID()] : null;
+            if (pointIsInside(mhtp.position) && mhtpState != null && mhtpState.Item1 == STATE.down)
             {
-                _action.run(mhtp.getID(), mhtp.getCurrentPressureData());
-            }
-            else
-            {
-                Tuple<STATE, IBehaviour> mhtpState = _mhtpBehaviours.ContainsKey(mhtp.getID()) ? _mhtpBehaviours[mhtp.getID()] : null;
-                if (pointIsInside(mhtp.position) && mhtpState.Item1 == STATE.down)
+                if (_action != null)
+                {
+                    _action.run(mhtp.getID(), mhtp.getCurrentPressureData());
+                }
+                else
+                {
                     SpeechOutput.Instance.speak(information);
+                }
             }
         }
 
