@@ -62,7 +62,6 @@ namespace HapticClientAPI
         {
             List<Tuple<Point, Point>> lines = new List<Tuple<Point, Point>>();
             lines.Add(_pair);
-            state = STATE.down;
             return new DirectionBehaviour(mhtp, lines);
         }
 

@@ -9,7 +9,6 @@ namespace MHTP_API
     {
         /// <summary>
         /// Executes the action
-        /// TODO - pass pressure values and other values (position, etc)?
         /// </summary>
         void run(uint id, Dictionary<int, double> pressureData);
     }

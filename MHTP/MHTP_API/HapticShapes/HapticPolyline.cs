@@ -108,7 +108,6 @@ namespace HapticClientAPI
                     }
                 }
             }
-            state = STATE.down;
             return new DirectionBehaviour(mhtp, lines);
             
         }

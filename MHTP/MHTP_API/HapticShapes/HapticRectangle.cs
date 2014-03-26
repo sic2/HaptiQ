@@ -70,7 +70,8 @@ namespace HapticClientAPI
             }
             else
             {
-                if (pointIsInside(mhtp.position) && state == STATE.down)
+                Tuple<STATE, IBehaviour> mhtpState = _mhtpBehaviours.ContainsKey(mhtp.getID()) ? _mhtpBehaviours[mhtp.getID()] : null;
+                if (pointIsInside(mhtp.position) && mhtpState.Item1 == STATE.down)
                     SpeechOutput.Instance.speak(information);
             }
         }
@@ -86,7 +87,6 @@ namespace HapticClientAPI
         protected override IBehaviour chooseBehaviour(MHTP mhtp)
         {
             IBehaviour behaviour = null;
-            state = STATE.move;
 
             Point bottomLeft = new Point(x, y + height);
             Point bottomRight = new Point(x + width, y + height);
@@ -143,9 +143,7 @@ namespace HapticClientAPI
             {
                 behaviour = new DirectionBehaviour(mhtp, lines);
             }
-                
-            state = STATE.down;
-
+               
             return behaviour;
         }
 

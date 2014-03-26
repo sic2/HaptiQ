@@ -30,12 +30,7 @@ namespace HapticClientAPI
         /// <summary>
         /// STATE enum used for indicating the current state of an haptic shape
         /// </summary>
-        protected enum STATE { down, move, up};
-
-        /// <summary>
-        /// State of this shape
-        /// </summary>
-        protected STATE state;
+        protected enum STATE { down, up};
 
         /// <summary>
         /// Geometry used to render this shape
@@ -60,13 +55,16 @@ namespace HapticClientAPI
         /// <summary>
         /// Associate an MHTP with a specific current behaviour
         /// </summary>
-        protected Dictionary<uint, IBehaviour> _mhtpBehaviours;
+        protected Dictionary<uint, Tuple<STATE, IBehaviour>> _mhtpBehaviours;
 
         /// <summary>
         /// Points structure for this shape
         /// </summary>
         public List<Point> connectionPoints;
 
+        /// <summary>
+        /// Action to be executed when pressure input is received
+        /// </summary>
         protected IAction _action;
         
         /// <summary>
@@ -77,9 +75,8 @@ namespace HapticClientAPI
         public HapticShape()
         {
             connectionPoints = new List<Point>();
-            _mhtpBehaviours = new Dictionary<uint, IBehaviour>();
+            _mhtpBehaviours = new Dictionary<uint, Tuple<STATE, IBehaviour>>();
 
-            state = STATE.up;
             MHTPsManager.Instance.addObserver(this);
         }
 
@@ -151,13 +148,10 @@ namespace HapticClientAPI
         /// <returns></returns>
         public Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(MHTP mhtp, bool pointIsInside)
         {
+            Tuple<STATE, IBehaviour> mhtpState = _mhtpBehaviours.ContainsKey(mhtp.getID()) ? _mhtpBehaviours[mhtp.getID()] : null;
             if (pointIsInside)
             {
-                if (state == STATE.up)
-                {
-                    state = STATE.down;
-                }
-                IBehaviour prevBehaviour = _mhtpBehaviours.ContainsKey(mhtp.getID()) ? _mhtpBehaviours[mhtp.getID()] : null;
+                IBehaviour prevBehaviour = mhtpState != null ? mhtpState.Item2 : null;
                 IBehaviour currentBehaviour = chooseBehaviour(mhtp);
                 currentBehaviour.updateNext(prevBehaviour);
 
@@ -166,29 +160,27 @@ namespace HapticClientAPI
                 {
                     rule = BEHAVIOUR_RULES.NOPE;
                 }
-                _mhtpBehaviours[mhtp.getID()] = currentBehaviour;
+                _mhtpBehaviours[mhtp.getID()] = new Tuple<STATE, IBehaviour>(STATE.down, currentBehaviour);
                 return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, currentBehaviour, prevBehaviour);
             }
-            else if (state == STATE.down)
+            else if (mhtpState != null && mhtpState.Item1 == STATE.down)
             {
-                state = STATE.up;
-                IBehaviour prevBehaviour = _mhtpBehaviours.ContainsKey(mhtp.getID()) ? _mhtpBehaviours[mhtp.getID()] : null; ;
+                IBehaviour prevBehaviour = mhtpState.Item2;
                 IBehaviour currentBehaviour = new BasicBehaviour(mhtp, BasicBehaviour.TYPES.flat);
                 BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
                 if (currentBehaviour.Equals(prevBehaviour))
                 {
                     rule = BEHAVIOUR_RULES.NOPE;
                 }
-                _mhtpBehaviours[mhtp.getID()] = currentBehaviour;
+                _mhtpBehaviours[mhtp.getID()] = new Tuple<STATE, IBehaviour>(STATE.up, currentBehaviour);
                 return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, currentBehaviour, prevBehaviour);
             }
 
             Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> retval = 
                 new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(BEHAVIOUR_RULES.REMOVE,
-                    _mhtpBehaviours.ContainsKey(mhtp.getID()) ? _mhtpBehaviours[mhtp.getID()] : null, null);
-            _mhtpBehaviours[mhtp.getID()] = null;
+                    _mhtpBehaviours.ContainsKey(mhtp.getID()) ? _mhtpBehaviours[mhtp.getID()].Item2 : null, null);
+            _mhtpBehaviours[mhtp.getID()] = new Tuple<STATE, IBehaviour>(STATE.up, null);
             return retval;
-
         }
 
         /// <summary>
@@ -209,9 +201,13 @@ namespace HapticClientAPI
         /// [ TODO ] Currently this event is called only when an actuator is pressed.
         /// Multiple presses are not supported. 
         /// </summary>
-        /// <param name="point"></param>
+        /// <param name="mhtp"></param>
         public abstract void handlePress(MHTP mhtp);
 
+        /// <summary>
+        /// Register action for this HapticShape
+        /// </summary>
+        /// <param name="action"></param>
         public void registerAction(IAction action)
         {
             _action = action;

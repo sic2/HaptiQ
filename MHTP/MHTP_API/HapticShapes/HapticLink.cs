@@ -73,8 +73,6 @@ namespace HapticClientAPI
             double highFrequency = 100 * (Helper.distanceBetweenTwoPoints(mhtp.position, _pair.Item1) / 
                 Helper.distanceBetweenTwoPoints(_pair.Item2, _pair.Item1));
             IBehaviour behaviour = new PulsationBehaviour(mhtp, new Tuple<Point, Point>(_pair.Item2, _pair.Item1), highFrequency);
-            state = STATE.down;
-            
             return behaviour;
         }
 
