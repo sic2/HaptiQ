@@ -100,18 +100,206 @@ The result of the final design iteration is the 8-HaptiQ. Using the same design 
 \end{figure}
 
 The 4-HaptiQ not only is not optimised in terms of space, but its wiring is also not well engineered. As it is possible to observe in figure ~\ref{fig:HaptiQ reference static actuators} the wiring does not allow the device to be used comfortably, especially when one wants to rotate it. 
+The servos in the 8-HaptiQ are organised in couples. Unlike its predecessor, the servos are positioned horizontally (see Figure \missingfigure{picture of two servos bla bla bla}) and the screws are moved more toward the center of rotatory mechanism of the servos. These design choices allow the device to be more compact and still preserve the same functionalities of the 4-HaptiQ. 
+The device is lift up by an additional structure laying below it, allowing the wiring to be less disruptive. 
+
+With the gathering of the wires for the sensors to the center of the device, the position of the sensors is also inverted compared to the 4-HaptiQ. While in the 4-HaptiQ these were meeting in the middle, with this new version of the HaptiQ the sensors are spread to the outside. It is not clear whether this design choice is an advantage or not in terms of usability. Alternatives to this solution will be provided in the near future, as discussed in the Future Work chapter.
+
+The 8-HaptiQ takes a different approach for the design of the actuators guides. In the first version, a base was provided for the actuator, which limits this to move further down when this is at its minimum position (see Figure ~\ref{fig:HaptiQ MinPos}). But to provide an optimal wiring, the 8-HaptiQ combines the guides for all the actuators with the reference plane (see Figure \missingfigure{add sketchup screenshot}). Additional connecting screws alow the actuators to be always controlled by the servos and not to fall below its minimum position. 
 
 \section{The API}
 
+This section discusses the design choices for the API for the HaptiQ. The general idea behind the HaptiQ API is similar to the HapticTouch toolkit \cite{ledo2012haptictouch}. However, this has been completely redesigned to support:
+
 \begin{itemize}
-	\item explain the API structure
-    \item see notes below
+	\item multiple actuators
+    \item multiple pressure sensors
+    \item a completely new approach to HapticObjects and HapticBehaviours
+    \item actions called when input is received by the user
+    \item additional API to get input position of the device from different hardware
 \end{itemize}
+
+Each of these will be discussed in the following sections. 
+
+\subsection{Overall Structure}
+
+The API consists of two main components: the HaptiQ API used to control the device and the Input API (see Figure ~\ref{fig:api}). 
+The HaptiQ API component is designed to provide high and low access to the HaptiQ. This allows the API to be versatile and to be used by beginner, intermediate and advanced developers. 
+The HaptiQ API retrieves the position of the device through the Input API. 
+
+The following two sections describe these components in more details.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\textwidth]{General_overview.png}
+  \caption{API General Overview}
+  \label{fig:api}
+\end{figure}
+
+\subsection{Input API}
+
+Initially, the HaptiQ, like the HTP, was designed to work on a Microsoft PixelSense table \cite{pixelsense}.
+Microsoft Surface Bytetags are located underneath the HTP to get the location of the device in the table. However, official Bytetags are expensive and printing them with a normal printer does not lead to satisfying results. In addition, the HaptiQ will be used in the near future on digital tables that do not support the Surface SDK. Therefore, in order to abstract the HaptiQ API from any hardware input dependence, a separate API component has been created (see Figure ~\ref{fig:input_api}). 
+
+The architectural structure of the Input API is based on the classic Factory pattern. This adds a level of abstraction over the hardware that should be used to get the position of the HaptiQ. Currently the API supports Bytetags and Glyphs recognition \todo[noline]{add reference}. But client applications can also add their own customised class to support different position detection methods. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{input.png}
+  \caption{Input API}
+  \label{fig:input_api}
+\end{figure}
+
+\subsection{HaptiQ API}
+
+The HaptiQ API is the central component of the API, which connects the Input API, the HaptiQ device and the client applications together (see Figure ~\ref{fig:haptiQ_api}). 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\textwidth]{haptiQAPI.png}
+  \caption{HaptiQ API}
+  \label{fig:haptiQ_api}
+\end{figure}
+
+\subsubsection{Haptic Objects}
+Basic haptic objects are provided by the API, to be used easily by WPF applications. The main focus of such applications should be the information one wants to convey, rather than its aesthetics. Therefore, only simple shapes are provided. Obviously, one can extend the HapticShape abstract class to provide more interesting shapes.
+
+It is possible to register an action per object, which gets called whenever input is received from the device through the pressure sensors. 
+
+\missingfigure{add screen shot of all haptic objects}
+
+\begin{itemize}
+	\item circle
+    \item rectangle
+    \item link
+    \item line
+    \item polyline
+\end{itemize}
+
+\subsubsection{Speech Synthesizer}
+
+The Speech Synthesizer is a standalone subcomponent of the HaptiQ API which allows any part of the API, as well as client applications, to output textual information as audio, provided that the machine has a sound card.
+
+While this is a small component, it still plays an important role in the API. Ungar and Blades \cite{ungar2000can} discuss whether the conjoint retention hypothesis, combining spatial and linguistic information, can provide richer haptic cueing. Their study did not show any significant improvement when adding audio feedback. However, they results were not definitive. Therefore, I decided to follow the trend of many commercial applications, like VoiceOver, which use audio to provide textual and position feedback too.
 
 \section{Tactons}
 
+Pietrzak et al. \cite{pietrzak2009creating} propose a set of tactons that can be used on pin array devices and that could be used to indicate edgs and directions. These tactons are designed for a 4x4 pins grid. The HaptiQ provides a maximum of eight actuators, uses lines rather than points to convey haptic cues and can provide height information as well (pin arrays typically provide only 0/1 information). Here, I present a new set of tactons.
+
+A tacton, or behaviour, is used by an HapticObject to notify a device how to react when this is located on top of it. In the provided API there is a strong relationship between each HapticObject and a behaviour. Nonetheless, behaviours can be used by client defined HapticObjects or directly from a client application.
+
+In the following sections, the scale in figure ~\ref{fig:scales} will be used to represent the heights of the actuators \todo[noline]{invert the scales?}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{scales.png}
+  \caption{Blue-Red scale used to indicate the height of the actuators for the 4/8-HaptiQ tactons. Values represent the positions of the actuators in percentage.}
+  \label{fig:scales}
+\end{figure}
+
+\subsection{Flat and Max}
+
+Flat and Max are the simplest tactons of the set (see Figure ~\ref{Basic tactons}). The Flat tacton is typically used to indicate that underneath the device there are no objects or information. The Max behaviour, instead, can be used to represent the existance of an object. For instance, when the device is inside an HapticRectangle the Max behaviour is played. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{basic.png}
+  \caption{Basic tactons: Flat and Max}
+  \label{fig:Basic tactons}
+\end{figure}
+
+\subsection{Notification}
+
+The Notification tacton, similarly to the Max tacton, can also be used to notify an object. In the case being, this tacton is used to notify an HapticCircle. This tacton consists into cyclically change the positions of the actuators (see Figure ~\ref{fig:notification}). 
+
+\begin{figure}[H]
+        \centering
+        \begin{subfigure}[H]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{notification-4.png}
+                \caption{4-HaptiQ}
+                \label{fig:notification-4}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[H]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{notification-8.png}
+                \caption{8-HaptiQ}
+                \label{fig:notification-8}
+        \end{subfigure}
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+        \caption{Notification tacton}\label{fig:notification}
+\end{figure}
+
+\subsection{Direction}
+
+The Direction tacton \todo[noline]{rename to edge?} is probably the most significant one of all the tactons. This allows the HaptiQ to represent edges and corners. 
+
+Figure ~\ref{fig:edges} show how the combinations of actuators, in both the prototypes, are used to represent edges. The resolution of the device is increased by alternatively actuating adjacent actuators. It is possible to achieve a precision of 45° and 22.5° for the 4-HaptiQ and the 8-HaptiQ respectively. 
+
+\begin{figure}[H]
+        \centering
+        \begin{subfigure}[H]{0.3\textwidth}
+                \includegraphics[width=\textwidth]{direction-4.png}
+                \caption{4-HaptiQ}
+                \label{fig:direction-4}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[H]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{direction-8.png}
+                \caption{8-HaptiQ}
+                \label{fig:direction-8}
+        \end{subfigure}
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+        \caption{Direction tacton - Edges}\label{fig:edges}
+\end{figure}
+
+It is also possible to represent corners, which are merely the combinations of two edges. The 4-HaptiQ can represent corners of 90° with a precision of 45° (see Figure ~\ref{fig:corner-4}). Indeed, the 8-HaptiQ can represent corners of 45°, 90° and 135°, with a precision of 22.5° (see Figures ~\ref{fig:corner-8}, ~\ref{fig:corner-8c}). 
+
+\begin{figure}[H]
+        \centering
+        \begin{subfigure}[H]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{corners-4.png}
+                \caption{4-HaptiQ}
+                \label{fig:corner-4}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+          
+        \begin{subfigure}[H]{0.4\textwidth}
+                \includegraphics[width=\textwidth]{corners-8.png}
+                \caption{8-HaptiQ}
+                \label{fig:corner-8}
+        \end{subfigure}
+        ~ 
+         \begin{subfigure}[H]{0.4\textwidth}
+                \includegraphics[width=\textwidth]{corners-8c.png}
+                \caption{8-HaptiQ (combinations)}
+                \label{fig:corner-8c}
+        \end{subfigure}
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+        \caption{Direction tacton - Corners}\label{fig:corners}
+\end{figure}
+
+The Direction tacton is used by the HapticRectangle, to represent its borders, and the HapticLine and HapticPolyline objects. 
+
+\subsection{Pulsation and Linear}
+The Pulsation and Linear tactons are used with the HapticLink to represent the sign of the link between two Haptic objects. Figure ~\ref{fig:pulsation} shows two cases of the pulsation tacton for the 4-HaptiQ. By symmetry it is possible to represent 8 (or 16 for the 8-HaptiQ) directions. This tacton also allows frequency to be specified, so that pulsation increases as one gets closer to the target. 
+
+The Linear tacton, on the other hand, is the union of the pulsation tactons with not pulsation. One can also specify a linear factor, so that the height of the actuators increases linearly as one gets closer to the target. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{pulsation.png}
+  \caption{Pulsation tacton}
+  \label{fig:pulsation}
+\end{figure}
+
+
 
 \section{Applications}
+
+The HaptiQ can provide a new set of haptic cues which allow the visually impaired to better perceive lines, edges and directions. Two basic applications have been implemented using the API previously described.
 
 \section{NOTES:}
 
@@ -126,45 +314,24 @@ The 4-HaptiQ not only is not optimised in terms of space, but its wiring is also
 \end{itemize}
 
 
-
 \begin{enumerate}
 	\item Hardware design
     	\begin{enumerate}
         \item FIRST ITERATION
-        	\item Improving the actuators
-            	show pictures of old HTP and new MHTP
-            \item pressure sensors (they are optional)
-            \item actuators position facilitate directions. this is useful for blind people. an alternative device could provide actuators displaced as a grid.
-            \item 4-MHTP
-            \item 8-MHTP
             \item touch screen display SDK should be able to provide raw input
             \item from Brock's : "most blind seem to explore tactile maps with both hands and all 10 fingers"
             \item the computer needs a sound card for enabling text-to-speech output
         \end{enumerate}
 	\item MHTP API architecture
     	\begin{enumerate}
-        	\item state what architecture is targeted
+
         	\item Factory pattern with reflection in combination with delegation pattern was used to abstract the input from the touch screen device and notify the MHTP manager system
             \item Observer pattern is used to notify haptic shapes about any new input
-            \item Bytetags (or glyphs?) were used to get input from touch screen device (Implementation?)
-            \item custom configuration
-            \item API allows recognition of glyphs using different devices (touch displayes via surface sdk, webcam, etc)
             \item Limitations: there is a lower bound threshold on how often input can be acquired. this depends on the input device, the input technique used and the "refresh rate" of the MHTP
             \item texture recognition not impemented because servos cannot act over a certain frequency. Papert \cite{brown2005first} has a part where it says what's the skin frequency range. Solutions could include electro-vibration or haptic vibration motors (http://www.precisionmicrodrives.com/vibrating-vibrator-vibration-motors)
         \end{enumerate}
-    \item MHTP API allows both high and low level manipulation of the device (in a similar fashion to HTP toolkit)
-    \item Behaviour design
-    \item Haptic objects
+
     \item Text exploration using SpeechSynthetiser - this can be personalised by adding custom haptic shapes which can react differently
 \end{enumerate}
 
-
-\textbf{NOTES:}
-
-\begin{itemize}
-    \item Ungar's paper --> conjoint retention hypothesis: combining spatial and linguistic information
-    \item Ungar's paper --> "overall performance increases because the dual perceptual/linguistic representation provides a richer cueing and retrieval base for the learner to draw from during recall"
-    \item Ungar's paper does not show any strong evidence that linguistic representation might add more to the perceptual one. However, that's a study from 2001
-    \item MHTP can be classified as TUI but dynamic (see Ullmer 2005)
-\end{itemize}
 

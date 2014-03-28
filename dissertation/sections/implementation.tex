@@ -1,3 +1,55 @@
 \chapter{Implementation}
 
-This content of this chapter follows from the Design chapter.
+\section{The Hardware}
+
+\section{The API}
+
+\subsection{Examples}
+
+\lstset{style=sharpc}
+\begin{lstlisting}
+using MHTP_API;
+using HapticClientAPI;
+
+public partial class Application : SurfaceWindow
+{
+  public Application()
+  {
+      MHTPsManager.Create(windowTitle, "SurfaceInput");
+      
+      HapticShape rect0 = new HapticRectangle(50, 50, 150, 200);
+      rect0.color(Brushes.Salmon);
+      this.ContainerTest.Children.Add(rect0);
+      
+      HapticShape rect1 = new HapticRectangle(150, 350, 200, 200);
+      rect1.color(Brushes.Orange);
+      this.ContainerTest.Children.Add(rect1);
+      
+      HapticShape rect2 = new HapticRectangle(550, 150, 100, 100);
+      rect2.color(Brushes.Green);
+      this.ContainerTest.Children.Add(rect2);
+      
+      HapticShape link = new HapticLink(rect2, rect1, false);
+      link.color(Brushes.White);
+      this.ContainerTest.Children.Add(link);
+  }
+}
+\end{lstlisting}
+
+\subsection{Input API}
+
+\begin{itemize}
+	\item targeted architecture
+    \item bytetags, glyphs
+\end{itemize}
+
+\subsection{HaptiQ API}
+
+\subsection{Configuration}
+
+\subsection{Tactons}
+
+\subsection{Applications}
+
+
+

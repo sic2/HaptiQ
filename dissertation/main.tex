@@ -12,9 +12,10 @@
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{titlesec}
 \usepackage[nottoc,notlot,notlof]{tocbibind}
-\usepackage{nth} % allows days formatting. i.e. 1st, 2nd, ..., i-th
+\usepackage{nth} % allows days formatting. i.e. 1st, 2nd , ..., i-th
 \usepackage{url}
 \usepackage[toc,page]{appendix}
+\usepackage{setspace}
 
 \usepackage{hyperref}
 \hypersetup{
@@ -33,15 +34,33 @@
 \renewcommand{\baselinestretch}{1.5}
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+% Allow C# Code to be embedded
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{sharpc}
+{language=[Sharp]C, 
+frame=single, 
+rulecolor=\color{blue!80!black}, 
+keywordstyle=\color{blue}, 
+numbers=left,
+basicstyle=\footnotesize\singlespacing}
+
+
 \begin{document}
 
 \input{./sections/title.tex}
+\clearpage\mbox{}\clearpage
 \newpage
 \input{./sections/abstract.tex}
+\clearpage\mbox{}\clearpage
 \newpage
 \input{./sections/declaration.tex}
+\clearpage\mbox{}\clearpage
 \newpage
 \input{./sections/acknowledgments.tex}
+\clearpage\mbox{}\clearpage
 \newpage
 
 \tableofcontents{hyperref}{links}
