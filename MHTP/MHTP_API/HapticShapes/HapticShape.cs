@@ -50,7 +50,7 @@ namespace HapticClientAPI
         /// <summary>
         /// Information contained in this shape
         /// </summary>
-        protected String information = "No information available";
+        protected String information = "";
 
         /// <summary>
         /// Associate an MHTP with a specific current behaviour

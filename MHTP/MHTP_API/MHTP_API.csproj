@@ -55,7 +55,9 @@
   <ItemGroup>
     <Compile Include="Actuator.cs" />
     <Compile Include="AudioManager\SpeechOutput.cs" />
+    <Compile Include="Actions\BasicAction.cs" />
     <Compile Include="Behaviours\Behaviour.cs" />
+    <Compile Include="Behaviours\LinearBehaviour.cs" />
     <Compile Include="Behaviours\PulsationBehaviour.cs" />
     <Compile Include="Config\Configuration.cs" />
     <Compile Include="Config\ConfigurationForm.cs">
@@ -69,12 +71,15 @@
     <Compile Include="CustomADT\SerializableDictionary.cs" />
     <Compile Include="CustomADT\SerializableTuple.cs" />
     <Compile Include="HapticShapes\HapticCircle.cs" />
+    <Compile Include="HapticShapes\HapticLine.cs" />
     <Compile Include="HapticShapes\HapticLink.cs" />
+    <Compile Include="HapticShapes\HapticPolyline.cs" />
     <Compile Include="HapticShapes\HapticRectangle.cs" />
     <Compile Include="HapticShapes\HapticShape.cs" />
     <Compile Include="HapticShapes\IHapticObject.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Behaviours\IBehaviour.cs" />
+    <Compile Include="Actions\IAction.cs" />
     <Compile Include="MHTP.cs" />
     <Compile Include="MHTPsManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

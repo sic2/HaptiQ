@@ -12,7 +12,7 @@ namespace MHTP_API
     /// an actuator or a set of actuators change the height linearly
     /// </summary>
     public class LinearBehaviour : Behaviour
-    { 
+    {
         private const int NUMBER_ACTUATORS_DIVIDER = 4;
         private const double HIGH_POSITION_PERCENTAGE = 0.8;
 
@@ -34,7 +34,8 @@ namespace MHTP_API
         /// <param name="mhtp"></param>
         /// <param name="segment"></param>
         /// <param name="frequency"></param>
-        public LinearBehaviour(MHTP mhtp, Tuple<Point, Point> segment, double ratio):base(mhtp)
+        public LinearBehaviour(MHTP mhtp, Tuple<Point, Point> segment, double ratio)
+            : base(mhtp)
         {
             _segment = segment;
             TIME = 0;
@@ -68,18 +69,18 @@ namespace MHTP_API
                 int activeActs = singleActuatorsMatrix[matrixIndex];
                 activeActs = RshiftActs(activeActs, (int)(sector / 2), _actuators.Count);
                 bitsToActuators(_actuators.Count, activeActs, false, false, ref output);
-                setZerosToMinimum(_actuators.Count, activeActs, ref output); 
+                setZerosToMinimum(_actuators.Count, activeActs, ref output);
             }
             else // Double actuators sector
             {
-                int[] acts = (int[]) dynamicActuatorsMatrix[matrixIndex].Clone();
+                int[] acts = (int[])dynamicActuatorsMatrix[matrixIndex].Clone();
                 acts[0] = RshiftActs(acts[0], (int)((sector - 1) / 2), _actuators.Count);
                 acts[1] = RshiftActs(acts[1], (int)((sector - 1) / 2), _actuators.Count);
                 bitsToActuators(_actuators.Count, acts[0] | acts[1], false, false, ref output);
-                setZerosToMinimum(_actuators.Count, (acts[0] | acts[1]), ref output); 
+                setZerosToMinimum(_actuators.Count, (acts[0] | acts[1]), ref output);
             }
         }
-        
+
         /// <summary>
         /// Override equals to allow LinearBehaviour to be compared correctly.
         /// </summary>
@@ -112,4 +113,5 @@ namespace MHTP_API
                 return hash;
             }
         }
+    }
 }
