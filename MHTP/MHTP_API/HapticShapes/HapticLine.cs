@@ -66,6 +66,15 @@ namespace HapticClientAPI
         }
 
         /// <summary>
+        /// Return the two end points of this haptic line
+        /// </summary>
+        /// <returns></returns>
+        public Tuple<Point, Point> getEndPoints()
+        {
+            return _pair;
+        }
+
+        /// <summary>
         /// Override OnRender to display tollerance borders of the shape
         /// </summary>
         /// <param name="drawingContext"></param>

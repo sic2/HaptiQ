@@ -32,6 +32,9 @@ namespace HapticClientAPI
             _hasDirection = hadDirection;
 
             _pair = Helper.findNearestPoints(hapticShapeSrc.connectionPoints, hapticShapeDst.connectionPoints);
+            hapticShapeSrc.connections.Add(new Tuple<Point, HapticLink>(_pair.Item1, this));
+            hapticShapeDst.connections.Add(new Tuple<Point, HapticLink>(_pair.Item2, this));
+
             this.geometry = new LineGeometry(_pair.Item1.toSysWinPoint(), _pair.Item2.toSysWinPoint());
         }
 
@@ -74,6 +77,24 @@ namespace HapticClientAPI
                 Helper.distanceBetweenTwoPoints(_pair.Item2, _pair.Item1));
             IBehaviour behaviour = new PulsationBehaviour(mhtp, new Tuple<Point, Point>(_pair.Item2, _pair.Item1), highFrequency);
             return behaviour;
+        }
+
+        /// <summary>
+        /// Return a tuple of haptic shapes connected by this haptic link
+        /// </summary>
+        /// <returns></returns>
+        public Tuple<HapticShape, HapticShape> getLinkedHapticShapes()
+        {
+            return new Tuple<HapticShape, HapticShape>(_hapticShapeSrc, _hapticShapeDst);
+        }
+
+        /// <summary>
+        /// Return the two end points of this haptic link
+        /// </summary>
+        /// <returns></returns>
+        public Tuple<Point, Point> getEndPoints()
+        {
+            return _pair;
         }
 
         /// <summary>

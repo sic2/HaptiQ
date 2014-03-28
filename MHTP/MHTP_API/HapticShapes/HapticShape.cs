@@ -63,6 +63,13 @@ namespace HapticClientAPI
         public List<Point> connectionPoints;
 
         /// <summary>
+        /// List of Tuples, where each tuple contains:
+        /// a connection point of this HapticShape and 
+        /// the hapticLink leaving from such point.
+        /// </summary>
+        public List<Tuple<Point, HapticLink>> connections;
+
+        /// <summary>
         /// Action to be executed when pressure input is received
         /// </summary>
         protected IAction _action;
@@ -75,6 +82,7 @@ namespace HapticClientAPI
         public HapticShape()
         {
             connectionPoints = new List<Point>();
+            connections = new List<Tuple<Point, HapticLink>>();
             _mhtpBehaviours = new Dictionary<uint, Tuple<STATE, IBehaviour>>();
 
             MHTPsManager.Instance.addObserver(this);

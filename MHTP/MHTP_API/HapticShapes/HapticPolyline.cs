@@ -109,7 +109,15 @@ namespace HapticClientAPI
                 }
             }
             return new DirectionBehaviour(mhtp, lines);
-            
+        }
+
+        /// <summary>
+        /// Return the points that make this polyline
+        /// </summary>
+        /// <returns></returns>
+        public List<Point> getPoints()
+        {
+            return _points;
         }
 
         /// <summary>

@@ -49,7 +49,9 @@ namespace MHTP_API
         /// </summary>
         /// <param name="srcPoints"></param>
         /// <param name="dstPoints"></param>
-        /// <returns></returns>
+        /// <returns>Tuple of points. 
+        /// The first item belongs to srcPoints.
+        /// The second item belongs to dstPoints</returns>
         public static Tuple<Point, Point> findNearestPoints(List<Point> srcPoints, List<Point> dstPoints)
         {
             if (srcPoints == null || dstPoints == null)
