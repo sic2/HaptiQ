@@ -2,12 +2,26 @@
 
 \section{The Hardware}
 
+Designed in Sketchup and printed using MakerBot\textregistered  Replicator\texttrademark 2x (experimental 3d printer)
+
 \section{The API}
+
+\subsection{Input API}
+
+\begin{itemize}
+	\item targeted architecture
+    \item bytetags, glyphs
+\end{itemize}
+
+\subsection{HaptiQ API}
 
 \subsection{Examples}
 
+The API, as previously state, has been designed and implemented so that even beginners can easily use it. Code ~\ref{lst:basicAPIUsage} shows a very basic example of its usage. 
+
+
 \lstset{style=sharpc}
-\begin{lstlisting}
+\begin{lstlisting}[caption={Basic API usage},label={lst:basicAPIUsage}]
 using MHTP_API;
 using HapticClientAPI;
 
@@ -36,20 +50,11 @@ public partial class Application : SurfaceWindow
 }
 \end{lstlisting}
 
-\subsection{Input API}
+\section{Configuration}
 
-\begin{itemize}
-	\item targeted architecture
-    \item bytetags, glyphs
-\end{itemize}
+\section{Tactons}
 
-\subsection{HaptiQ API}
-
-\subsection{Configuration}
-
-\subsection{Tactons}
-
-\subsection{Applications}
+\section{Applications}
 
 
 
