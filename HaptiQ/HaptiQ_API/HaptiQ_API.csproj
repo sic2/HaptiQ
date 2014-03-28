@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actuator.cs" />
+    <Compile Include="AudioManager\BeepOutput.cs" />
     <Compile Include="AudioManager\SpeechOutput.cs" />
     <Compile Include="Actions\BasicAction.cs" />
     <Compile Include="Behaviours\Behaviour.cs" />

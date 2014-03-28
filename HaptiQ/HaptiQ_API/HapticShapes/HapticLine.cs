@@ -49,10 +49,31 @@ namespace HapticClientAPI
         }
 
         /// <summary>
+        /// Returns true if a given point is near a segment.
+        /// Play sound, changing duration when getting further away.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="startLine"></param>
+        /// <param name="endLine"></param>
+        /// <param name="TOLLERANCE"></param>
+        /// <returns></returns>
+        protected override bool pointIsCloseToSegment(Point point, Point startLine, Point endLine, double TOLLERANCE)
+        {
+            double dst = distancePointToSegment(point, startLine, endLine);
+            int duration = (int) dst * ((BeepOutput.MIN_DURATION - BeepOutput.MAX_DURATION) / (int) TOLLERANCE);
+            if (dst <= TOLLERANCE)
+            {
+                BeepOutput.Beep(duration);
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Handle a press.
         /// This method needs to be implemented if a new feature is wanted.
         /// </summary>
-        /// <param name="HaptiQ"></param>
+        /// <param name="haptiQ"></param>
         public override void handlePress(HaptiQ haptiQ)
         {
             // Do nothing

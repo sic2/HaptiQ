@@ -126,10 +126,23 @@ namespace HapticClientAPI
         /// <param name="endLine"></param>
         /// <param name="TOLLERANCE"></param>
         /// <returns></returns>
-        protected bool pointIsCloseToSegment(Point point, Point startLine, Point endLine, double TOLLERANCE)
+        protected virtual bool pointIsCloseToSegment(Point point, Point startLine, Point endLine, double TOLLERANCE)
         {
-            double d = Math.Sqrt(distanceToSegmentSquared(point, startLine, endLine));
-            return d <= TOLLERANCE;
+            double dst = Math.Sqrt(distanceToSegmentSquared(point, startLine, endLine));
+            return dst <= TOLLERANCE;
+        }
+
+        /// <summary>
+        /// Returns the distance between a point and a segment
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="startLine"></param>
+        /// <param name="endLine"></param>
+        /// <returns></returns>
+        protected double distancePointToSegment(Point point, Point startLine, Point endLine)
+        {
+            double dst = Math.Sqrt(distanceToSegmentSquared(point, startLine, endLine));
+            return dst;
         }
 
         private double distanceSquared(Point v, Point w)
