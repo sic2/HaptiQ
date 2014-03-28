@@ -4,7 +4,6 @@ using System.Windows.Media;
 using Input_API;
 using HaptiQ_API;
 
-
 namespace HapticClientAPI
 {
     /// <summary>
