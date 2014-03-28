@@ -42,7 +42,7 @@ namespace SurfaceApp1
             rectC.color(Brushes.Salmon);
             this.ContainerTest.Children.Add(rectC);
 
-            HapticShape link0 = new HapticLink(rectC, rect, false);
+            HapticShape link0 = new HapticLink(rect, rectC);
             link0.color(Brushes.White);
             this.ContainerTest.Children.Add(link0);
 
@@ -54,7 +54,7 @@ namespace SurfaceApp1
             rect2.color(Brushes.Green);
             this.ContainerTest.Children.Add(rect2);
 
-            HapticShape link = new HapticLink(rect2, rect1, false);
+            HapticShape link = new HapticLink(rect2, rect1);
             link.color(Brushes.White);
             this.ContainerTest.Children.Add(link);
 
@@ -67,7 +67,7 @@ namespace SurfaceApp1
             line.color(Brushes.GhostWhite);
             this.ContainerTest.Children.Add(line);
 
-            HapticShape circle1 = new HapticCircle(400, 400, 100);
+            HapticShape circle1 = new HapticCircle(700, 400, 100);
             circle1.color(Brushes.White);
             this.ContainerTest.Children.Add(circle1);
 

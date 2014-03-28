@@ -127,7 +127,7 @@ namespace HapticClientAPI
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-            foreach (Point point in connectionPoints)
+            foreach (Point point in _points)
             { 
                 drawingContext.DrawEllipse(null, new Pen(Brushes.Red, 1.0),
                 point.toSysWinPoint(), NEARNESS_TOLLERANCE, NEARNESS_TOLLERANCE);

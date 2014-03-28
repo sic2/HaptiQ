@@ -4,6 +4,7 @@ using System.Windows.Media;
 using Input_API;
 using HaptiQ_API;
 
+
 namespace HapticClientAPI
 {
     /// <summary>
@@ -15,7 +16,6 @@ namespace HapticClientAPI
     {
         private HapticShape _hapticShapeSrc;
         private HapticShape _hapticShapeDst;
-        private bool _hasDirection;
 
         private Tuple<Point, Point> _pair;
 
@@ -25,11 +25,10 @@ namespace HapticClientAPI
         /// <param name="hapticShapeSrc"></param>
         /// <param name="hapticShapeDst"></param>
         /// <param name="hadDirection"></param>
-        public HapticLink(HapticShape hapticShapeSrc, HapticShape hapticShapeDst, bool hadDirection) : base()
+        public HapticLink(HapticShape hapticShapeSrc, HapticShape hapticShapeDst) : base()
         {
             _hapticShapeSrc = hapticShapeSrc;
             _hapticShapeDst = hapticShapeDst;
-            _hasDirection = hadDirection;
 
             _pair = Helper.findNearestPoints(hapticShapeSrc.connectionPoints, hapticShapeDst.connectionPoints);
             hapticShapeSrc.connections.Add(new Tuple<Point, HapticLink>(_pair.Item1, this));
@@ -71,11 +70,9 @@ namespace HapticClientAPI
 
         protected override IBehaviour chooseBehaviour(HaptiQ haptiQ)
         {
-            // TODO - what about item2? do not hardcode this 
-            // XXX - apply non-linear function !?
-            double highFrequency = 100 * (Helper.distanceBetweenTwoPoints(haptiQ.position, _pair.Item1) / 
+            double highFrequency = 100 * (Helper.distanceBetweenTwoPoints(haptiQ.position, _pair.Item2) / 
                 Helper.distanceBetweenTwoPoints(_pair.Item2, _pair.Item1));
-            IBehaviour behaviour = new PulsationBehaviour(haptiQ, new Tuple<Point, Point>(_pair.Item2, _pair.Item1), highFrequency);
+            IBehaviour behaviour = new PulsationBehaviour(haptiQ, new Tuple<Point, Point>(_pair.Item1, _pair.Item2), highFrequency);
             return behaviour;
         }
 
@@ -104,9 +101,9 @@ namespace HapticClientAPI
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-            drawingContext.DrawEllipse(null, new Pen(Brushes.Red, 1.0), 
+            drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 1.0), 
                 _pair.Item1.toSysWinPoint(), NEARNESS_TOLLERANCE, NEARNESS_TOLLERANCE);
-            drawingContext.DrawEllipse(null, new Pen(Brushes.Red, 1.0), 
+            drawingContext.DrawEllipse(Brushes.Green, new Pen(Brushes.Green, 1.0), 
                 _pair.Item2.toSysWinPoint(), NEARNESS_TOLLERANCE, NEARNESS_TOLLERANCE);
 
         }
