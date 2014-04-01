@@ -41,7 +41,7 @@ namespace HapticClientAPI
 
         protected override IBehaviour chooseBehaviour(HaptiQ haptiQ)
         {
-            return new BasicBehaviour(haptiQ, BasicBehaviour.TYPES.notification, getFrequency(haptiQ.position));
+            return new NotificationBehaviour(haptiQ, getFrequency(haptiQ.position));
         }
 
         protected override bool pointIsInside(Point point)

@@ -59,6 +59,7 @@
     <Compile Include="Actions\BasicAction.cs" />
     <Compile Include="Behaviours\Behaviour.cs" />
     <Compile Include="Behaviours\LinearBehaviour.cs" />
+    <Compile Include="Behaviours\NotificationBehaviour.cs" />
     <Compile Include="Behaviours\PulsationBehaviour.cs" />
     <Compile Include="Config\Configuration.cs" />
     <Compile Include="Config\ConfigurationForm.cs">

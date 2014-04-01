@@ -12,18 +12,17 @@ namespace HaptiQ_API
     public class BasicBehaviour : Behaviour
     {
         private const int DEFAULT_FREQUENCY = 1;
-        private const int INIT_CURRENT_ACTIVE_ACTS = 1;
-        private const int INIT_PREV_ACTIVE_ACTS = 1;
         private const double DEFAULT_POS = 0.7;
         private const int DEFAULT_WAITING_MS = 200;
   
         private double _frequency;
-        private double[,] _positions;
+        private int _actuatorsToActivate;
 
         /// <summary>
         /// This enum is used to specify the type of BasicBehaviour
         /// </summary>
-        public enum TYPES { 
+        public enum TYPES 
+        { 
             /// <summary>
             /// A flat behaviour puts all actuators to their minimum position
             /// </summary>
@@ -31,11 +30,8 @@ namespace HaptiQ_API
             /// <summary>
             /// A max behaviour moves all actuators to their maximum position
             /// </summary>
-            max,
-            /// <summary>
-            /// A notification behaviour moves all the actuators alternatively
-            /// </summary>
-            notification };
+            max
+        };
 
         private TYPES _type;
 
@@ -59,30 +55,21 @@ namespace HaptiQ_API
             _type = type;
             TIME = 0;
             _frequency = frequency;
+            highPosition = DEFAULT_POS;
+            lowPosition = MIN_POSITION;
 
-            _positions = new double[_actuators.Count(), 2];
-            double position = 0.0;
-            double direction = 0;
-            for (int i = 0; i < _positions.GetLength(0); i++)
+            if (type == TYPES.flat)
             {
-                switch (type)
-                {
-                    case TYPES.flat:
-                        position = MIN_POSITION;
-                        break;
-                    case TYPES.max:
-                        position = MAX_POSITION;
-                        break;
-                    case TYPES.notification:
-                        position += 1.0 / (_positions.GetLength(0) - 1);
-                        direction = 1; // Increasing direction
-                        break;
-                    default:
-                        break;
-                }
-               
-                _positions[i, 0] = position;
-                _positions[i, 1] = direction;
+                _actuatorsToActivate = 0;
+            }
+            else if (type == TYPES.max)
+            {
+                _actuatorsToActivate = (int) (Math.Pow(2, _actuators.Count()) - 1);
+            }
+            else
+            {
+                 _actuatorsToActivate = 0;
+                Helper.Logger("HaptiQ_API.BasicBehaviour.BasicBehaviour::type " + type + " undefined");
             }
         }
 
@@ -94,55 +81,10 @@ namespace HaptiQ_API
         {
             Dictionary<int, double> retval = new Dictionary<int, double>();
             TIME++;
-
-            double offset = 1.0 / (_positions.GetLength(0) - 1);
-            for (int i = 0; i < _positions.GetLength(0); i++)
-            {
-                if (_positions[i, 1] == 1)
-                {
-                    if (_positions[i, 0] + offset <= 1.0)
-                    {
-                        _positions[i, 0] += offset;
-                    }
-                    else
-                    {
-                        _positions[i, 1] = -1;
-                        _positions[i, 0] -= offset;
-                    }
-                }
-                else if (_positions[i, 1] == -1)
-                {
-                    if (_positions[i, 0] - offset >= 0.0)
-                    {
-                        _positions[i, 0] -= offset;
-                    }
-                    else
-                    {
-                        _positions[i, 1] = 1;
-                        _positions[i, 0] += offset;
-                    }
-                }
-                // Reduce position by half the pressure percentage
-                retval[i] = _positions[i, 0] * 
-                   (1 - _actuatorsDict[i].pressure / (2.0 * Actuator.MAX_PRESSURE));
-            }
-
+            bitsToActuators(_actuators.Count, _actuatorsToActivate, false, true, ref retval);
+          
             System.Threading.Thread.Sleep((int)(DEFAULT_WAITING_MS * _frequency));
             return retval;
-        }
-
-        /// <summary>
-        /// Updates this behaviour based on an another behaviour
-        /// </summary>
-        /// <param name="behaviour"></param>
-        public override void updateNext(IBehaviour behaviour)
-        {
-            base.updateNext(behaviour);
-            BasicBehaviour basicBehaviour = behaviour as BasicBehaviour;
-            if (basicBehaviour != null && basicBehaviour._type == this._type)
-            {
-                this._positions = basicBehaviour._positions;
-            }
         }
 
         /// <summary>
