@@ -173,11 +173,37 @@ private int[][][] directionMatrix = new int[][][]
                    };
 \end{lstlisting}
 
-The second approach generalises the initial approach, by representing actuators as bits, rather than integers within arrays, and applying bitwise operations. 
+The second approach generalises the initial approach, by representing actuators as bits, rather than integers within arrays, and applying bitwise operations (see Figure ~\ref{fig:bits}). 
 
-\todo[inline]{bitwise operations explained}
+For example, to represent a vertical line in the 4-HaptiQ, we can just use the number five:
 
-\section{Examples}
+		0101 (5) = 0001 (1) \& 0100 (4) \\
+Shifting numbers to right (or left) with carry allows behaviours to choose what actuators to use. 
+The shifting offset is based on the orientation of the device compared to the segment it has to represent. Finding this value consists into subdividing the HaptiQ in logical sectors. For instance, the 4-HaptiQ is divided in eight sectors (see Figure ~\ref{fig:sectors}). Even sectors, in red, represent states that the device needs to represent by alternating actuators over time.
+
+Say that 0101 is valid for the first sector, then when the device is in the third sector a shift by one only is needed: $0101 \gg 1$ = 1010 (with carry). For the case of even sectors, bits are not ended, but applied with condition:
+
+		0001 (timer mod 2 == 0)
+        
+        0100 (timer mod 2 != 0)
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{bits.png}
+  \caption{Actuators bits representation}
+  \label{fig:bits}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{sectors.png}
+  \caption{4-HaptiQ sectors}
+  \label{fig:sectors}
+\end{figure}
+
+Similar bitwise operations, as described above, are applied for the direction, pulsation, and linear tactons. The notification tacton, however, takes a different approach since each actuator can be in different states (see Section \ref{sec:notification}). The solution used is to use a 2-D array with values [position, direction] for each actuator, where the direction indicates whether the position should increase or decrease in the current iteration. The direction is inverted when the minimum or maximum allowed position is reached.  
+
+\section{A basic example}
 
 In this section, I will show how to use the API using a simple example (see Code ~\ref{lst:basicAPIUsage}). This section is necessary to properly understand section ~\ref{sec:Applications}, which discusses the provided example applications of this project.
 
