@@ -38,14 +38,9 @@ namespace HapticClientAPI
             this.StrokeThickness = 20;
         }
 
-        /// <summary>
-        /// Handle input and return appropriate behaviour
-        /// </summary>
-        /// <param name="haptiQ"></param>
-        /// <returns></returns>
-        public override Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(HaptiQ haptiQ)
+        protected override bool pointIsInside(Point point)
         {
-            return handleInput(haptiQ, pointIsCloseToSegment(haptiQ.position, _pair.Item1, _pair.Item2, NEARNESS_TOLLERANCE));
+            return pointIsCloseToSegment(point, _pair.Item1, _pair.Item2, NEARNESS_TOLLERANCE);
         }
 
         /// <summary>

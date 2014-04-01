@@ -18,7 +18,7 @@ namespace HaptiQ_API
         private const int DEFAULT_WAITING_MS = 200;
   
         private double _frequency;
-        private double[,] positions; // TODO - use underscore for private field
+        private double[,] _positions;
 
         /// <summary>
         /// This enum is used to specify the type of BasicBehaviour
@@ -60,10 +60,10 @@ namespace HaptiQ_API
             TIME = 0;
             _frequency = frequency;
 
-            positions = new double[_actuators.Count(), 2];
+            _positions = new double[_actuators.Count(), 2];
             double position = 0.0;
             double direction = 0;
-            for (int i = 0; i < positions.GetLength(0); i++)
+            for (int i = 0; i < _positions.GetLength(0); i++)
             {
                 switch (type)
                 {
@@ -74,15 +74,15 @@ namespace HaptiQ_API
                         position = MAX_POSITION;
                         break;
                     case TYPES.notification:
-                        position += 1.0 / (positions.GetLength(0) - 1);
+                        position += 1.0 / (_positions.GetLength(0) - 1);
                         direction = 1; // Increasing direction
                         break;
                     default:
                         break;
                 }
                
-                positions[i, 0] = position;
-                positions[i, 1] = direction;
+                _positions[i, 0] = position;
+                _positions[i, 1] = direction;
             }
         }
 
@@ -95,35 +95,35 @@ namespace HaptiQ_API
             Dictionary<int, double> retval = new Dictionary<int, double>();
             TIME++;
 
-            double offset = 1.0 / (positions.GetLength(0) - 1);
-            for (int i = 0; i < positions.GetLength(0); i++)
+            double offset = 1.0 / (_positions.GetLength(0) - 1);
+            for (int i = 0; i < _positions.GetLength(0); i++)
             {
-                if (positions[i, 1] == 1)
+                if (_positions[i, 1] == 1)
                 {
-                    if (positions[i, 0] + offset <= 1.0)
+                    if (_positions[i, 0] + offset <= 1.0)
                     {
-                        positions[i, 0] += offset;
+                        _positions[i, 0] += offset;
                     }
                     else
                     {
-                        positions[i, 1] = -1;
-                        positions[i, 0] -= offset;
+                        _positions[i, 1] = -1;
+                        _positions[i, 0] -= offset;
                     }
                 }
-                else if (positions[i, 1] == -1)
+                else if (_positions[i, 1] == -1)
                 {
-                    if (positions[i, 0] - offset >= 0.0)
+                    if (_positions[i, 0] - offset >= 0.0)
                     {
-                        positions[i, 0] -= offset;
+                        _positions[i, 0] -= offset;
                     }
                     else
                     {
-                        positions[i, 1] = 1;
-                        positions[i, 0] += offset;
+                        _positions[i, 1] = 1;
+                        _positions[i, 0] += offset;
                     }
                 }
                 // Reduce position by half the pressure percentage
-                retval[i] = positions[i, 0] * 
+                retval[i] = _positions[i, 0] * 
                    (1 - _actuatorsDict[i].pressure / (2.0 * Actuator.MAX_PRESSURE));
             }
 
@@ -141,7 +141,7 @@ namespace HaptiQ_API
             BasicBehaviour basicBehaviour = behaviour as BasicBehaviour;
             if (basicBehaviour != null && basicBehaviour._type == this._type)
             {
-                this.positions = basicBehaviour.positions;
+                this._positions = basicBehaviour._positions;
             }
         }
 

@@ -118,6 +118,8 @@ namespace HapticClientAPI
             this.information = information;
         }
 
+        protected abstract bool pointIsInside(Point point);
+
         /// <summary>
         /// Returns true if a given point is near a segment. 
         /// </summary>
@@ -165,12 +167,11 @@ namespace HapticClientAPI
         /// Handle behaviours on input
         /// </summary>
         /// <param name="haptiQ"></param>
-        /// <param name="pointIsInside"></param>
         /// <returns></returns>
-        public Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(HaptiQ haptiQ, bool pointIsInside)
+        public Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(HaptiQ haptiQ)
         {
             Tuple<STATE, IBehaviour> HaptiQState = _HaptiQBehaviours.ContainsKey(haptiQ.getID()) ? _HaptiQBehaviours[haptiQ.getID()] : null;
-            if (pointIsInside)
+            if (pointIsInside(haptiQ.position))
             {
                 IBehaviour prevBehaviour = HaptiQState != null ? HaptiQState.Item2 : null;
                 IBehaviour currentBehaviour = chooseBehaviour(haptiQ);
@@ -211,11 +212,6 @@ namespace HapticClientAPI
         /// <returns></returns>
         protected abstract IBehaviour chooseBehaviour(HaptiQ haptiQ);
 
-        /// <summary>
-        /// Method definition as in #IHapticObject. 
-        /// </summary>
-        /// <param name="haptiQ"></param>
-        public abstract Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(HaptiQ haptiQ);
 
         /// <summary>
         /// Handle an actuator press. 

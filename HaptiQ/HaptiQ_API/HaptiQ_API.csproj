@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HaptiQ_API</RootNamespace>
-    <AssemblyName>MHTP_API</AssemblyName>
+    <AssemblyName>HaptiQ_API</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\MHTP_API.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\HaptiQ_API.XML</DocumentationFile>
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -54,8 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actuator.cs" />
-    <Compile Include="AudioManager\BeepOutput.cs" />
-    <Compile Include="AudioManager\SpeechOutput.cs" />
+    <Compile Include="Audio\BeepOutput.cs" />
+    <Compile Include="Audio\SpeechOutput.cs" />
     <Compile Include="Actions\BasicAction.cs" />
     <Compile Include="Behaviours\Behaviour.cs" />
     <Compile Include="Behaviours\LinearBehaviour.cs" />

@@ -48,16 +48,6 @@ namespace HapticClientAPI
         }
 
         /// <summary>
-        /// Handle input for an haptic rectangle.
-        /// If point is inside the rectangle, an appropriate behaviour is calculated and returned.
-        /// </summary>
-        /// <param name="haptiQ"></param>
-        public override Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(HaptiQ haptiQ)
-        {
-            return handleInput(haptiQ, pointIsInside(haptiQ.position));
-        }
-
-        /// <summary>
         /// Output information content via audio if input was received 
         /// for a device currently in this haptic rectangle
         /// </summary>
@@ -78,7 +68,7 @@ namespace HapticClientAPI
             }
         }
 
-        private bool pointIsInside(Point point)
+        protected override bool pointIsInside(Point point)
         {
             return (point.X >= (x - BORDERS_TOLLERANCE) &&
                 point.X <= (x + width + BORDERS_TOLLERANCE)) && 

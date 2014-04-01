@@ -48,16 +48,6 @@ namespace HapticClientAPI
         } 
 
         /// <summary>
-        /// Handle a received position input. 
-        /// Return appropriate behaviour if point is inside this haptic link
-        /// <param name="haptiQ"></param>
-        /// </summary>
-        public override Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(HaptiQ haptiQ)
-        {
-            return handleInput(haptiQ, pointIsCloseToSegment(haptiQ.position, _pair.Item1, _pair.Item2, NEARNESS_TOLLERANCE));
-        }
-
-        /// <summary>
         /// Handle a press.
         /// This method needs to be implemented if a new feature is wanted.
         /// </summary>
@@ -73,6 +63,11 @@ namespace HapticClientAPI
                 Helper.distanceBetweenTwoPoints(_pair.Item2, _pair.Item1));
             IBehaviour behaviour = new PulsationBehaviour(haptiQ, new Tuple<Point, Point>(_pair.Item1, _pair.Item2), highFrequency);
             return behaviour;
+        }
+
+        protected override bool pointIsInside(Point point)
+        {
+            return pointIsCloseToSegment(point, _pair.Item1, _pair.Item2, NEARNESS_TOLLERANCE);
         }
 
         /// <summary>

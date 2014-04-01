@@ -34,11 +34,6 @@ namespace HapticClientAPI
             connectionPoints.Add(new Point(x - sqrtTwo * radius, y - sqrtTwo * radius));
         }
 
-        public override Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(HaptiQ haptiQ)
-        {
-            return handleInput(haptiQ, pointIsInside(haptiQ.position));
-        }
-
         public override void handlePress(HaptiQ haptiQ)
         {
             // TODO
@@ -49,7 +44,7 @@ namespace HapticClientAPI
             return new BasicBehaviour(haptiQ, BasicBehaviour.TYPES.notification, getFrequency(haptiQ.position));
         }
 
-        private bool pointIsInside(Point point)
+        protected override bool pointIsInside(Point point)
         {
             return Math.Pow((point.X - x), 2) + Math.Pow(point.Y - y, 2) < Math.Pow(radius + NEARNESS_TOLLERANCE, 2);
         }
@@ -61,7 +56,7 @@ namespace HapticClientAPI
             return (-1.0 / (2 * radius)) * dst + 1;
         }
 
-        private double dstFromCenter(Point point)
+        protected virtual double dstFromCenter(Point point)
         {
             return Math.Sqrt(Math.Pow((point.X - x), 2) + Math.Pow(point.Y - y, 2));
         }

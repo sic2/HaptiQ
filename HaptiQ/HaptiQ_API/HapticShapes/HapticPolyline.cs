@@ -44,16 +44,6 @@ namespace HapticClientAPI
         }
 
         /// <summary>
-        /// Handle input and return appropriate behaviour
-        /// </summary>
-        /// <param name="haptiQ"></param>
-        /// <returns></returns>
-        public override Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(HaptiQ haptiQ)
-        {
-            return handleInput(haptiQ, pointIsInPolyline(haptiQ.position));
-        }
-
-        /// <summary>
         /// Handle a press.
         /// This method needs to be implemented if a new feature is wanted.
         /// </summary>
@@ -61,6 +51,11 @@ namespace HapticClientAPI
         public override void handlePress(HaptiQ haptiQ)
         {
             // Do nothing
+        }
+
+        protected override bool pointIsInside(Point point)
+        {
+            return pointIsInPolyline(point);
         }
 
         private bool pointIsInPolyline(Point point)
