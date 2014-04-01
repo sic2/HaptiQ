@@ -1,17 +1,13 @@
 \chapter{Future Work}
 \label{chap:futureWork}
 
-\begin{itemize}
-	\item evaluate HaptiQ through a user study (this will be done by Regis)
-	\item additional tactons
-    \item improve the mechanics of the HaptiQ and restructure the servos position so to minimise the overall dimension of the device
-    \item combine the use of the HaptiQ and other inputs, like fingers. 
-    \item add a break to device for simulating friction
-    \item increase resolution of HaptiQ
-    \item rotate device on itself to allow higher resolution
-\end{itemize}
+The HaptiQ aims to take the Haptic Tabletop Puck to the next level, by allowing the visually impaired to sense edges, corners and directions, and still keeping the hardware design inexpensive. In the future, I plan to pursue additional work in collaboration with Régis Ongaro-Carcy, Saad Attieh, and Dr Miguel A. Nacenta. This chapter intends to highlight the potential work that could be planned for the near future, as well as the work currently pursued by Régis Ongaro-Carcy and Miguel A. Nacenta. 
 
-\begin{itemize}
-    \item evaluate the learning rate for blind people in terms of behaviours of the device
-    \item possible experiment --> use of HaptiQ with audio VS audio only (like VoiceOver in iphone)
-\end{itemize}
+One of the aims of this project is to distribute this work under the GNU General Public License. We believe that the HaptiQ can facilitate blind people to use interactive surfaces without having to spend a considerable amount of money and still providing a sufficient quality haptic-audio feedback. 
+The next iteration of the HaptiQ will focus on improving the design and mechanics. The current device is easy to print, but requires about 10 hours of assembling. It is important to redesign some of the pieces and the structure of the device, making the HaptiQ more modular and easy to access to people with no experience with 3D printing and models construction. 
+
+In this work no user study was conducted. While the HaptiQ seems to perform very well, it is still unknown how helpful the provided tactons are. A user study with people with visual impairments could help understand how the design, mechanics, and tactons of the HaptiQ perform. Whether a vector-based haptic feedback display provides more helpful cues to the blind and visually impaired when following a line, or on recognising a corner, is unknown. The current device supports modular actuators, so it is possible to compare the vector-based HaptiQ with a grid-based one. A study analysing the current HaptiQ will help to understand how well the current device performs and what is to be improved, added, or removed in the next iteration phase. For instance, it would be very interesting to compare technology similar to VoiceOver \cite{voiceOver}, that uses audio feedback only, with the HaptiQ that uses both haptic and audio feedback (or haptic only).  
+
+Future work will consist into exploring what new features should be added to the HaptiQ and its API. New types of haptic objects and behaviours could make the API more powerful, allowing client applications to describe more scenarios. The use of electro-vibration and/or mechanical vibrations could allow the HaptiQ to sense textures. This would be a powerful feature, since the aim of HaptiQ is to compensate for the flat and haptic-less interactive surfaces. Adding a break, like the HTP \cite{marquardt2009haptic} does, would add a new dimension to the HaptiQ: friction. Providing resistance to movements parallel to the used surface can allow applications to represent certain types of textures. There are also other possibilities. For example, different meanings can be given to objects that exert different opposing forces to the movement of the HaptiQ. 
+
+Currently, Régis is developing a strategic game, based on geographical information, for visually impaired people. He is working under the supervision of Dr Miguel A. Nacenta and will conduct a user study with visually impaired people at the Université de Strasbourg. While he is working on his research, I will provide support with the HaptiQ, being the main developer. I am also planning to actively participate in the design and development of the game, with the permission of Régis and Dr Nacenta. 
