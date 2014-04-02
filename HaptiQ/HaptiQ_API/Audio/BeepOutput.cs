@@ -8,7 +8,7 @@ namespace HaptiQ_API
 {
     public class BeepOutput
     {
-        public const int MAX_DURATION = 400;
+        public const int MAX_DURATION = 1000;
         public const int MIN_DURATION = 100;
 
         /// <summary>

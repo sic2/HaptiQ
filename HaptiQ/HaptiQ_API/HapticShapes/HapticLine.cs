@@ -54,23 +54,13 @@ namespace HapticClientAPI
         protected override bool pointIsCloseToSegment(Point point, Point startLine, Point endLine, double TOLLERANCE)
         {
             double dst = distancePointToSegment(point, startLine, endLine);
-            int duration = (int) dst * ((BeepOutput.MIN_DURATION - BeepOutput.MAX_DURATION) / (int) TOLLERANCE);
+            int duration = - (int) dst * ((BeepOutput.MIN_DURATION - BeepOutput.MAX_DURATION) / (int) TOLLERANCE);
             if (dst <= TOLLERANCE)
             {
                 BeepOutput.Beep(duration);
                 return true;
             }
             return false;
-        }
-
-        /// <summary>
-        /// Handle a press.
-        /// This method needs to be implemented if a new feature is wanted.
-        /// </summary>
-        /// <param name="haptiQ"></param>
-        public override void handlePress(HaptiQ haptiQ)
-        {
-            // Do nothing
         }
 
         protected override IBehaviour chooseBehaviour(HaptiQ haptiQ)

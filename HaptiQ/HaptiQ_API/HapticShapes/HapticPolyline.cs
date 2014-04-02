@@ -13,6 +13,7 @@ namespace HapticClientAPI
 {
     public class HapticPolyline : HapticShape
     {
+        List<Tuple<Point, Point>> _lines;
         private List<Point> _points;
 
         public HapticPolyline(List<System.Windows.Point> points)
@@ -42,16 +43,6 @@ namespace HapticClientAPI
             this.Stroke = brush;
         }
 
-        /// <summary>
-        /// Handle a press.
-        /// This method needs to be implemented if a new feature is wanted.
-        /// </summary>
-        /// <param name="haptiQ"></param>
-        public override void handlePress(HaptiQ haptiQ)
-        {
-            // Do nothing
-        }
-
         protected override bool pointIsInside(Point point)
         {
             return pointIsInPolyline(point);
@@ -59,50 +50,59 @@ namespace HapticClientAPI
 
         private bool pointIsInPolyline(Point point)
         {
-            for (int i = 0; i < _points.Count() - 1; i++)
-            {
-                if (pointIsCloseToSegment(point, _points[i], _points[i + 1], NEARNESS_TOLLERANCE))
-                   return true;
-            }
-            // Test corners, which have a different nearness tollerance factor
+            _lines = new List<Tuple<Point, Point>>();
+
+            bool retval = false;
             for (int i = 0; i < _points.Count() - 2; i++)
             {
                 if (pointIsCloseToSegment(point, _points[i], _points[i + 1], CORNER_NEARNESS_TOLLERANCE) &&
-                   pointIsCloseToSegment(point, _points[i + 1], _points[i + 2], CORNER_NEARNESS_TOLLERANCE))
-                   return true;
-            }
-
-            return false;
-        }
-
-        protected override IBehaviour chooseBehaviour(HaptiQ haptiQ)
-        {
-            List<Tuple<Point, Point>> lines = new List<Tuple<Point, Point>>();
-
-            for (int i = 0; i < _points.Count() - 2; i++)
-            {
-                // XXX - pointIsClose to segment is called twice (in this method and from handle input)
-                if (pointIsCloseToSegment(haptiQ.position, _points[i], _points[i + 1], CORNER_NEARNESS_TOLLERANCE) &&
-                    pointIsCloseToSegment(haptiQ.position, _points[i + 1], _points[i + 2], CORNER_NEARNESS_TOLLERANCE))
+                    pointIsCloseToSegment(point, _points[i + 1], _points[i + 2], CORNER_NEARNESS_TOLLERANCE))
                 {
-                    lines.Add(new Tuple<Point, Point>(_points[i + 1], _points[i]));
-                    lines.Add(new Tuple<Point, Point>(_points[i + 1], _points[i + 2]));
+                    _lines.Add(new Tuple<Point, Point>(_points[i + 1], _points[i]));
+                    _lines.Add(new Tuple<Point, Point>(_points[i + 1], _points[i + 2]));
+
+                    double dst0 = distancePointToSegment(point, _points[i], _points[i + 1]);
+                    double dst1 = distancePointToSegment(point, _points[i + 1], _points[i + 2]);
+                    if (dst0 < dst1)
+                        beepFeedback(point, _points[i], _points[i + 1], CORNER_NEARNESS_TOLLERANCE); 
+                    else
+                        beepFeedback(point, _points[i + 1], _points[i + 2], CORNER_NEARNESS_TOLLERANCE);
+                    retval = true;
                     break;
                 }
             }
 
-            if (lines.Count() == 0)
+            for (int i = 0; i < _points.Count() - 1; i++)
             {
-                for (int i = 0; i < _points.Count() - 1; i++)
+                if (pointIsCloseToSegment(point, _points[i], _points[i + 1], NEARNESS_TOLLERANCE))
                 {
-                    if (pointIsCloseToSegment(haptiQ.position, _points[i], _points[i + 1], NEARNESS_TOLLERANCE))
+                    if (_lines.Count() == 0)
                     {
-                        lines.Add(new Tuple<Point, Point>(_points[i], _points[i + 1]));
-                        break;
+                        _lines.Add(new Tuple<Point, Point>(_points[i], _points[i + 1]));
+                        beepFeedback(point, _points[i], _points[i + 1], CORNER_NEARNESS_TOLLERANCE);
                     }
+                    retval = true;
+                    break;
                 }
             }
-            return new DirectionBehaviour(haptiQ, lines);
+
+            return retval;
+        }
+
+        protected override IBehaviour chooseBehaviour(HaptiQ haptiQ)
+        {
+            return new DirectionBehaviour(haptiQ, _lines);
+        }
+
+        private void beepFeedback(Point point, Point startLine, Point endLine, double TOLLERANCE)
+        {
+            double dst = distancePointToSegment(point, startLine, endLine);
+            int duration = - (int)dst * ((BeepOutput.MIN_DURATION - BeepOutput.MAX_DURATION) / (int)TOLLERANCE);
+            if (dst <= TOLLERANCE)
+            {
+                Console.WriteLine("dst " + dst + " duration " + duration);
+                BeepOutput.Beep(duration);
+            }
         }
 
         /// <summary>
