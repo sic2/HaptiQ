@@ -170,32 +170,35 @@ namespace HapticClientAPI
         /// <returns></returns>
         public Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(HaptiQ haptiQ)
         {
-            Tuple<STATE, IBehaviour> HaptiQState = _HaptiQBehaviours.ContainsKey(haptiQ.getID()) ? _HaptiQBehaviours[haptiQ.getID()] : null;
-            if (pointIsInside(haptiQ.position))
+            if (this.Parent != null)
             {
-                IBehaviour prevBehaviour = HaptiQState != null ? HaptiQState.Item2 : null;
-                IBehaviour currentBehaviour = chooseBehaviour(haptiQ);
-                currentBehaviour.updateNext(prevBehaviour);
+                Tuple<STATE, IBehaviour> HaptiQState = _HaptiQBehaviours.ContainsKey(haptiQ.getID()) ? _HaptiQBehaviours[haptiQ.getID()] : null;
+                if (pointIsInside(haptiQ.position))
+                {
+                    IBehaviour prevBehaviour = HaptiQState != null ? HaptiQState.Item2 : null;
+                    IBehaviour currentBehaviour = chooseBehaviour(haptiQ);
+                    currentBehaviour.updateNext(prevBehaviour);
 
-                BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
-                if (currentBehaviour.Equals(prevBehaviour))
-                {
-                    rule = BEHAVIOUR_RULES.NOPE;
+                    BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
+                    if (currentBehaviour.Equals(prevBehaviour))
+                    {
+                        rule = BEHAVIOUR_RULES.NOPE;
+                    }
+                    _HaptiQBehaviours[haptiQ.getID()] = new Tuple<STATE, IBehaviour>(STATE.down, currentBehaviour);
+                    return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, currentBehaviour, prevBehaviour);
                 }
-                _HaptiQBehaviours[haptiQ.getID()] = new Tuple<STATE, IBehaviour>(STATE.down, currentBehaviour);
-                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, currentBehaviour, prevBehaviour);
-            }
-            else if (HaptiQState != null && HaptiQState.Item1 == STATE.down)
-            {
-                IBehaviour prevBehaviour = HaptiQState.Item2;
-                IBehaviour currentBehaviour = new BasicBehaviour(haptiQ, BasicBehaviour.TYPES.flat);
-                BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
-                if (currentBehaviour.Equals(prevBehaviour))
+                else if (HaptiQState != null && HaptiQState.Item1 == STATE.down)
                 {
-                    rule = BEHAVIOUR_RULES.NOPE;
+                    IBehaviour prevBehaviour = HaptiQState.Item2;
+                    IBehaviour currentBehaviour = new BasicBehaviour(haptiQ, BasicBehaviour.TYPES.flat);
+                    BEHAVIOUR_RULES rule = BEHAVIOUR_RULES.SUBS;
+                    if (currentBehaviour.Equals(prevBehaviour))
+                    {
+                        rule = BEHAVIOUR_RULES.NOPE;
+                    }
+                    _HaptiQBehaviours[haptiQ.getID()] = new Tuple<STATE, IBehaviour>(STATE.up, currentBehaviour);
+                    return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, currentBehaviour, prevBehaviour);
                 }
-                _HaptiQBehaviours[haptiQ.getID()] = new Tuple<STATE, IBehaviour>(STATE.up, currentBehaviour);
-                return new Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour>(rule, currentBehaviour, prevBehaviour);
             }
 
             Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> retval = 
@@ -228,6 +231,11 @@ namespace HapticClientAPI
         public void registerAction(IAction action)
         {
             _action = action;
+        }
+
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            base.OnRender(drawingContext);
         }
     }
 }

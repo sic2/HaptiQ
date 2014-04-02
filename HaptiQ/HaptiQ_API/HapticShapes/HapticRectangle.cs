@@ -145,7 +145,6 @@ namespace HapticClientAPI
         /// <param name="drawingContext"></param>
         protected override void OnRender(DrawingContext drawingContext)
         {
-            
             base.OnRender(drawingContext);
             drawingContext.DrawRectangle(null, new Pen(Brushes.Red, 1.0),
                 new System.Windows.Rect(x - BORDERS_TOLLERANCE, y - BORDERS_TOLLERANCE, 

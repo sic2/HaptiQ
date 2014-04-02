@@ -63,7 +63,12 @@ namespace HaptiQ_API
 
         private void segmentBehaviour(ref Dictionary<int, double> output)
         {
-            int sector = getSector(_lines[0], _orientation, _actuators.Count, _actuators.Count);
+            segmentBehaviour(_lines[0], ref output);
+        }
+
+        private void segmentBehaviour(Tuple<Point, Point> segment, ref Dictionary<int, double> output)
+        {
+            int sector = getSector(segment, _orientation, _actuators.Count, _actuators.Count);
             int matrixIndex = _actuators.Count / NUMBER_ACTUATORS_DIVIDER - 1;
             if (sector % 2 == 0) // Static sector
             {
@@ -73,12 +78,12 @@ namespace HaptiQ_API
             }
             else // Pulsing sector
             {
-                int[] acts = (int[]) dynamicActuatorsMatrix[matrixIndex].Clone();
+                int[] acts = (int[])dynamicActuatorsMatrix[matrixIndex].Clone();
                 acts[0] = RshiftActs(acts[0], (int)((sector - 1) / 2), _actuators.Count);
                 acts[1] = RshiftActs(acts[1], (int)((sector - 1) / 2), _actuators.Count);
                 bitsToActuators(_actuators.Count, acts[0], TIME % 2 == 0, false, ref output);
                 bitsToActuators(_actuators.Count, acts[1], TIME % 2 != 0, false, ref output);
-                setZerosToMinimum(_actuators.Count, (acts[0] | acts[1]), ref output); 
+                setZerosToMinimum(_actuators.Count, (acts[0] | acts[1]), ref output);
             }
         }
 
@@ -91,7 +96,13 @@ namespace HaptiQ_API
             // Two main actuators - Note that shifting is needed to apply orientation
             int actuator1 = vectorToActuator(_lines[0], _actuators.Count);
             int actuator2 = vectorToActuator(_lines[1], _actuators.Count);
-            if (sector % 2 == 0) // Combine the two actuators
+
+            if (actuator1 == -1 || actuator2 == -1)
+            {
+                segmentBehaviour(_lines[0], ref output);
+                //segmentBehaviour(_lines[1], ref output);
+            }
+            else if (sector % 2 == 0) // Combine the two actuators
             {
                 actuator1 = actuator1 | actuator2;
                 actuator1 = RshiftActs(actuator1, (int)(sector / 2), _actuators.Count);
