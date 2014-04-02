@@ -5,7 +5,7 @@ using Input_API;
 
 namespace HaptiQ_API
 {
-    public class DirectionBehaviour : Behaviour
+    public class EdgeCornerBehaviour : Behaviour
     {
         private const int NUMBER_ACTUATORS_DIVIDER = 4;
         private const double HIGH_POSITION_PERCENTAGE = 0.8;
@@ -23,11 +23,11 @@ namespace HaptiQ_API
                         };
 
         /// <summary>
-        /// Constructor for direction behaviour. 
+        /// Constructor for edge-corner behaviour. 
         /// </summary>
         /// <param name="haptiQ"></param>
         /// <param name="lines">Geometric lines indicating the direction</param>
-        public DirectionBehaviour(HaptiQ haptiQ, List<Tuple<Point, Point>> lines)
+        public EdgeCornerBehaviour(HaptiQ haptiQ, List<Tuple<Point, Point>> lines)
             : base(haptiQ)
         {
             _lines = lines;
@@ -159,7 +159,7 @@ namespace HaptiQ_API
         }
 
         /// <summary>
-        /// Override equals to allow DirectionBehaviour to be compared correctly.
+        /// Override equals to allow EdgeCornerBehaviour to be compared correctly.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -169,7 +169,7 @@ namespace HaptiQ_API
             if (obj == null) return false;
 
             // If parameter cannot be cast to Point return false
-            DirectionBehaviour p = obj as DirectionBehaviour;
+            EdgeCornerBehaviour p = obj as EdgeCornerBehaviour;
             if ((System.Object)p == null) return false;
 
             // Return true if the fields match

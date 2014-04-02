@@ -91,7 +91,7 @@ namespace HapticClientAPI
 
         protected override IBehaviour chooseBehaviour(HaptiQ haptiQ)
         {
-            return new DirectionBehaviour(haptiQ, _lines);
+            return new EdgeCornerBehaviour(haptiQ, _lines);
         }
 
         private void beepFeedback(Point point, Point startLine, Point endLine, double TOLLERANCE)

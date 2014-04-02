@@ -133,7 +133,7 @@ namespace HapticClientAPI
                    
             if (behaviour == null)
             {
-                behaviour = new DirectionBehaviour(haptiQ, lines);
+                behaviour = new EdgeCornerBehaviour(haptiQ, lines);
             }
                
             return behaviour;

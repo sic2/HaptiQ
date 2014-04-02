@@ -67,7 +67,7 @@ namespace HapticClientAPI
         {
             List<Tuple<Point, Point>> lines = new List<Tuple<Point, Point>>();
             lines.Add(_pair);
-            return new DirectionBehaviour(haptiQ, lines);
+            return new EdgeCornerBehaviour(haptiQ, lines);
         }
 
         /// <summary>
