@@ -35,14 +35,14 @@ namespace SurfaceApp1
         {
             HapticShape rect = new HapticRectangle(50, 50, 150, 200);
             rect.color(Brushes.Salmon);
-            rect.registerAction(new BasicAction());
+            rect.registerAction(new BasicAction("Test"));
             this.ContainerTest.Children.Add(rect);
 
             HapticShape rectC = new HapticRectangle(350, 50, 150, 200);
             rectC.color(Brushes.Salmon);
             this.ContainerTest.Children.Add(rectC);
 
-            HapticShape link0 = new HapticLink(rect, rectC);
+            HapticShape link0 = new HapticLink(rect, rectC, true);
             link0.color(Brushes.White);
             this.ContainerTest.Children.Add(link0);
 
@@ -54,7 +54,7 @@ namespace SurfaceApp1
             rect2.color(Brushes.Green);
             this.ContainerTest.Children.Add(rect2);
 
-            HapticShape link = new HapticLink(rect2, rect1);
+            HapticShape link = new HapticLink(rect2, rect1, false);
             link.color(Brushes.White);
             this.ContainerTest.Children.Add(link);
 
