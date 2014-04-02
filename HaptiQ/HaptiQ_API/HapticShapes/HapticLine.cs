@@ -35,7 +35,6 @@ namespace HapticClientAPI
         public override void color(Brush brush)
         {
             this.Stroke = brush;
-            this.StrokeThickness = 20;
         }
 
         protected override bool pointIsInside(Point point)

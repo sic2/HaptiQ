@@ -37,6 +37,7 @@ namespace HapticClientAPI
             hapticShapeSrc.connections.Add(new Tuple<Point, HapticLink>(_pair.Item1, this));
             hapticShapeDst.connections.Add(new Tuple<Point, HapticLink>(_pair.Item2, this));
 
+            
             this.geometry = new LineGeometry(_pair.Item1.toSysWinPoint(), _pair.Item2.toSysWinPoint());
         }
 
@@ -48,7 +49,6 @@ namespace HapticClientAPI
         public override void color(Brush brush)
         {
             this.Stroke = brush;
-            this.StrokeThickness = 20;
         } 
 
         /// <summary>

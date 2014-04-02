@@ -85,6 +85,8 @@ namespace HapticClientAPI
             connections = new List<Tuple<Point, HapticLink>>();
             _HaptiQBehaviours = new Dictionary<uint, Tuple<STATE, IBehaviour>>();
 
+            this.StrokeThickness = 20;
+
             HaptiQsManager.Instance.addObserver(this);
         }
 
@@ -106,6 +108,15 @@ namespace HapticClientAPI
         public virtual void color(Brush brush)
         {
             this.Fill = brush;
+        }
+
+        /// <summary>
+        /// Set the thickness for this HapticShape. 
+        /// </summary>
+        /// <param name="value"></param>
+        public virtual void thickness(int value)
+        {
+            this.StrokeThickness = value;
         }
 
         /// <summary>
