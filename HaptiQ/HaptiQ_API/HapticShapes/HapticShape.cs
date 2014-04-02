@@ -229,11 +229,21 @@ namespace HapticClientAPI
 
         /// <summary>
         /// Handle an actuator press. 
-        /// [ TODO ] Currently this event is called only when an actuator is pressed.
+        /// [ XXX ] Currently this event is called only when an actuator is pressed.
         /// Multiple presses are not supported. 
         /// </summary>
         /// <param name="haptiQ"></param>
-        public abstract void handlePress(HaptiQ haptiQ);
+        public virtual void handlePress(HaptiQ haptiQ)
+        {
+            Tuple<STATE, IBehaviour> HaptiQState = _HaptiQBehaviours.ContainsKey(haptiQ.getID()) ? _HaptiQBehaviours[haptiQ.getID()] : null;
+            if (pointIsInside(haptiQ.position) && HaptiQState != null && HaptiQState.Item1 == STATE.down)
+            {
+                if (_action != null)
+                {
+                    _action.run(haptiQ.getID(), haptiQ.getCurrentPressureData());
+                }
+            }
+        }
 
         /// <summary>
         /// Register action for this HapticShape

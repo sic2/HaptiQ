@@ -290,8 +290,6 @@ namespace HaptiQ_API
                 foreach (Configuration configuration in configurations)
                 {
                     HaptiQ haptiQ = new HaptiQ(_nextID, configuration);
-                    if (configuration.interfaceKitBoardAttached)
-                        haptiQ.PressureGesture += new PressureGestureEventHandler(pressureGestureHaptiQChanged);
                     addHaptiQ(haptiQ); // Add this HaptiQ to HaptiQsManager appropriate data structure
                 }
             }
@@ -464,6 +462,7 @@ namespace HaptiQ_API
                 haptiQ.PositionChanged += new PositionEventHandler(HaptiQ_PositionChanged);
                 haptiQ.PressureInput += new PressureInputEventHandler(HaptiQ_PressureInput);
                 haptiQ.ActuatorPositionChanged += new ActuatorPositionEventHandler(HaptiQ_ActuatorPositionChanged);
+                haptiQ.PressureGesture += new PressureGestureEventHandler(pressureGestureHaptiQChanged);
 
                 _HaptiQsDictionary.Add(_nextID, haptiQ);
                 _inputIdentifiersToHaptiQs.Add(haptiQ.configuration.inputIdentifier, _nextID);
@@ -486,6 +485,7 @@ namespace HaptiQ_API
                 _HaptiQsDictionary[HaptiQID].PositionChanged -= new PositionEventHandler(HaptiQ_PositionChanged);
                 _HaptiQsDictionary[HaptiQID].PressureInput -= new PressureInputEventHandler(HaptiQ_PressureInput);
                 _HaptiQsDictionary[HaptiQID].ActuatorPositionChanged -= new ActuatorPositionEventHandler(HaptiQ_ActuatorPositionChanged);
+                _HaptiQsDictionary[HaptiQID].PressureGesture -= new PressureGestureEventHandler(pressureGestureHaptiQChanged);
 
                 _HaptiQsDictionary.Remove(HaptiQID);
             }

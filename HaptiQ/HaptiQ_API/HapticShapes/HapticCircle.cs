@@ -34,11 +34,6 @@ namespace HapticClientAPI
             connectionPoints.Add(new Point(x - sqrtTwo * radius, y - sqrtTwo * radius));
         }
 
-        public override void handlePress(HaptiQ haptiQ)
-        {
-            // TODO
-        }
-
         protected override IBehaviour chooseBehaviour(HaptiQ haptiQ)
         {
             return new NotificationBehaviour(haptiQ, getFrequency(haptiQ.position));

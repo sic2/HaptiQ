@@ -157,7 +157,6 @@ namespace HaptiQ_API
 
         /// <summary>
         /// Return sector of the HaptiQ given a segment and orientation of the HaptiQ.
-        /// TODO - Maybe move to HaptiQ class?
         /// </summary>
         /// <param name="segment"></param>
         /// <param name="orientation"></param>

@@ -51,16 +51,6 @@ namespace HapticClientAPI
             this.Stroke = brush;
         } 
 
-        /// <summary>
-        /// Handle a press.
-        /// This method needs to be implemented if a new feature is wanted.
-        /// </summary>
-        /// <param name="haptiQ"></param>
-        public override void handlePress(HaptiQ haptiQ)
-        {
-            // Do nothing
-        }
-
         protected override IBehaviour chooseBehaviour(HaptiQ haptiQ)
         {
             double highFrequency = _hasDirection ? 100 * (Helper.distanceBetweenTwoPoints(haptiQ.position, _pair.Item2) /

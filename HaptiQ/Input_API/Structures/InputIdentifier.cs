@@ -99,7 +99,7 @@ namespace Input_API
         }
 
         /// <summary>
-        /// TODO
+        /// Return this InputIdentifier as a SerializableInputIdentifier
         /// </summary>
         /// <returns></returns>
         public SerializableInputIdentifier getSerializableInputIdentifier()
