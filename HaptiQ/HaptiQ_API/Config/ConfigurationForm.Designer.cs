@@ -383,7 +383,7 @@
             // progressBar5
             // 
             this.progressBar5.ForeColor = System.Drawing.Color.Firebrick;
-            this.progressBar5.Location = new System.Drawing.Point(68, 470);
+            this.progressBar5.Location = new System.Drawing.Point(68, 302);
             this.progressBar5.Maximum = 1000;
             this.progressBar5.Name = "progressBar5";
             this.progressBar5.Size = new System.Drawing.Size(247, 16);
@@ -423,7 +423,7 @@
             // progressBar6
             // 
             this.progressBar6.ForeColor = System.Drawing.Color.Firebrick;
-            this.progressBar6.Location = new System.Drawing.Point(68, 414);
+            this.progressBar6.Location = new System.Drawing.Point(68, 358);
             this.progressBar6.Maximum = 1000;
             this.progressBar6.Name = "progressBar6";
             this.progressBar6.Size = new System.Drawing.Size(247, 16);
@@ -463,7 +463,7 @@
             // progressBar7
             // 
             this.progressBar7.ForeColor = System.Drawing.Color.Firebrick;
-            this.progressBar7.Location = new System.Drawing.Point(68, 358);
+            this.progressBar7.Location = new System.Drawing.Point(68, 414);
             this.progressBar7.Maximum = 1000;
             this.progressBar7.Name = "progressBar7";
             this.progressBar7.Size = new System.Drawing.Size(247, 16);
@@ -503,7 +503,7 @@
             // progressBar8
             // 
             this.progressBar8.ForeColor = System.Drawing.Color.Firebrick;
-            this.progressBar8.Location = new System.Drawing.Point(68, 302);
+            this.progressBar8.Location = new System.Drawing.Point(68, 471);
             this.progressBar8.Maximum = 1000;
             this.progressBar8.Name = "progressBar8";
             this.progressBar8.Size = new System.Drawing.Size(247, 16);
@@ -653,6 +653,8 @@
             this.Controls.Add(this.label7);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.Pressure8);
+            this.Controls.Add(this.progressBar7);
+            this.Controls.Add(this.progressBar8);
             this.Controls.Add(this.Pressure7);
             this.Controls.Add(this.Pressure6);
             this.Controls.Add(this.Pressure5);
@@ -669,11 +671,9 @@
             this.Controls.Add(this.Actuator7MAX);
             this.Controls.Add(this.Actuator7MIN);
             this.Controls.Add(this.Actuator7);
-            this.Controls.Add(this.progressBar7);
             this.Controls.Add(this.Actuator6MAX);
             this.Controls.Add(this.Actuator6MIN);
             this.Controls.Add(this.Actuator6);
-            this.Controls.Add(this.progressBar8);
             this.Controls.Add(this.Actuator5MAX);
             this.Controls.Add(this.Actuator5MIN);
             this.Controls.Add(this.Actuator5);

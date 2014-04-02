@@ -63,24 +63,21 @@ namespace HaptiQ_API
             _currentAdvancedServoBoard.open((int)ServoBoardsComboBox.SelectedItem);
             _currentAdvancedServoBoard.waitForAttachment();
 
-            // TODO - maybe use handler: selectedItemChanged
             InterfaceKitsComboBox.SelectedValueChanged += new EventHandler(InterfaceKitsComboBox_SelectedValueChanged);
 
             var inputIdentifiers = new List<String>();
-            inputIdentifiers.Add("Tag"); // TODO - Change to surfaceTag
-            inputIdentifiers.Add("Glyph"); // TODO - change to surface glyphs
-            // inputIdentifiers.Add("Blob"); // XXX not supported
-            // inputIdentifiers.Add("Finger"); // XXX not supported
+            inputIdentifiers.Add("Tag");
+            inputIdentifiers.Add("Glyph");
             InputIdentifiersComboBox.DataSource = inputIdentifiers;
             InputIdentifiersComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 
             this.TopMost = false;
         }
 
+        // Check configuration is valid
         private void saveForm()
         {
             bool configurationIsValid = true;
-            // TODO - check configuration is valid and save to file
 
             // Create configuration
             Configuration configuration = new Configuration();
@@ -430,7 +427,6 @@ namespace HaptiQ_API
 
         private void Actuator1MAX_Scroll(object sender, EventArgs e)
         {
-            // TODO - hold lock and change other trackbar is necessary
             actuatorMAXScrollHandler(0, Actuator1MIN, Actuator1MAX);
         }
 
@@ -503,8 +499,5 @@ namespace HaptiQ_API
         {
             actuatorMAXScrollHandler(7, Actuator8MIN, Actuator8MAX);
         }
-
-     
-
     }
 }

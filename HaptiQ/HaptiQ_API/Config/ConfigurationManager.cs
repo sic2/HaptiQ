@@ -39,8 +39,10 @@ namespace HaptiQ_API
         {
             configuration.serializableInputIdentifier = configuration.inputIdentifier.getSerializableInputIdentifier();
             configurations.Add(configuration);
-            String configurationFile = configuration.HaptiQName.Replace(" ", string.Empty) + ".xml";
-            Helper.SerializeToXML(configuration, "test.xml"); // XXX - need to implement a method to retrieve all xml files from current directory
+            String configurationFile = Configuration.CONFIGURATION_FILENAME_PREFIX + 
+                configuration.HaptiQName.Replace(" ", string.Empty) + 
+                Configuration.CONFIGURATION_FILENAME_EXT;
+            Helper.SerializeToXML(configuration, configurationFile);
         }
 
     }

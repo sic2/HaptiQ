@@ -88,6 +88,24 @@ namespace HaptiQ_API
         public SerializableInputIdentifier serializableInputIdentifier;
 
         /// <summary>
+        /// Configuration file name prefix.
+        /// </summary>
+        [System.Xml.Serialization.XmlIgnore]
+        public static String CONFIGURATION_FILENAME_PREFIX = "CONFIG_";
+
+        /// <summary>
+        /// Extension used for configuration files
+        /// </summary>
+        [System.Xml.Serialization.XmlIgnore]
+        public static String CONFIGURATION_FILENAME_EXT = ".xml";
+
+        /// <summary>
+        /// Configuration file name pattern. 
+        /// </summary>
+        [System.Xml.Serialization.XmlIgnore]
+        public static String CONFIGURATION_FILENAME_PATTERN = CONFIGURATION_FILENAME_PREFIX + "*" + CONFIGURATION_FILENAME_EXT;
+
+        /// <summary>
         /// Creates an empty configuration object
         /// </summary>
         public Configuration()

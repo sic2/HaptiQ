@@ -8,6 +8,7 @@ using Input_API;
 
 using Phidgets;
 using Phidgets.Events;
+using System.IO;
 
 namespace HaptiQ_API
 {
@@ -157,7 +158,7 @@ namespace HaptiQ_API
             _manager = new Manager();
             _manager.Attach += new AttachEventHandler(manager_Attach);
             _manager.Detach += new DetachEventHandler(manager_Detach);
-            _manager.Error += new ErrorEventHandler(manager_Error);
+            _manager.Error += new Phidgets.Events.ErrorEventHandler(manager_Error);
             _manager.open();
         }
 
@@ -226,7 +227,7 @@ namespace HaptiQ_API
         {
             _manager.Attach -= new AttachEventHandler(manager_Attach);
             _manager.Detach -= new DetachEventHandler(manager_Detach);
-            _manager.Error -= new ErrorEventHandler(manager_Error);
+            _manager.Error -= new Phidgets.Events.ErrorEventHandler(manager_Error);
             _manager.close();
         }
 
@@ -251,15 +252,21 @@ namespace HaptiQ_API
                 Helper.Logger("HaptiQ_API.HaptiQsManager.configure:: No devices attached and to be configured. Throwing exception");
                 throw new Exception("No devices attached and/or to be configured");
             }
-            // Check configuration file.
-            // TODO - check all .xml files
-            Configuration conf = Helper.DeserializeFromXML("test.xml");
-            if (conf != null)
+
+            // Check all configuration files in current directory
+            List<Configuration> configurations = new List<Configuration>();
+            DirectoryInfo dir = new DirectoryInfo(".");
+            foreach (var file in dir.GetFiles(Configuration.CONFIGURATION_FILENAME_PATTERN))
             {
-                conf.checkConfiguration(ref _devicesToBeConfigured);
-                List<Configuration> configurations = new List<Configuration>();
-                configurations.Add(conf);
-                createHaptiQs(configurations);
+                Configuration conf = Helper.DeserializeFromXML(file.Name);
+                if (conf != null)
+                {
+                    if (conf.checkConfiguration(ref _devicesToBeConfigured))
+                    {
+                        configurations.Add(conf);
+                        createHaptiQs(configurations);
+                    }
+                }
             }
             startConfigurationForm();
         }
@@ -587,10 +594,13 @@ namespace HaptiQ_API
         private void manager_Detach(object sender, DetachEventArgs e)
         {
             Helper.Logger("HaptiQ_API.HaptiQsManager.manager_Detach::Device " + e.Device.Name + " (" + e.Device.SerialNumber.ToString() + ") detached");
-            // TODO - remove board from list / dictionary
+            if (_devicesToBeConfigured.Contains(e.Device))
+            {
+                _devicesToBeConfigured.Remove(e.Device);
+            }
         }
 
-        private void manager_Error(object sender, ErrorEventArgs e)
+        private void manager_Error(object sender, Phidgets.Events.ErrorEventArgs e)
         {
             Helper.Logger("HaptiQ_API.HaptiQsManager.manager_Error:: " + e.Description);
         }
