@@ -34,7 +34,7 @@ The first prototype extends the rotational axis in the xy plane (see Figure ~\re
 
 In the second prototype I tried to minimize the total number of servos to two. One servo would be used to rotate a combinatorial gear about the z-axis(see Figure ~\ref{fig:second prototype}). A second servo can then be used to raise the first servo with the gear it controls and all the rods. This approach can be considered very versatile and could allow an high number of actuators by keeping the number of servos always to two. Nonetheless, the actuators would all be at the same heights when raised as in the first prototype. Since height can be used to convey additional information, this prototype was discarded and a third prototype was created.
 
-The third prototype does not focus on minimising the number of servos any more, but rather on the possible functions that could be added to the HaptiQ. In this design each servo controls an actuator only and these are disposed circularly around the centre of the device (see Figure ~\ref{fig:third prototype}). The device would have a "joystick" shape. Three pressure sensors could be added either at the bottom of the device or in between the internal and the external annuli. Using simple triangulation on the pressure sensors values, it could be possible to use the device like a gaming joystick and eventually augment its area of interaction. However, in one of the meetings with Saad, we realised that blind people would find this feature disrupting because understanding how far in the xy plane the device is augmented can become a challenging task. 
+The third prototype does not focus on minimising the number of servos any more, but rather on the possible functions that could be added to the HaptiQ. In this design each servo controls an actuator only and these are disposed circularly around the centre of the device (see Figure ~\ref{fig:third prototype}). The device would have a \textit{joystick} shape. Three pressure sensors could be added either at the bottom of the device or in between the internal and the external annuli. Using simple triangulation on the pressure sensors values, it could be possible to use the device like a gaming joystick and eventually augment its area of interaction. However, in one of the meetings with Saad, we realised that blind people would find this feature disrupting because understanding how far in the xy plane the device is augmented can become a challenging task. 
 
 \subsection{4-HaptiQ}
 The 4-HaptiQ is the first functional HaptiQ. This is an experimental project, with future work discussed in chapter 9, so I will occasionally refer to the device with the term prototype. This version has four actuators as shown in Figure ~\ref{fig:HaptiQ reference static actuators}. Unlike the third of the early prototypes, the main focus is on the mechanics and functions aspects.
@@ -304,9 +304,9 @@ The Notification tacton, similarly to the Max tacton, can also be used to notify
         \caption{Notification tacton}\label{fig:notification}
 \end{figure}
 
-\subsection{Direction}
+\subsection{Edges and Corners}
 
-The Direction tacton \todo[noline]{rename to edge?} is probably the most significant one of all the tactons. This allows the HaptiQ to represent edges and corners. 
+The Edge-Corner tacton is probably the most significant one of all the tactons by allowing users to perceive edges and corners. 
 
 Figure ~\ref{fig:edges} show how the combinations of actuators, in both the prototypes, are used to represent edges. The resolution of the device is increased by alternatively actuating adjacent actuators. It is possible to achieve a precision of 45° and 22.5° for the 4-HaptiQ and the 8-HaptiQ respectively. 
 
@@ -355,12 +355,12 @@ It is also possible to represent corners, which are merely the combinations of t
         \caption{Direction tacton - Corners}\label{fig:corners}
 \end{figure}
 
-The Direction tacton is used by the HapticRectangle, to represent its borders, and the HapticLine and HapticPolyline objects. 
+The Edge-Corner tacton is used by the HapticRectangle, to represent its borders, and the HapticLine and HapticPolyline objects. 
 
 \subsection{Pulsation and Linear}
-The Pulsation and Linear tactons are used with the HapticLink to represent the sign of the link between two Haptic objects. Figure ~\ref{fig:pulsation} shows two cases of the pulsation tacton for the 4-HaptiQ. By symmetry it is possible to represent 8 (or 16 for the 8-HaptiQ) directions. This tacton also allows frequency to be specified, so that pulsation increases as one gets closer to the target. 
+The Pulsation and Linear tactons are used with the HapticLink to represent the sign of the link between two Haptic objects. Figure ~\ref{fig:pulsation} shows two cases of the pulsation tacton for the 4-HaptiQ. By symmetry it is possible to represent 8 (or 16 for the 8-HaptiQ) directions. This tacton also allows frequency to be specified, so that pulsation increases as one gets closer to the target. The static actuators in this tacton are also fundamental to identify orientation of the direction.
 
-The Linear tacton, on the other hand, is the union of the pulsation tactons with not pulsation. One can also specify a linear factor, so that the height of the actuators increases linearly as one gets closer to the target. 
+The Linear tacton, on the other hand, is the union of the pulsation tactons, but without any pulsation behaviour. Thus, the height of the actuators is used rather than the pulsation frequency in order to convoy different information about a direction. For example, the tacton can be encoded so that the height of the actuators increases linearly as the distance between the device and the target approaches zero.
 
 \begin{figure}[H]
   \centering
@@ -373,7 +373,7 @@ The Linear tacton, on the other hand, is the union of the pulsation tactons with
 
 The HaptiQ can provide a new set of haptic cues which allow the visually impaired to better perceive lines, edges and directions. Two example basic applications have been implemented using the API previously described.
 
-\textbf{Emphasis on the fact that these are just proof-of-concepts, not finished applications}
+\todo[inline, color=green!40]{Emphasis on the fact that these are just proof-of-concepts, not finished applications}
 
 \subsection{Graphs visualisation}
 

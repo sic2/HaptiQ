@@ -7,7 +7,7 @@ Firstly, the hardware implementation is discussed, followed by the API. A dedica
 
 Building the hardware components of the two HaptiQ devices has been a challenge on its own. Both the 4-HaptiQ and the 8-HaptiQ are 3D-modelled using Google Sketchup \todo[noline]{cite}. Models are then exported in the STL format, a standard in CAD software, and commissioned to a 3D printer. I used a MakerBot\textregistered   Replicator\texttrademark 2x. This is an experimental 3D printer, therefore high precision (\textless 2mm) is hard to achieve and requires many attempts before being able to print the wanted model. 
 
-Phidgets boards are used to control the mini-servos and get pressure inputs. The wiring is more of a demanding task, rather than a challenging one, requiring many hours of work.
+Phidgets boards are used to control the micro servomotors, \textit{Hitech HS-65MG}, and get pressure inputs, via force-sensing resistors. The wiring is more of a demanding task, rather than a challenging one, requiring many hours of work.
 
 The different components of the device are assembled using super glue and screws (see the HaptiQ manual for more information on printing and assembling the device). 
 
@@ -69,11 +69,13 @@ delegate void ChangedEventHandler(object sender, InputIdentifier inputIdentifier
 
 in order to notify the current location of a device, recognisable by a unique identifier (Bytetag or glyph). Then the HaptiQsManager, from within the HaptiQ API, handles such events.  
 
+It is important to note that Bytetags are supported for debugging purposes only. Working with the provided tabletop is time consuming. Allowing Bytetags to be used, it is possible to run, debug and test the system using the Input Simulator provided with the Surface SDK 2.0 using a normal machine. 
+
 \subsection{HaptiQ API}
 
-The HaptiQ API, as previously stated, controls the device and coordinates its work with the other two main components: the Input API and the clients. The \textit{HaptiQsManager}, the \textit{HaptiQ}, and the \textit{Actuator} classes play the major role in controlling the devices and ensuring the coordination between input locations, haptic objects and behaviours. These three classes are also dependent on the Phidget library \footnote{Available at http://www.phidgets.com/}. 
+The HaptiQ API, as previously stated, controls the device and coordinates its work with the other two main components: the Input API and the applications. The \textit{HaptiQsManager}, the \textit{HaptiQ}, and the \textit{Actuator} classes play the major role in controlling the devices and ensuring the coordination between input locations, haptic objects and behaviours. These three classes are also dependent on the Phidget library \footnote{Available at http://www.phidgets.com/}. 
 
-On the creation of the manager, the configuration process is launched (see section ~\ref{sec:configuration} for more about devices configuration) and HaptiQ instances are created appropriately. The manager assigns each device a unique ID, which can be used to find and access a device. 
+On the creation of the manager, the configuration process is launched (see section ~\ref{sec:configuration} for more details about devices configuration) and HaptiQ instances are created appropriately. The manager assigns each device a unique ID, which can be used to find and access a device. 
 Each HaptiQ keeps track of its own actuators, the connected pressure sensors, and the current behaviours to play. After an HaptiQ instance is initialised in the constructor, an independent thread is initiated. This consists of a loop that runs all the current behaviours every 10ms. Reducing the frequency gradually decreases the smoothness of the played dynamic behaviours. On the other hand, increasing the frequency creates an unnecessary overuse of resources. 
 
 A behaviour consists of a dictionary mapping an actuator of the device to its wanted position. The position is expressed as a value between 0 and 1, where 0 indicates that the actuator should be moved to its minimum position, and 1 to its maximum position. The manager retrieves behaviours to be played, from each haptic object, and distributes them to the devices that generated them. Nonetheless, an HaptiQ instance allows behaviours to be explicitly added or removed, giving more flexibility to clients. Similarly to the HTP toolkit, behaviours can be combined by averaging the positions for each actuator. 
@@ -89,13 +91,22 @@ Parallel.ForEach(actuators, entry =>
                     });
 \end{lstlisting}
 
+\subsubsection{Pressure Events}
+
+The HaptiQ class defines two types of pressure events: pressure changes and pressure gestures. The first type of event is raised whenever the pressure registered by a sensor changes. The second type instead is raised on pressure gestures being recognised. The current API supports only one type of gesture: a press. A press is recognised whenever the pressure registered by a particular sensor increases over a certain threshold and then rapidly decreases within a certain time frame. 
+
+Time-series analysis could allow the recognition of other gestures, but this is outside the scope of this project.
+
+
+\missingfigure{picture of press gesture}
+
 \subsubsection{Haptic Objects}
 
 Haptic objects are the visual elements that client applications can use to represent information to the visually impaired. An Haptic object must implement the IHapticObject interface. This interface, as shown in Code ~\ref{lst:IHapticObject}, consists of three methods:
 
 \begin{itemize}
 	\item \textbf{handleInput}: called whenever a new input location is received from the Input API. This method returns a Tuple of three elements: a rule to apply for the returned values (ADD, REMOVE, SUBSTITUTE, NONE) and two behaviours. For instance, the method may add a new behaviour to the HaptiQ, or substitute the current behaviour with a new one. Since HaptiQs can combine behaviours, each HaptiQ object needs to keep track of what current behaviour is assigned to each HaptiQ. 
-    \item \textbf{handlePress}: called when a pressure sensor of an HaptiQ is pressed (pressure value is above a certain threshold)
+    \item \textbf{handlePress}: called when a pressure gesture event is raised
     \item \textbf{registerAction}: allows clients to register custom actions to be executed on \textit{handlePress}
 \end{itemize}
 
@@ -127,10 +138,18 @@ Finally, objects extending \textit{HapticShape} are renderable on WPF applicatio
 \section{Configuration}
 \label{sec:configuration}
 
-\begin{itemize}
-\item Use windows forms.
-\item pop up until there are phidget boards attached to be configured
-\end{itemize}
+The two prototypes created in this project have different characteristics. For instance, the second version has eight actuators, rather than four, and its servos have a certain action range that the first version does not have. The API allows devices with different characteristics to be used by serializing their configurations as XML files. On creation, the manager inspects the current directory for XML configuration files and attempts to create HaptiQs using the deserialized configurations and the attached Phidget boards.  
+
+But even so, it could be the case that no configuration file exists for an attached HaptiQ. This is especially true the first time a device is used. In this eventuality a configuration form is prompted to the user (see Figure \ref{fig:configurationPanel}). The form has been created using \textit{WinForms}, so that no dependency on WPF or similar library is added. The panel allows users to specify which actuators to use, their range of action, whether to use pressure input or not, and the fiducial marker to use. 
+
+Users are prompted with a configuration form until all attached Phidget boards are configured.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{configuration.png}
+  \caption{Configuration Form}
+  \label{fig:configurationPanel}
+\end{figure}
 
 \section{Tactons}
 
@@ -209,7 +228,7 @@ In this section, I will show how to use the API using a simple example (see Code
 
 The first step consists in creating a WPF application and adding a reference to the HaptiQ\_API. In the designed view, add a Grid named \textit{container} to the main window. From the code view of the application, import the HaptiQ\_API and the HapticClientAPI namespaces (the latter contains the default haptic objects). 
 
-The call \textit{HaptiQsManager.Create(windowTitle, "\textless Input Class\textgreater")} initialises the HaptiQ device and the Input API, using the specified Input class (e.g. "SurfaceInput" for Bytetags). 
+The call \textit{HaptiQsManager.Create(windowTitle, \textless Input Class\textgreater)} initialises the HaptiQ device and the Input API, using the specified Input class (e.g. 'SurfaceInput' for Bytetags). 
 Objects are automatically added to the system when they are created. These are rendered only when added to a WPF grid or canvas. 
 
 In the \textit{onClosed} method of the WPF application, it is important to call \textit{HaptiQsManager.Instance.delete()} to ensure that the HaptiQs are detached correctly and all resources are disposed correctly.
@@ -223,7 +242,7 @@ public partial class Application : SurfaceWindow
 {
   public Application()
   {
-      HaptiQsManager.Create(windowTitle, "SurfaceInput");
+      HaptiQsManager.Create(windowTitle, ''SurfaceInput'');
       
       HapticShape rect0 = new HapticRectangle(50, 50, 150, 200);
       rect0.color(Brushes.Salmon);
