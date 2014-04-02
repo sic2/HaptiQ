@@ -30,6 +30,7 @@ namespace FunctionsVisualiser
     public partial class SurfaceWindow1 : SurfaceWindow
     {
         List<HapticShape> hapticObjects;
+        HapticLine line;
 
         /// <summary>
         /// Default constructor.
@@ -41,15 +42,10 @@ namespace FunctionsVisualiser
             HaptiQsManager.Create(this.Title, "SurfaceInput");
             hapticObjects = new List<HapticShape>(); // list haptic objects used to display functions
 
-            // Create axises
-            HapticLine line = new HapticLine(new Point(0, this.container.Height), new Point(this.container.Width, this.container.Height));
-            line.color(Brushes.Blue);
+            // Create y-axis
             HapticLine line1 = new HapticLine(new Point(0, 0), new Point(0, this.container.Height));
             line1.color(Brushes.Blue);
-
-            this.container.Children.Add(line);
             this.container.Children.Add(line1);
-
         }
 
         /// <summary>
@@ -79,7 +75,7 @@ namespace FunctionsVisualiser
                 var regex = new Regex(Regex.Escape("x"));
                 var max = double.MinValue;
                 var min = double.MaxValue;
-                for (int i = 1; i < 1000; i += 20)
+                for (int i = 0; i < 10; i ++)
                 {
                     var funct = regex.Replace(function, i.ToString(), 1);
                     NCalc.Expression expr = new NCalc.Expression(funct);
@@ -113,7 +109,7 @@ namespace FunctionsVisualiser
                 double scaleFactor = container.Height / (max - min);
                 for (int i = 0; i < functionValues.Count; i++)
                 {
-                    functionValues[i] = new Point(functionValues[i].X, container.Height - functionValues[i].Y * scaleFactor);
+                    functionValues[i] = new Point(functionValues[i].X * (container.Width / 10.0), container.Height - functionValues[i].Y * scaleFactor + (min < 0 ? min * scaleFactor : 0));
                 }
 
                 HapticPolyline polyline = new HapticPolyline(functionValues);
@@ -121,6 +117,18 @@ namespace FunctionsVisualiser
                 this.container.Children.Add(polyline);
 
                 hapticObjects.Add(polyline);
+
+                // x-axis
+                double mid = container.Height + (min < 0 ? min * scaleFactor : 0);
+                if (line != null)
+                {
+                    HaptiQsManager.Instance.removeObserver(line);
+                    this.container.Children.Remove(line);
+                }
+                line = new HapticLine(new Point(0, mid), new Point(this.container.Width, mid));
+                line.color(Brushes.Blue);
+                line.thickness(5);
+                this.container.Children.Add(line);
             }
             catch (ArgumentException ae)
             {
