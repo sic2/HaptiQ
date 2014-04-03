@@ -376,6 +376,15 @@ namespace HaptiQ_API
 
         }
 
+        /// <summary>
+        /// Return all haptic objects registered with the HaptiQsManager
+        /// </summary>
+        /// <returns></returns>
+        public List<IHapticObject> getAllObservers()
+        {
+            return _hapticObjectObservers;
+        }
+
         // This will be called whenever the position of one of the HaptiQs actuators changes.
         private void InputChanged(object sender, InputIdentifier inputIdentifier, Point point, double orientation, EventArgs e)
         {

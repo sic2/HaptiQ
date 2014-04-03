@@ -170,6 +170,7 @@ namespace HaptiQ_API
               12, System.Windows.Media.Brushes.Black),
               new System.Windows.Point(x, y));
         }
+
     }
    
 }

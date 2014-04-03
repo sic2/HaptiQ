@@ -82,6 +82,16 @@ namespace HaptiQ_API
         /// Action to be executed when pressure input is received
         /// </summary>
         protected IAction _action;
+
+        /// <summary>
+        /// True if this HapticShape is selected. False otherwise.
+        /// </summary>
+        public bool isSelected { get; set; }
+        private bool isSelectable;
+
+        private Brush _color;
+
+        private Brush SELECTION_COLOR = Brushes.Silver;
         
         /// <summary>
         /// Default constructor for HapticShape. 
@@ -94,6 +104,8 @@ namespace HaptiQ_API
             connections = new List<Tuple<Point, HapticLink>>();
             _HaptiQBehaviours = new Dictionary<uint, Tuple<STATE, IBehaviour>>();
 
+            isSelected = false;
+            isSelectable = true;
             this.StrokeThickness = 20;
             this.Unloaded += new System.Windows.RoutedEventHandler(HapticShape_Unloaded);
 
@@ -117,6 +129,8 @@ namespace HaptiQ_API
         /// <param name="brush"></param>
         public virtual void color(Brush brush)
         {
+            if (_color == null)
+                _color = brush; // set initial color
             this.Fill = brush;
         }
 
@@ -285,5 +299,27 @@ namespace HaptiQ_API
         /// <param name="e"></param>
         protected virtual void HapticShape_Unloaded(object sender, System.Windows.RoutedEventArgs e)
         {}
+
+        public void makeObjectSelectable(bool selectable)
+        {
+            isSelectable = !isSelectable;
+        }
+
+        /// <summary>
+        /// Called when this object is entered
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnTouchEnter(System.Windows.Input.TouchEventArgs e)
+        {
+            base.OnTouchDown(e);
+            if (isSelectable)
+            {
+                isSelected = !isSelected;
+                if (isSelected)
+                    color(SELECTION_COLOR);
+                else
+                    color(_color);
+            }
+        }
     }
 }

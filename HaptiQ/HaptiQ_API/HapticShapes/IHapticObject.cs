@@ -21,6 +21,14 @@ namespace HaptiQ_API
     public interface IHapticObject
     {
         /// <summary>
+        /// True if this IHapticObject is selected. 
+        /// False otherwise.
+        /// </summary>
+        bool isSelected { get; set; }
+
+        void makeObjectSelectable(bool selectable);
+
+        /// <summary>
         /// This method should handle a given input (position and orientation) returning 
         /// an appropriate behaviour. 
         /// </summary>
