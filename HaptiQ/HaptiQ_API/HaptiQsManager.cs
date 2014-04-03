@@ -116,6 +116,8 @@ namespace HaptiQ_API
         private List<IHapticObject> _hapticObjectObservers;
         private readonly Object _syncObj = new Object();
 
+        private List<IHapticObject> _selectedHapticObjects;
+
         private List<Phidget> _devicesToBeConfigured;
 
         private Input _input;
@@ -145,6 +147,9 @@ namespace HaptiQ_API
             // Initialise list of - haptic - observers which are notified when
             // HaptiQ position changes or pressure inputs change 
             _hapticObjectObservers = new List<IHapticObject>();
+            // List of haptic objects selected by OnTouchEnter in HapticShape
+            // or by other means for other types of IHapticObjects
+            _selectedHapticObjects = new List<IHapticObject>();
 
             initialisePhidgetManager();
             // Configure HaptiQs
@@ -383,6 +388,39 @@ namespace HaptiQ_API
         public List<IHapticObject> getAllObservers()
         {
             return _hapticObjectObservers;
+        }
+
+        /// <summary>
+        /// Add this haptic object to the list of selected ones
+        /// </summary>
+        /// <param name="hapticObject"></param>
+        public void selectObject(IHapticObject hapticObject)
+        {
+            lock (_selectedHapticObjects)
+            {
+                _selectedHapticObjects.Add(hapticObject);
+            }
+        }
+
+        /// <summary>
+        /// Remove this object from the list of selected objects
+        /// </summary>
+        /// <param name="hapticObject"></param>
+        public void deselectObject(IHapticObject hapticObject)
+        {
+            lock (_selectedHapticObjects)
+            {
+                _selectedHapticObjects.Remove(hapticObject);
+            }
+        }
+
+        /// <summary>
+        /// Get the list of selected objects
+        /// </summary>
+        /// <returns></returns>
+        public List<IHapticObject> getSelectedObjects()
+        {
+            return _selectedHapticObjects;
         }
 
         // This will be called whenever the position of one of the HaptiQs actuators changes.

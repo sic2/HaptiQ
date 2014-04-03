@@ -83,14 +83,9 @@ namespace HaptiQ_API
         /// </summary>
         protected IAction _action;
 
-        /// <summary>
-        /// True if this HapticShape is selected. False otherwise.
-        /// </summary>
-        public bool isSelected { get; set; }
         private bool isSelectable;
 
         private Brush _color;
-
         private Brush SELECTION_COLOR = Brushes.Silver;
         
         /// <summary>
@@ -300,9 +295,40 @@ namespace HaptiQ_API
         protected virtual void HapticShape_Unloaded(object sender, System.Windows.RoutedEventArgs e)
         {}
 
+        /// <summary>
+        /// Make this HapticShape selectable or not.
+        /// </summary>
+        /// <param name="selectable"></param>
         public void makeObjectSelectable(bool selectable)
         {
             isSelectable = !isSelectable;
+        }
+
+
+        private bool _isSelected;
+        /// <summary>
+        /// True if this HapticShape is selected. False otherwise.
+        /// </summary>
+        public bool isSelected 
+        {
+            get
+            {
+                return _isSelected;
+            }
+            set
+            {
+                _isSelected = value;
+                if (_isSelected)
+                {
+                    color(SELECTION_COLOR);
+                    HaptiQsManager.Instance.selectObject(this);
+                }
+                else
+                {
+                    color(_color);
+                    HaptiQsManager.Instance.deselectObject(this);
+                }
+            }
         }
 
         /// <summary>
@@ -315,10 +341,6 @@ namespace HaptiQ_API
             if (isSelectable)
             {
                 isSelected = !isSelected;
-                if (isSelected)
-                    color(SELECTION_COLOR);
-                else
-                    color(_color);
             }
         }
     }
