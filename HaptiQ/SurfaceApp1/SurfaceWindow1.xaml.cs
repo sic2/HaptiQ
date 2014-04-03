@@ -25,6 +25,8 @@ namespace SurfaceApp1
 
             // Add handlers for window availability events
             AddWindowAvailabilityHandlers();
+           
+            Helper.setTopLeftCorner(new Point(surfaceButton1.TranslatePoint(new Point(0, 0), this).X + surfaceButton1.Width, 0));
 
             HaptiQsManager.Create(this.Title, "SurfaceInput");
             loadGraph();
@@ -32,53 +34,53 @@ namespace SurfaceApp1
 
         private void loadGraph()
         {
-            HapticShape rect = new HapticRectangle(50, 50, 150, 200);
-            rect.color(Brushes.Salmon);
-            rect.registerAction(new BasicAction("Test"));
-            this.ContainerTest.Children.Add(rect);
+            //HapticShape rect = new HapticRectangle(0, 5, 150, 200);
+            //rect.color(Brushes.Salmon);
+            //rect.registerAction(new BasicAction("Test"));
+            //this.ContainerTest.Children.Add(rect);
 
-            HapticShape rectC = new HapticRectangle(350, 50, 150, 200);
-            rectC.color(Brushes.Salmon);
-            this.ContainerTest.Children.Add(rectC);
+            //HapticShape rectC = new HapticRectangle(350, 50, 150, 200);
+            //rectC.color(Brushes.Salmon);
+            //this.ContainerTest.Children.Add(rectC);
 
-            HapticShape link0 = new HapticLink(rect, rectC, true);
-            link0.color(Brushes.White);
-            this.ContainerTest.Children.Add(link0);
+            //HapticShape link0 = new HapticLink(rect, rectC, true);
+            //link0.color(Brushes.White);
+            //this.ContainerTest.Children.Add(link0);
 
-            HapticShape rect1 = new HapticRectangle(150, 350, 200, 200);
-            rect1.color(Brushes.Orange);
-            this.ContainerTest.Children.Add(rect1);
+            //HapticShape rect1 = new HapticRectangle(150, 350, 200, 200);
+            //rect1.color(Brushes.Orange);
+            //this.ContainerTest.Children.Add(rect1);
 
-            HapticShape rect2 = new HapticRectangle(550, 150, 100, 100);
-            rect2.color(Brushes.Green);
-            this.ContainerTest.Children.Add(rect2);
+            //HapticShape rect2 = new HapticRectangle(550, 150, 100, 100);
+            //rect2.color(Brushes.Green);
+            //this.ContainerTest.Children.Add(rect2);
 
-            HapticShape link = new HapticLink(rect2, rect1, false);
-            link.color(Brushes.White);
-            this.ContainerTest.Children.Add(link);
+            //HapticShape link = new HapticLink(rect2, rect1, false);
+            //link.color(Brushes.White);
+            //this.ContainerTest.Children.Add(link);
 
-            HapticShape circle = new HapticCircle(100, 350, 75);
-            circle.color(Brushes.White);
-            this.ContainerTest.Children.Add(circle);
+            //HapticShape circle = new HapticCircle(100, 350, 75);
+            //circle.color(Brushes.White);
+            //this.ContainerTest.Children.Add(circle);
 
-            HapticShape line = new HapticLine(
-                 new Point(650, 50), new Point(650, 200));
-            line.color(Brushes.GhostWhite);
-            this.ContainerTest.Children.Add(line);
+            //HapticShape line = new HapticLine(
+            //     new Point(650, 50), new Point(650, 200));
+            //line.color(Brushes.GhostWhite);
+            //this.ContainerTest.Children.Add(line);
 
-            HapticShape circle1 = new HapticCircle(700, 400, 100);
-            circle1.color(Brushes.White);
-            this.ContainerTest.Children.Add(circle1);
+            //HapticShape circle1 = new HapticCircle(700, 400, 100);
+            //circle1.color(Brushes.White);
+            //this.ContainerTest.Children.Add(circle1);
 
-            List<Point> points = new List<Point>();
-            points.Add(new Point(50, 700));
-            points.Add(new Point(150, 650));
-            points.Add(new Point(300, 550));
-            points.Add(new Point(450, 650));
-            points.Add(new Point(550, 550));
-            HapticShape polyline = new HapticPolyline(points);
-            polyline.color(Brushes.Gold);
-            this.ContainerTest.Children.Add(polyline);
+            //List<Point> points = new List<Point>();
+            //points.Add(new Point(50, 700));
+            //points.Add(new Point(150, 650));
+            //points.Add(new Point(300, 550));
+            //points.Add(new Point(450, 650));
+            //points.Add(new Point(550, 550));
+            //HapticShape polyline = new HapticPolyline(points);
+            //polyline.color(Brushes.Gold);
+            //this.ContainerTest.Children.Add(polyline);
         }
 
         /// <summary>
@@ -147,6 +149,56 @@ namespace SurfaceApp1
         private void OnWindowUnavailable(object sender, EventArgs e)
         {
             //TODO: disable audio, animations here
+        }
+
+        private void surfaceButton1_Click(object sender, RoutedEventArgs e)
+        {
+            var createHapticRectangle = new CreateHapticRectangleWindow(ContainerTest);
+            createHapticRectangle.Show();
+        }
+
+        private void surfaceButton2_Click(object sender, RoutedEventArgs e)
+        {
+            var createCircleRectangle = new CreateHapticCircleWindow(ContainerTest);
+            createCircleRectangle.Show();
+        }
+
+        private void surfaceButton3_Click(object sender, RoutedEventArgs e)
+        {
+            var createLineRectangle = new CreateHapticLineWindow(ContainerTest);
+            createLineRectangle.Show();
+        }
+
+        private void surfaceButton4_Click(object sender, RoutedEventArgs e)
+        {
+            var createPolylineRectangle = new CreateHapticPolylineWindow(ContainerTest);
+            createPolylineRectangle.Show();
+        }
+
+        private void surfaceButton5_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO - link
+        }
+
+        private void surfaceButton6_Click(object sender, RoutedEventArgs e)
+        {
+
+            bool lockObjs = true;
+            if (surfaceButton6.Background == Brushes.Red)
+            {
+                surfaceButton6.Background = Brushes.Green;
+                lockObjs = false;
+            }
+            else
+            {
+                surfaceButton6.Background = Brushes.Red;
+                lockObjs = true;
+            }
+            List<IHapticObject> objs = HaptiQsManager.Instance.getAllObservers();
+            foreach (IHapticObject obj in objs)
+            {
+                obj.makeObjectSelectable(lockObjs);
+            }
         }
 
     }

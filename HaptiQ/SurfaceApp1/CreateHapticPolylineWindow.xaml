@@ -1,0 +1,20 @@
+﻿<Window x:Class="SurfaceApp1.CreateHapticPolylineWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="CreateHapticPolylineWindow" Height="300" Width="300" xmlns:my="http://schemas.microsoft.com/surface/2008">
+    <Grid>
+        <my:SurfaceButton Content="New Point" Height="23" HorizontalAlignment="Left" Margin="24,51,0,0" Name="surfaceButton1" VerticalAlignment="Top" Width="107" Click="surfaceButton1_Click" />
+        <my:SurfaceButton Background="#FFD9EDEF" BorderBrush="Blue" Content="Create" Foreground="Black" Height="23" HorizontalAlignment="Left" Margin="203,0,0,0" Name="surfaceButton2" VerticalAlignment="Bottom" Width="75" Click="surfaceButton2_Click" />
+        <my:SurfaceListBox Height="149" HorizontalAlignment="Left" Margin="64,112,0,0" Name="surfaceListBox1" VerticalAlignment="Top" Width="129">
+            <my:SurfaceListBoxItem Content="Blue" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem1" VerticalAlignment="Top" Width="120" />
+            <my:SurfaceListBoxItem Content="Orange" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem2" VerticalAlignment="Top" Width="120" />
+            <my:SurfaceListBoxItem Content="Red" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem3" VerticalAlignment="Top" Width="120" />
+            <my:SurfaceListBoxItem Content="Green" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem4" VerticalAlignment="Top" Width="120" />
+            <my:SurfaceListBoxItem Content="Yellow" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem5" VerticalAlignment="Top" Width="120" />
+        </my:SurfaceListBox>
+        <TextBlock FontSize="16" FontWeight="Bold" Height="38" HorizontalAlignment="Left" Margin="0,112,0,0" Name="textBlock4" Text="Color" TextAlignment="Center" VerticalAlignment="Top" Width="63" />
+        <ListBox Height="77" HorizontalAlignment="Left" Margin="146,12,0,0" Name="listBox1" VerticalAlignment="Top" Width="120" />
+        <my:SurfaceTextBox Height="38" HorizontalAlignment="Left" Margin="12,10,0,0" Name="surfaceTextBox1" Text="" VerticalAlignment="Top" Width="51" />
+        <my:SurfaceTextBox Height="38" HorizontalAlignment="Left" Margin="85,10,0,0" Name="surfaceTextBox2" Text="" VerticalAlignment="Top" Width="55" />
+    </Grid>
+</Window>
