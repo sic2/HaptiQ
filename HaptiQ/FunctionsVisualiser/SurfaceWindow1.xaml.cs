@@ -17,7 +17,6 @@ using Microsoft.Surface.Presentation.Controls;
 using Microsoft.Surface.Presentation.Input;
 
 using HaptiQ_API;
-using HapticClientAPI;
 
 using NCalc;
 using System.Text.RegularExpressions;

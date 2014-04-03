@@ -7,9 +7,8 @@ using System.Windows.Media;
 using System.Globalization;
 
 using Input_API;
-using HaptiQ_API;
 
-namespace HapticClientAPI
+namespace HaptiQ_API
 {
     /// <summary>
     /// HapticRectangle class

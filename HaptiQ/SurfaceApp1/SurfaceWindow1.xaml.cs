@@ -8,7 +8,6 @@ using Microsoft.Surface;
 using Microsoft.Surface.Presentation.Controls;
 
 using HaptiQ_API;
-using HapticClientAPI;
 
 namespace SurfaceApp1
 {

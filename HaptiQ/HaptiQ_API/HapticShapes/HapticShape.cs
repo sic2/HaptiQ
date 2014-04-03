@@ -5,9 +5,8 @@ using System.Windows.Shapes;
 using System.Windows.Media;
 
 using Input_API;
-using HaptiQ_API;
 
-namespace HapticClientAPI
+namespace HaptiQ_API
 {
     /// <summary>
     /// Any custom HapticShape must extend this class.

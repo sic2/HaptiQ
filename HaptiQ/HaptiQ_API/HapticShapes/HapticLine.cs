@@ -5,9 +5,8 @@ using System.Text;
 using System.Windows.Media;
 
 using Input_API;
-using HaptiQ_API;
 
-namespace HapticClientAPI
+namespace HaptiQ_API
 {
     /// <summary>
     /// Represent an haptic line.

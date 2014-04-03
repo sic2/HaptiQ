@@ -2,9 +2,8 @@
 using System.Windows.Media;
 
 using Input_API;
-using HaptiQ_API;
 
-namespace HapticClientAPI
+namespace HaptiQ_API
 {
     /// <summary>
     /// HapticLink defines a object that links two other objects.
