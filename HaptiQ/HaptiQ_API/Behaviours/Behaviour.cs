@@ -7,11 +7,24 @@ using Input_API;
 
 namespace HaptiQ_API
 {
+    /// <summary>
+    /// Behaviour abstract class
+    /// </summary>
     abstract public class Behaviour : IBehaviour
     {
+        /// <summary>
+        /// Minimum position allowed for the actuators
+        /// </summary>
         protected const double MIN_POSITION = 0.0;
+
+        /// <summary>
+        /// Maximum position allowed for the actuators
+        /// </summary>
         protected const double MAX_POSITION = 1.0;
         
+        /// <summary>
+        /// Internal timer of this behaviour
+        /// </summary>
         public int TIME { get; set; }
 
         /// <summary>
@@ -23,16 +36,34 @@ namespace HaptiQ_API
         /// </summary>
         protected double lowPosition;
 
-        protected List<Actuator> _actuators;
-        protected Dictionary<int, Actuator> _actuatorsDict; // For fast retrieval
-        protected Point _position;
-        protected double _orientation;
+        /// <summary>
+        /// List of actuators for this behaviour
+        /// </summary>
+        protected List<Actuator> actuators;
 
+        /// <summary>
+        /// Mapping id->actuator
+        /// This information is duplicated from _actuators, but allows fast retrieval
+        /// </summary>
+        protected Dictionary<int, Actuator> actuatorsDict;
 
-        public Behaviour()
-        {
-            // XXX - this should never be called
-        }
+        /// <summary>
+        /// Position of the HaptiQ that created this Behaviour
+        /// </summary>
+        protected Point position;
+
+        /// <summary>
+        /// Orientation of the HaptiQ that created this Behaviour
+        /// </summary>
+        protected double orientation;
+
+        /// <summary>
+        /// Behaviour constructor
+        /// Note that this constructor should never be called.
+        /// It exists only 
+        /// </summary>
+        //public Behaviour()
+        //{ }
 
         /// <summary>
         /// Behaviour constructor
@@ -40,14 +71,14 @@ namespace HaptiQ_API
         /// <param name="haptiQ"></param>
         public Behaviour(HaptiQ haptiQ)
         {
-            this._actuators = haptiQ.getActuators();
-            this._position = haptiQ.position;
-            this._orientation = haptiQ.orientation;
+            this.actuators = haptiQ.getActuators();
+            this.position = haptiQ.position;
+            this.orientation = haptiQ.orientation;
 
-            _actuatorsDict = new Dictionary<int, Actuator>();
-            foreach (Actuator actuator in _actuators)
+            actuatorsDict = new Dictionary<int, Actuator>();
+            foreach (Actuator actuator in actuators)
             {
-                _actuatorsDict[actuator.getId()] = actuator;
+                actuatorsDict[actuator.getId()] = actuator;
             }
         }
 
@@ -104,7 +135,7 @@ namespace HaptiQ_API
         }
 
         /// <summary>
-        /// Convert an binary to a dictionary<actuatorID, position>
+        /// Convert an binary to a dictionary (actuatorID -> position>)
         /// </summary>
         /// <param name="numberActuators"></param>
         /// <param name="activeActuators"></param>

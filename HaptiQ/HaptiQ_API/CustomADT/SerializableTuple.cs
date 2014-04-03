@@ -5,10 +5,11 @@ using System.Text;
 
 namespace HaptiQ_API
 {
-    // Tuple does not have a default constructor and 
-    // XMLSerialiser can only serialise objects that have default constructors, 
-    // that's why this class is created
-
+    /// <summary>
+    /// Tuple does not have a default constructor and 
+    /// XMLSerialiser can only serialise objects that have default constructors, 
+    /// that's why this class is created
+    /// </summary>
     public class SerializableTuple<T1, T2>
     {
         // Needed for XML serialisation

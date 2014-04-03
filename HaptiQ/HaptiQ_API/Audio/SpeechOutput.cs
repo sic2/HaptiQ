@@ -7,6 +7,10 @@ using System.Speech.Synthesis;
 
 namespace HaptiQ_API
 {
+    /// <summary>
+    /// SpeechOutput class with Singleton pattern. 
+    /// This avoids the creation of multiple classes. 
+    /// </summary>
     public class SpeechOutput
     {
         private const int MAX_SPEED = 5;
@@ -24,6 +28,9 @@ namespace HaptiQ_API
             _synth.Volume = 50; 
         }
 
+        /// <summary>
+        /// Returns an instance of SpeechOutput. 
+        /// </summary>
         public static SpeechOutput Instance
         {
             get

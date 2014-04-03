@@ -37,6 +37,11 @@ namespace HapticClientAPI
             this.Stroke = brush;
         }
 
+        /// <summary>
+        /// Return true if point is in the HapticLine
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
         protected override bool pointIsInside(Point point)
         {
             return pointIsCloseToSegment(point, _pair.Item1, _pair.Item2, NEARNESS_TOLLERANCE);
@@ -63,6 +68,12 @@ namespace HapticClientAPI
             return false;
         }
 
+        /// <summary>
+        /// Returns an edge-corner behaviour based on the position of the HaptiQ
+        /// on the HapticLine
+        /// </summary>
+        /// <param name="haptiQ"></param>
+        /// <returns></returns>
         protected override IBehaviour chooseBehaviour(HaptiQ haptiQ)
         {
             List<Tuple<Point, Point>> lines = new List<Tuple<Point, Point>>();

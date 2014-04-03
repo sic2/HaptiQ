@@ -30,7 +30,17 @@ namespace HapticClientAPI
         /// <summary>
         /// STATE enum used for indicating the current state of an haptic shape
         /// </summary>
-        protected enum STATE { down, up };
+        protected enum STATE 
+        { 
+            /// <summary>
+            /// Device is inside this shape
+            /// </summary>
+            down, 
+            /// <summary>
+            /// Device is not inside this shape
+            /// </summary>
+            up 
+        };
 
         /// <summary>
         /// Geometry used to render this shape
@@ -129,6 +139,11 @@ namespace HapticClientAPI
             this.information = information;
         }
 
+        /// <summary>
+        /// Return true if point is inside this HapticShape
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
         protected abstract bool pointIsInside(Point point);
 
         /// <summary>
@@ -254,6 +269,10 @@ namespace HapticClientAPI
             _action = action;
         }
 
+        /// <summary>
+        /// Defines the actions to execute when rendering this HapticShape
+        /// </summary>
+        /// <param name="drawingContext"></param>
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);

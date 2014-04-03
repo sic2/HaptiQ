@@ -542,6 +542,10 @@ namespace HaptiQ_API
             return _advServo.Attached && _actuators.Count > 0;
         }
 
+        /// <summary>
+        /// Return the current pressure data of this HaptiQ 
+        /// </summary>
+        /// <returns></returns>
         public Dictionary<int, double> getCurrentPressureData()
         {
             return _currentPressureData;

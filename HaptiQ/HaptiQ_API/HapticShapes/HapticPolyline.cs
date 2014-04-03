@@ -11,11 +11,18 @@ using HaptiQ_API;
 
 namespace HapticClientAPI
 {
+    /// <summary>
+    /// HapticPolyline class
+    /// </summary>
     public class HapticPolyline : HapticShape
     {
         List<Tuple<Point, Point>> _lines;
         private List<Point> _points;
 
+        /// <summary>
+        /// Construct an HapticPolyline
+        /// </summary>
+        /// <param name="points"></param>
         public HapticPolyline(List<System.Windows.Point> points)
         {
             _points = new List<Point>();
@@ -43,6 +50,11 @@ namespace HapticClientAPI
             this.Stroke = brush;
         }
 
+        /// <summary>
+        /// Return true if point is in the polyline
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
         protected override bool pointIsInside(Point point)
         {
             return pointIsInPolyline(point);
@@ -89,6 +101,12 @@ namespace HapticClientAPI
             return retval;
         }
 
+        /// <summary>
+        /// Return an Edge-Corner behaviour based on the position of the haptiQ
+        /// on this polyline
+        /// </summary>
+        /// <param name="haptiQ"></param>
+        /// <returns></returns>
         protected override IBehaviour chooseBehaviour(HaptiQ haptiQ)
         {
             return new EdgeCornerBehaviour(haptiQ, _lines);

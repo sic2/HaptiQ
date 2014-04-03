@@ -5,6 +5,9 @@ using System.Text;
 
 namespace HaptiQ_API
 {
+    /// <summary>
+    /// NotificationBehaviour class
+    /// </summary>
     public class NotificationBehaviour : Behaviour
     {
         private const int DEFAULT_FREQUENCY = 1;
@@ -31,7 +34,7 @@ namespace HaptiQ_API
             TIME = 0;
             _frequency = frequency;
 
-            _positions = new double[_actuators.Count(), 2];
+            _positions = new double[actuators.Count(), 2];
             double position = 0.0;
             for (int i = 0; i < _positions.GetLength(0); i++)
             {
@@ -80,7 +83,7 @@ namespace HaptiQ_API
                 }
                 // Reduce position by half the pressure percentage
                 retval[i] = _positions[i, 0] *
-                   (1 - _actuatorsDict[i].pressure / (2.0 * Actuator.MAX_PRESSURE));
+                   (1 - actuatorsDict[i].pressure / (2.0 * Actuator.MAX_PRESSURE));
             }
 
             System.Threading.Thread.Sleep((int)(DEFAULT_WAITING_MS * _frequency));

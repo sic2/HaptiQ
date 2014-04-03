@@ -5,6 +5,9 @@ using Input_API;
 
 namespace HaptiQ_API
 {
+    /// <summary>
+    /// EdgeCornerBehaviour 
+    /// </summary>
     public class EdgeCornerBehaviour : Behaviour
     {
         private const int NUMBER_ACTUATORS_DIVIDER = 4;
@@ -46,7 +49,7 @@ namespace HaptiQ_API
             TIME++;
 
             // ASSUME number of actuators is either 4 or 8
-            int numberActuators = _actuators.Count;
+            int numberActuators = actuators.Count;
             bool isCorner = _lines.Count == 2 ? true : false;
             if (isCorner)
             {
@@ -68,34 +71,34 @@ namespace HaptiQ_API
 
         private void segmentBehaviour(Tuple<Point, Point> segment, ref Dictionary<int, double> output)
         {
-            int sector = getSector(segment, _orientation, _actuators.Count, _actuators.Count);
-            int matrixIndex = _actuators.Count / NUMBER_ACTUATORS_DIVIDER - 1;
+            int sector = getSector(segment, orientation, actuators.Count, actuators.Count);
+            int matrixIndex = actuators.Count / NUMBER_ACTUATORS_DIVIDER - 1;
             if (sector % 2 == 0) // Static sector
             {
                 int activeActs = staticActuatorsMatrix[matrixIndex];
-                activeActs = RshiftActs(activeActs, (int)(sector / 2), _actuators.Count);
-                bitsToActuators(_actuators.Count, activeActs, false, true, ref output);
+                activeActs = RshiftActs(activeActs, (int)(sector / 2), actuators.Count);
+                bitsToActuators(actuators.Count, activeActs, false, true, ref output);
             }
             else // Pulsing sector
             {
                 int[] acts = (int[])dynamicActuatorsMatrix[matrixIndex].Clone();
-                acts[0] = RshiftActs(acts[0], (int)((sector - 1) / 2), _actuators.Count);
-                acts[1] = RshiftActs(acts[1], (int)((sector - 1) / 2), _actuators.Count);
-                bitsToActuators(_actuators.Count, acts[0], TIME % 2 == 0, false, ref output);
-                bitsToActuators(_actuators.Count, acts[1], TIME % 2 != 0, false, ref output);
-                setZerosToMinimum(_actuators.Count, (acts[0] | acts[1]), ref output);
+                acts[0] = RshiftActs(acts[0], (int)((sector - 1) / 2), actuators.Count);
+                acts[1] = RshiftActs(acts[1], (int)((sector - 1) / 2), actuators.Count);
+                bitsToActuators(actuators.Count, acts[0], TIME % 2 == 0, false, ref output);
+                bitsToActuators(actuators.Count, acts[1], TIME % 2 != 0, false, ref output);
+                setZerosToMinimum(actuators.Count, (acts[0] | acts[1]), ref output);
             }
         }
 
         private void cornerBehaviour(ref Dictionary<int, double> output)
         {
-            double sectorRange = (2 * Math.PI) / (2.0 * _actuators.Count);
-            double normAngle = (_orientation > 0 ? _orientation : (2 * Math.PI + _orientation)) + (sectorRange / 2.0);
-            int sector = (int)Math.Floor(normAngle / sectorRange) % (_actuators.Count * 2);
+            double sectorRange = (2 * Math.PI) / (2.0 * actuators.Count);
+            double normAngle = (orientation > 0 ? orientation : (2 * Math.PI + orientation)) + (sectorRange / 2.0);
+            int sector = (int)Math.Floor(normAngle / sectorRange) % (actuators.Count * 2);
 
             // Two main actuators - Note that shifting is needed to apply orientation
-            int actuator1 = vectorToActuator(_lines[0], _actuators.Count);
-            int actuator2 = vectorToActuator(_lines[1], _actuators.Count);
+            int actuator1 = vectorToActuator(_lines[0], actuators.Count);
+            int actuator2 = vectorToActuator(_lines[1], actuators.Count);
 
             if (actuator1 == -1 || actuator2 == -1)
             {
@@ -105,26 +108,26 @@ namespace HaptiQ_API
             else if (sector % 2 == 0) // Combine the two actuators
             {
                 actuator1 = actuator1 | actuator2;
-                actuator1 = RshiftActs(actuator1, (int)(sector / 2), _actuators.Count);
-                bitsToActuators(_actuators.Count, actuator1, false, true, ref output);
+                actuator1 = RshiftActs(actuator1, (int)(sector / 2), actuators.Count);
+                bitsToActuators(actuators.Count, actuator1, false, true, ref output);
             }
             else // Combinations of actuators to virtually create corners
             {
-                actuator1 = RshiftActs(actuator1, (int)((sector - 1) / 2), _actuators.Count);
-                actuator2 = RshiftActs(actuator2, (int)((sector - 1) / 2), _actuators.Count);
-                int actuator3 = RshiftActs(actuator1, 1, _actuators.Count);
+                actuator1 = RshiftActs(actuator1, (int)((sector - 1) / 2), actuators.Count);
+                actuator2 = RshiftActs(actuator2, (int)((sector - 1) / 2), actuators.Count);
+                int actuator3 = RshiftActs(actuator1, 1, actuators.Count);
 
                 int actuator4 = 0;
-                if (_actuators.Count == 8)
+                if (actuators.Count == 8)
                 {
-                    actuator4 = RshiftActs(actuator2, 1, _actuators.Count);
-                    bitsToActuators(_actuators.Count, actuator4, TIME % 2 != 0, false, ref output);
+                    actuator4 = RshiftActs(actuator2, 1, actuators.Count);
+                    bitsToActuators(actuators.Count, actuator4, TIME % 2 != 0, false, ref output);
                 }
 
-                bitsToActuators(_actuators.Count, actuator1, TIME % 2 != 0, false, ref output);
-                bitsToActuators(_actuators.Count, actuator2, TIME % 2 == 0, false, ref output);
-                bitsToActuators(_actuators.Count, actuator3, TIME % 2 == 0, false, ref output);
-                setZerosToMinimum(_actuators.Count, (actuator1 | actuator2 | actuator3 | actuator4), ref output); 
+                bitsToActuators(actuators.Count, actuator1, TIME % 2 != 0, false, ref output);
+                bitsToActuators(actuators.Count, actuator2, TIME % 2 == 0, false, ref output);
+                bitsToActuators(actuators.Count, actuator3, TIME % 2 == 0, false, ref output);
+                setZerosToMinimum(actuators.Count, (actuator1 | actuator2 | actuator3 | actuator4), ref output); 
             }
         }
  
@@ -174,7 +177,7 @@ namespace HaptiQ_API
 
             // Return true if the fields match
             return (p._lines == this._lines && 
-                p._orientation == this._orientation);
+                p.orientation == this.orientation);
         }
 
         // @see: http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
@@ -184,7 +187,7 @@ namespace HaptiQ_API
             {
                 int hash = 17;
                 hash = hash * 23 + this._lines.GetHashCode();
-                hash = hash * 23 + this._orientation.GetHashCode();
+                hash = hash * 23 + this.orientation.GetHashCode();
                 return hash;
             }
         }

@@ -11,6 +11,9 @@ using HaptiQ_API;
 
 namespace HapticClientAPI
 {
+    /// <summary>
+    /// HapticRectangle class
+    /// </summary>
     public class HapticRectangle : HapticShape
     {
         // Constant used to display border tollerance of rectangle
@@ -68,6 +71,11 @@ namespace HapticClientAPI
             }
         }
 
+        /// <summary>
+        /// Return true if point is inside this HapticRectangle
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
         protected override bool pointIsInside(Point point)
         {
             return (point.X >= (x - BORDERS_TOLLERANCE) &&
@@ -76,6 +84,12 @@ namespace HapticClientAPI
                 point.Y <= (y + height + BORDERS_TOLLERANCE));
         }
 
+        /// <summary>
+        /// Return appropriate behaviour based on the position of the HaptiQ within 
+        /// this HapticRectangle
+        /// </summary>
+        /// <param name="haptiQ"></param>
+        /// <returns></returns>
         protected override IBehaviour chooseBehaviour(HaptiQ haptiQ)
         {
             IBehaviour behaviour = null;

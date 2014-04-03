@@ -64,7 +64,7 @@ namespace HaptiQ_API
             }
             else if (type == TYPES.max)
             {
-                _actuatorsToActivate = (int) (Math.Pow(2, _actuators.Count()) - 1);
+                _actuatorsToActivate = (int) (Math.Pow(2, actuators.Count()) - 1);
             }
             else
             {
@@ -81,7 +81,7 @@ namespace HaptiQ_API
         {
             Dictionary<int, double> retval = new Dictionary<int, double>();
             TIME++;
-            bitsToActuators(_actuators.Count, _actuatorsToActivate, false, true, ref retval);
+            bitsToActuators(actuators.Count, _actuatorsToActivate, false, true, ref retval);
           
             System.Threading.Thread.Sleep((int)(DEFAULT_WAITING_MS * _frequency));
             return retval;

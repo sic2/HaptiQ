@@ -11,12 +11,21 @@ using HaptiQ_API;
 
 namespace HapticClientAPI
 {
+    /// <summary>
+    /// HapticCircle
+    /// </summary>
     public class HapticCircle : HapticShape
     {
         private double x;
         private double y;
         private double radius;
 
+        /// <summary>
+        /// Construct an HapticCircle
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="radius"></param>
         public HapticCircle(double x, double y, double radius) : base()
         {
             this.x = x; this.y = y; this.radius = radius;
@@ -34,11 +43,22 @@ namespace HapticClientAPI
             connectionPoints.Add(new Point(x - sqrtTwo * radius, y - sqrtTwo * radius));
         }
 
+        /// <summary>
+        /// Return a notificationBehaviour with frequency dictated by the 
+        /// position of the HaptiQ within this shape
+        /// </summary>
+        /// <param name="haptiQ"></param>
+        /// <returns></returns>
         protected override IBehaviour chooseBehaviour(HaptiQ haptiQ)
         {
             return new NotificationBehaviour(haptiQ, getFrequency(haptiQ.position));
         }
 
+        /// <summary>
+        /// Return true if point is inside this HapticCircle
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
         protected override bool pointIsInside(Point point)
         {
             return Math.Pow((point.X - x), 2) + Math.Pow(point.Y - y, 2) < Math.Pow(radius + NEARNESS_TOLLERANCE, 2);
@@ -51,6 +71,11 @@ namespace HapticClientAPI
             return (-1.0 / (2 * radius)) * dst + 1;
         }
 
+        /// <summary>
+        /// Returns the distance between a point and the center of the HapticCircle
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
         protected virtual double dstFromCenter(Point point)
         {
             return Math.Sqrt(Math.Pow((point.X - x), 2) + Math.Pow(point.Y - y, 2));

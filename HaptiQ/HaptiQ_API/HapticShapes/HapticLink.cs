@@ -25,7 +25,7 @@ namespace HapticClientAPI
         /// </summary>
         /// <param name="hapticShapeSrc"></param>
         /// <param name="hapticShapeDst"></param>
-        /// <param name="hadDirection"></param>
+        /// <param name="hasDirection"></param>
         public HapticLink(HapticShape hapticShapeSrc, HapticShape hapticShapeDst, bool hasDirection)
             : base()
         {
@@ -51,6 +51,12 @@ namespace HapticClientAPI
             this.Stroke = brush;
         } 
 
+        /// <summary>
+        /// Return PulsationBehaviour with appropriate frequency.
+        /// Frequency is defined by the position of the HaptiQ within this HapticLink
+        /// </summary>
+        /// <param name="haptiQ"></param>
+        /// <returns></returns>
         protected override IBehaviour chooseBehaviour(HaptiQ haptiQ)
         {
             double highFrequency = _hasDirection ? 100 * (Helper.distanceBetweenTwoPoints(haptiQ.position, _pair.Item2) /
@@ -59,6 +65,11 @@ namespace HapticClientAPI
             return behaviour;
         }
 
+        /// <summary>
+        /// Return true if point is inside this HapticLink
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
         protected override bool pointIsInside(Point point)
         {
             return pointIsCloseToSegment(point, _pair.Item1, _pair.Item2, NEARNESS_TOLLERANCE);

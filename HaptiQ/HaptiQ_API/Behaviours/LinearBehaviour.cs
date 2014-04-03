@@ -29,11 +29,11 @@ namespace HaptiQ_API
 
         /// <summary>
         /// Constructor of the Linear behaviour.
-        /// Make the specified actuators to pulse at a constant interval 
+        /// Height of the actuators is specified by the ratio value
         /// </summary>
         /// <param name="haptiQ"></param>
         /// <param name="segment"></param>
-        /// <param name="frequency"></param>
+        /// <param name="ratio"></param>
         public LinearBehaviour(HaptiQ haptiQ, Tuple<Point, Point> segment, double ratio)
             : base(haptiQ)
         {
@@ -62,22 +62,22 @@ namespace HaptiQ_API
         /// <param name="output"></param>
         private void segmentBehaviour(ref Dictionary<int, double> output)
         {
-            int sector = getSector(_segment, _orientation, _actuators.Count, _actuators.Count * 2);
-            int matrixIndex = _actuators.Count / NUMBER_ACTUATORS_DIVIDER - 1;
+            int sector = getSector(_segment, orientation, actuators.Count, actuators.Count * 2);
+            int matrixIndex = actuators.Count / NUMBER_ACTUATORS_DIVIDER - 1;
             if (sector % 2 == 0) // Single actuators sector
             {
                 int activeActs = singleActuatorsMatrix[matrixIndex];
-                activeActs = RshiftActs(activeActs, (int)(sector / 2), _actuators.Count);
-                bitsToActuators(_actuators.Count, activeActs, false, false, ref output);
-                setZerosToMinimum(_actuators.Count, activeActs, ref output);
+                activeActs = RshiftActs(activeActs, (int)(sector / 2), actuators.Count);
+                bitsToActuators(actuators.Count, activeActs, false, false, ref output);
+                setZerosToMinimum(actuators.Count, activeActs, ref output);
             }
             else // Double actuators sector
             {
                 int[] acts = (int[])dynamicActuatorsMatrix[matrixIndex].Clone();
-                acts[0] = RshiftActs(acts[0], (int)((sector - 1) / 2), _actuators.Count);
-                acts[1] = RshiftActs(acts[1], (int)((sector - 1) / 2), _actuators.Count);
-                bitsToActuators(_actuators.Count, acts[0] | acts[1], false, false, ref output);
-                setZerosToMinimum(_actuators.Count, (acts[0] | acts[1]), ref output);
+                acts[0] = RshiftActs(acts[0], (int)((sector - 1) / 2), actuators.Count);
+                acts[1] = RshiftActs(acts[1], (int)((sector - 1) / 2), actuators.Count);
+                bitsToActuators(actuators.Count, acts[0] | acts[1], false, false, ref output);
+                setZerosToMinimum(actuators.Count, (acts[0] | acts[1]), ref output);
             }
         }
 
@@ -97,7 +97,7 @@ namespace HaptiQ_API
 
             // Return true if the fields match
             return (p._segment == this._segment &&
-                p._orientation == this._orientation &&
+                p.orientation == this.orientation &&
                 this.highPosition == this.highPosition);
         }
 
@@ -108,7 +108,7 @@ namespace HaptiQ_API
             {
                 int hash = 17;
                 hash = hash * 23 + this._segment.GetHashCode();
-                hash = hash * 23 + this._orientation.GetHashCode();
+                hash = hash * 23 + this.orientation.GetHashCode();
                 hash = hash * 23 + this.highPosition.GetHashCode();
                 return hash;
             }

@@ -6,9 +6,19 @@ using System.Threading;
 
 namespace HaptiQ_API
 {
+    /// <summary>
+    /// BeepOutput defines a class used to emit audio beeps using the motherboard
+    /// </summary>
     public class BeepOutput
     {
+        /// <summary>
+        /// Maximum duration of a beep in ms
+        /// </summary>
         public const int MAX_DURATION = 1000;
+
+        /// <summary>
+        /// Minimum duration of a beep in ms
+        /// </summary>
         public const int MIN_DURATION = 100;
 
         /// <summary>

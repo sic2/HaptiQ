@@ -5,6 +5,10 @@ using System.Text;
 
 namespace HaptiQ_API
 {
+    /// <summary>
+    /// IAction interface.
+    /// Implement this to define custom actions to be executed on pressure gesture events
+    /// </summary>
     public interface IAction
     {
         /// <summary>

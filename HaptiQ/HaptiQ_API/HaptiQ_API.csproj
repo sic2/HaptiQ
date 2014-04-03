@@ -68,7 +68,7 @@
     <Compile Include="Config\ConfigurationForm.Designer.cs">
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Behaviours\EdgeCornersBehaviour.cs" />
+    <Compile Include="Behaviours\EdgeCornerBehaviour.cs" />
     <Compile Include="Config\ConfigurationManager.cs" />
     <Compile Include="CustomADT\SerializableDictionary.cs" />
     <Compile Include="CustomADT\SerializableTuple.cs" />
