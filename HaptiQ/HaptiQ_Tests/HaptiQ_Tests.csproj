@@ -56,7 +56,7 @@
     </ProjectReference>
     <ProjectReference Include="..\HaptiQ_API\HaptiQ_API.csproj">
       <Project>{89E94DE8-469B-49A8-8265-0FF58943C72F}</Project>
-      <Name>MHTP_API</Name>
+      <Name>HaptiQ_API</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

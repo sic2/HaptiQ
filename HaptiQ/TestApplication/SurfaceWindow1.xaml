@@ -1,0 +1,14 @@
+﻿<s:SurfaceWindow x:Class="TestApplication.SurfaceWindow1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:s="http://schemas.microsoft.com/surface/2008"
+    Title="TestApplication"
+                  mc:Ignorable="d"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                 SizeToContent="WidthAndHeight"
+    >
+    <Grid  Name="Container" Height="700" Width="1000">
+
+  </Grid>
+</s:SurfaceWindow>
