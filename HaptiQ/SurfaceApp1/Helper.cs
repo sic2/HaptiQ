@@ -38,6 +38,10 @@ namespace SurfaceApp1
                     return Brushes.Green;
                 case "Yellow":
                     return Brushes.Yellow;
+                case "White":
+                    return Brushes.White;
+                case "Brown":
+                    return Brushes.Brown;
                 default:
                     break;
             }

@@ -16,6 +16,8 @@
             <my:SurfaceListBoxItem Content="Red" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem3" VerticalAlignment="Top" Width="120" />
             <my:SurfaceListBoxItem Content="Green" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem4" VerticalAlignment="Top" Width="120" />
             <my:SurfaceListBoxItem Content="Yellow" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem5" VerticalAlignment="Top" Width="120" />
+            <my:SurfaceListBoxItem Content="White" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem6" VerticalAlignment="Top" Width="120" />
+            <my:SurfaceListBoxItem Content="Brown" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem7" VerticalAlignment="Top" Width="120" />
         </my:SurfaceListBox>
         <TextBlock FontSize="16" FontWeight="Bold" Height="38" HorizontalAlignment="Left" Margin="0,112,0,0" Name="textBlock4" Text="Color" TextAlignment="Center" VerticalAlignment="Top" Width="63" />
     </Grid>

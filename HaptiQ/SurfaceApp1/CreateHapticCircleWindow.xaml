@@ -9,6 +9,8 @@
             <my:SurfaceListBoxItem Content="Red" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem3" VerticalAlignment="Top" Width="120" />
             <my:SurfaceListBoxItem Content="Green" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem4" VerticalAlignment="Top" Width="120" />
             <my:SurfaceListBoxItem Content="Yellow" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem5" VerticalAlignment="Top" Width="120" />
+            <my:SurfaceListBoxItem Content="White" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem6" VerticalAlignment="Top" Width="120" />
+            <my:SurfaceListBoxItem Content="Brown" Height="16" HorizontalAlignment="Left" Name="surfaceListBoxItem7" VerticalAlignment="Top" Width="120" />
         </my:SurfaceListBox>
         <my:SurfaceTextBox BorderBrush="Blue" Foreground="#FF00004B" Height="38" HorizontalAlignment="Left" Margin="26,0,0,0" Name="surfaceTextBox1" Text="" VerticalAlignment="Top" Width="223" />
         <my:SurfaceTextBox Height="38" HorizontalAlignment="Left" Margin="170,40,0,0" Name="surfaceTextBox2" VerticalAlignment="Top" Width="38" />

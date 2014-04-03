@@ -28,19 +28,6 @@ namespace SurfaceApp1
             InitializeComponent();
             _grid = grid;
             surfaceListBox1.SelectionChanged += new SelectionChangedEventHandler(surfaceListBox1_SelectionChanged);
-        
-        // TODO - fill from and to boxes
-        
-        }
-
-        private void populateListBox(Microsoft.Surface.Presentation.Controls.SurfaceListBox listBox)
-        {
-            List<IHapticObject> list = HaptiQsManager.Instance.getAllObservers();
-            foreach (IHapticObject obj in list)
-            {
-                HapticShape shape = obj as HapticShape;
-                
-            }
         }
 
         void surfaceListBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -54,8 +41,11 @@ namespace SurfaceApp1
             bool error = false;
             try
             {
-
-                HapticShape link = new HapticLink(null, null, surfaceCheckBox1.IsChecked.Value);
+                List<IHapticObject> selectedObjs = HaptiQsManager.Instance.getSelectedObjects();
+                HapticShape link = new HapticLink((HapticShape) selectedObjs[selectedObjs.Count - 2],
+                    (HapticShape) selectedObjs[selectedObjs.Count - 1], 
+                    surfaceCheckBox1.IsChecked.Value);
+                link.color(Helper.getBrush(_currentColor));
                 _grid.Children.Add(link);
             }
             catch (FormatException fe)
