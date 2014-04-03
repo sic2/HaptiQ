@@ -5,7 +5,7 @@ Firstly, the hardware implementation is discussed, followed by the API. A dedica
 
 \section{The Hardware}
 
-Building the hardware components of the two HaptiQ devices has been a challenge on its own. Both the 4-HaptiQ and the 8-HaptiQ are 3D-modelled using Google Sketchup \todo[noline]{cite}. Models are then exported in the STL format, a standard in CAD software, and commissioned to a 3D printer. I used a MakerBot\textregistered   Replicator\texttrademark 2x. This is an experimental 3D printer, therefore high precision (\textless 2mm) is hard to achieve and requires many attempts before being able to print the wanted model. 
+Building the hardware components of the two HaptiQ devices has been a challenge on its own. Both the 4-HaptiQ and the 8-HaptiQ are 3D-modelled using Google Sketchup \footnote{Google SketchUp. http://www.sketchup.com . [Online; last checked: 03/04/2014].}. Models are then exported in the STL format, a standard in CAD software, and commissioned to a 3D printer. I used a MakerBot\textregistered   Replicator\texttrademark 2x. This is an experimental 3D printer, therefore high precision (\textless 2mm) is hard to achieve and requires many attempts before being able to print the wanted model. 
 
 Phidgets boards are used to control the micro servomotors, \textit{Hitech HS-65MG}, and get pressure inputs, via force-sensing resistors. The wiring is more of a demanding task, rather than a challenging one, requiring many hours of work.
 
@@ -107,7 +107,7 @@ Haptic objects are the visual elements that client applications can use to repre
 \begin{itemize}
 	\item \textbf{handleInput}: called whenever a new input location is received from the Input API. This method returns a Tuple of three elements: a rule to apply for the returned values (ADD, REMOVE, SUBSTITUTE, NONE) and two behaviours. For instance, the method may add a new behaviour to the HaptiQ, or substitute the current behaviour with a new one. Since HaptiQs can combine behaviours, each HaptiQ object needs to keep track of what current behaviour is assigned to each HaptiQ. 
     \item \textbf{handlePress}: called when a pressure gesture event is raised
-    \item \textbf{registerAction}: allows clients to register custom actions to be executed on \textit{handlePress}
+    \item \textbf{registerAction}: allows clients to register custom actions to be executed on \textit{handlePress}. For example, a \textit{BasicAction} allows the client to specify text to be read out through the speakers when a pressure gesture is fired.
 \end{itemize}
 
 \lstset{style=sharpc1}
@@ -226,7 +226,7 @@ Similar bitwise operations, as described above, are applied for the direction, p
 
 In this section, I will show how to use the API using a simple example (see Code ~\ref{lst:basicAPIUsage}). This section is necessary to properly understand section ~\ref{sec:Applications}, which discusses the provided example applications of this project.
 
-The first step consists in creating a WPF application and adding a reference to the HaptiQ\_API. In the designed view, add a Grid named \textit{container} to the main window. From the code view of the application, import the HaptiQ\_API and the HapticClientAPI namespaces (the latter contains the default haptic objects). 
+The first step consists in creating a WPF application and adding a reference to the HaptiQ\_API. In the designed view, add a Grid named \textit{container} to the main window. Import the HaptiQ\_API in the code view of the application. 
 
 The call \textit{HaptiQsManager.Create(windowTitle, \textless Input Class\textgreater)} initialises the HaptiQ device and the Input API, using the specified Input class (e.g. 'SurfaceInput' for Bytetags). 
 Objects are automatically added to the system when they are created. These are rendered only when added to a WPF grid or canvas. 
@@ -236,7 +236,6 @@ In the \textit{onClosed} method of the WPF application, it is important to call 
 \lstset{style=sharpc}
 \begin{lstlisting}[caption={Basic API usage},label={lst:basicAPIUsage}]
 using HaptiQ_API;
-using HapticClientAPI;
 
 public partial class Application : SurfaceWindow
 {
@@ -256,7 +255,7 @@ public partial class Application : SurfaceWindow
       rect2.color(Brushes.Green);
       this.container.Children.Add(rect2);
       
-      HapticShape link = new HapticLink(rect2, rect1);
+      HapticShape link = new HapticLink(rect2, rect1, true);
       link.color(Brushes.White);
       this.container.Children.Add(link);
   }
@@ -270,24 +269,47 @@ public partial class Application : SurfaceWindow
 }
 \end{lstlisting}
 
-\todo[inline, color=green!40]{add image of the resulting application}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{basic_example.png}
+  \caption{Basic API usage}
+  \label{fig:basicexample}
+\end{figure}
 
-Please refer to the HaptiQ manual for additional examples on how to use the API. 
+Please refer to the HaptiQ manual for further details and additional examples on how to use the API. 
 
 
 \section{Applications}
 \label{sec:Applications}
 
-This section will briefly explain some of the implementation details about the two example applications provided with this project.
+This section will briefly explain some of the implementation details about the two example applications provided with this project. 
 
-\subsection{Graph Visualisation}
+\subsection{Graph Visualiser}
 
-\subsection{Functions Visualisation}
-
-\begin{itemize}
-\item use of NCalc \footnote{http://ncalc.codeplex.com/} for evaluating input mathematical expression
-\item scaling functions
-\end{itemize}
+The graph visualiser application, as explained in section ~\ref{sec:graphVis}, provides basic functionality to build and visualise graphs that can be perceived using the HaptiQ. 
+The main user interface is created using Visual Studio to organize the WPF standard controls (i.e. buttons). A click handler is attached to each button. Two types of buttons exist in the application. The first type are used to create new haptic objects, while the second one to make the objects selectable or not. \\
+When the first type of buttons is used, a new window is shown allowing the user to choose the properties of the haptic object. A create button in the new window adds the haptic object to the main window, as shown in Code ~\ref{lst:basicAPIUsage}.
+The second type, instead, iterates over all the haptic objects through the \textit{HaptiQsManager} and make them selectable or not. This functionality is useful because we want objects to be selectable only when creating the graph and not when the user is sensing it.  
 
 
+\subsection{Functions Visualiser}
 
+The functions visualiser application is self-contained in one simple C\# class. A user can input basic functions (e.g. linear, trigonometric) via the interface provided by the application. The interface, similarly to the Graph Visualiser one, is created with the assistance of Visual Studio. \\
+The application accepts only functions of the form: $ y = f(x) $, with only one occurrence of x. Functions are evaluated using the NCalc library \footnote{NCalc. http://www.ncalc.codeplex.com/ . [Online; Last checked: 02/04/2014].} at regular intervals over x. The pseudocode ~\ref{lst:functVisPseudo} shows the use of the NCalc library and the creation of the HapticPolyline. 
+
+\lstset{style=sharpc1}
+\begin{lstlisting}[caption={Function Visualiser pseudocode},label={lst:functVisPseudo}]
+var regex = new Regex(Regex.Escape("x"));
+for(int i = 0; i < RANGE; i++)
+{
+	var function = regex.Replace(inputTextFunction, i.ToString(), 1);
+    NCalc.Expression expr = new NCalc.Expression(function);
+    var y = expr.Evaluate();
+    points.add(new Point(i, y));
+}
+
+HapticShape polyline = new HapticPolyline(points);
+polyline.color(Brushes.White);
+container.Children.Add(polyline);
+
+\end{lstlisting}

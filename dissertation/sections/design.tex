@@ -4,7 +4,7 @@ The HaptiQ aims to solve some of the problems identified in the related work. Th
 
 \section{The Hardware}
 \subsection{Early Prototypes}
-The hardware design of the HaptiQ has been initially based on the HTP design. Similarly to the HTP, the HaptiQ also uses mini-servos to control its actuators. However, while the HTP controls only one actuator, the HaptiQ controls four or eight of them. It immediately follows that as the number of actuators increases, so do the number of servos and the size of the device. In order to minimise the size I designed three main prototypes by sketches (see Figure ~\ref{fig:HaptiQ-early-prototypes}). 
+The hardware design of the HaptiQ has been initially based on the HTP design. Similarly to the HTP, the HaptiQ also uses mini-servos to control its actuators. However, while the HTP controls only one actuator, the HaptiQ controls four or eight of them. It immediately follows that as the number of actuators increases, so does the number of servos and the size of the device. In order to minimise the size, I designed three main prototypes by sketches (see Figure ~\ref{fig:HaptiQ-early-prototypes}). 
 
 The first prototype extends the rotational axis in the xy plane (see Figure ~\ref{fig:first prototype}). The extension is designed as a gear that allows to choose combinations of three aligned actuators. An additional actuator would then be used to raise the selected actuators. This design reduces the number of servos, but all raised actuators will have the same height. Note that the focus of this design sketch was to minimise the number of servos, that is why actuators are shown as points, similar to Braille displays.
 
@@ -217,18 +217,27 @@ Basic haptic objects are provided by the API and are designed to be used by WPF 
 
 Haptic objects are the main visual components of the client applications. Therefore, clients can also register custom actions to be run when pressure events are received by a specific object.
 
-Figure ~\ref{fig:hapticObjects} shows examples of the haptic objects supported by the API. 
+Figure ~\ref{fig:hapticObjects} shows examples of the haptic objects supported by the API. Rectangles and circles can be used as identity objects, in applications like graphs. Identity objects can also be linked. Links can have directions (from red to green) or not. The API allows also to specify lines and polylines. One of the example applications provided with the API, for example, uses polylines to display mathematical functions.
 
-The Fiducial Markers used do not provide very precise input location of the device. In order to compensate, the HapticObjects provided are extended (red borders in Figure ~\ref{fig:hapticObjects}). This makes it harder to the user to leave the object, which is wanted behaviour.
+The used Fiducial Markers do not provide very precise input location of the device. In order to compensate, the HapticObjects provided are extended (red borders in Figure ~\ref{fig:hapticObjects}). This makes it harder to the user to leave the object, compensating for the inaccuracy of detecting the device location.
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{hapticObjects.png}
-  \caption{Haptic Objects. From left-to-right, from top-to-bottom: HapticRectangle (HR), HapticLinks, HR, HapticLine, HapticCircle (HC), HC, HapticPolyline}
-  \label{fig:hapticObjects}
+        \centering
+        \begin{subfigure}[H]{0.4\textwidth}
+                \includegraphics[width=\textwidth]{objects.png}
+                \caption{Identity objects and links}
+                \label{fig:objects1}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[H]{0.4\textwidth}
+                \includegraphics[width=\textwidth]{objects2.png}
+                \caption{Line objects}
+                \label{fig:objects2}
+        \end{subfigure}
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+        \caption{Haptic Objects}\label{fig:hapticObjects}
 \end{figure}
-
-\todo[noline]{add better screenshot}
 
 \subsubsection{Audio Feedback}
 
@@ -371,10 +380,41 @@ The Linear tacton, on the other hand, is the union of the pulsation tactons, but
 
 \section{Applications}
 
-The HaptiQ can provide a new set of haptic cues which allow the visually impaired to better perceive lines, edges and directions. Two example basic applications have been implemented using the API previously described.
+The HaptiQ can provide a new set of haptic cues which allow the visually impaired to better perceive lines, edges and directions. The two example applications shown below illustrate the types of applications that can be created using the HaptiQ API. Note that these applications have been designed as proof-of-concepts and not as applications ready to be deployed to the end users.
 
-\todo[inline, color=green!40]{Emphasis on the fact that these are just proof-of-concepts, not finished applications}
+\subsection{Graphs Visualiser}
+\label{sec:graphVis}
 
-\subsection{Graphs visualisation}
+The first application is a basic graph visualiser. The application is designed to be used by people with visual disabilities, with the assistance of a person with normal or corrected vision. The assistant can create graphs using the provided graphical user interface (see Figure ~\ref{fig:graphsVis}). Graphs contain identity objects and links as well as lines and polylines. \\
+In order to create new object, the assistant has to select one of the options on the left hand side. A new window will be prompted asking for the properties of the haptic object. The procedure is the same for all the objects, except for links where the user has to select which objects to link by physically touching the objects with a finger or a bytetag. 
 
-\subsection{Functions visualisation}
+The design is not complete, since it does not allow objects to be deleted and graphs to be saved for later use. However, this is a good example of a possible application for the HaptiQ. One of the issues raised by Saad, in fact, is that blind people have difficulties in visualising graphs such as Finite Automata or Trees. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{graph1.png}
+  \caption{Graphs Visualiser}
+  \label{fig:graphsVis}
+\end{figure}
+
+\subsection{Functions Visualiser}
+\label{sec:funcVis}
+
+The second application that this project uses to prove the flexibility and usability of the HaptiQ and its API is a function visualiser. One of the most challenging tasks for the visually impaired is to be able to \textit{visualise} mathematical functions. The design of the function visualiser is also very simple. The user inputs a function and the application then evaluates and displays it (see Figure ~\ref{fig:funcVisualiser}). The application uses haptic lines and polylines to represent the functions. Cartesian axes are also added for completeness.
+
+\begin{figure}[H]
+        \centering
+        \begin{subfigure}[H]{0.4\textwidth}
+                \includegraphics[width=\textwidth,height=\textwidth]{functions1.png}
+                \caption{Linear function}
+                \label{fig:funct1}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[H]{0.4\textwidth}
+                \includegraphics[width=\textwidth,height=\textwidth]{functions2.png}
+                \caption{Sine function}
+                \label{fig:funct2}
+        \end{subfigure}
+        \caption{Functions Visualiser}\label{fig:funcVisualiser}
+\end{figure}

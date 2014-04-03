@@ -12,7 +12,7 @@ No user study was conducted during this project. However, Saad, being visually i
 
 I was unable to organize any other meetings with Saad to get feedback about the 8-HaptiQ. However, we plan to meet sometime in the near future to start working on the next iteration phase (see Chapter ~\ref{chap:futureWork}). 
 
-The HaptiQ, similarly to the HTP, is intended to be inexpensive. The two prototypes created in this project have an estimated cost of £300.00 circa. Using cheaper printed circuit boards, however, can lower the price to less than £100.00. This is a significant improvement over the current commercial technology (prices are usually over \$1000.00).
+The HaptiQ, similarly to the HTP, is intended to be inexpensive. The two prototypes created in this project have an estimated cost of circa £300.00. Using cheaper printed circuit boards, however, can lower the price to less than £100.00. This is a significant improvement over the current commercial technology (prices are usually over £1000.00).
 
 \section{The API}
 
@@ -33,17 +33,22 @@ During one of the meetings with Saad, we discussed a subset of the tactons prese
 
 \section{Applications}
 
-\todo[inline, color=green!40]{discuss applications}
+The applications presented in this project function as proof of concepts only. Therefore, the applications can be improved largely. The graph visualiser, for example, could support the deletion of haptic objects and the possibility to save and load graphs for later uses. The functions visualiser, instead, can be of great help to students taking courses in mathematics both at school and university level. The application performs very well already, but there are still some issues with scaling and zooming to be solved. 
 
 \section{Summary}
 
 This project was very open-ended and consisted of many different components. Initially, I planned to conduct a user study to evaluate the HaptiQ. However, due to major ethical issues, I decided, with my supervisor, to focus more on the engineering aspects of the HaptiQ and its API. Nonetheless, an iterative process was used rather than a well structured one with well defined requirements. This allowed me to created two devices, with the second one completely re-engineered, and to evolve the API as needed.    
 
-As previously stated, no user study has been conducted to formally evaluate the device. While a user study is already planned in the near future (see Chapter ~\ref{chap:futureWork}), some conclusions can already be drawn by comparing the device with the state of the art in haptic technology. \\
+As previously stated, no user study has been conducted to formally evaluate the device.
+The project, however, has been assisted and supervised throughout the whole design and implementation phases by Dr Miguel A. Nacenta, who is an expert in Human-Computer Interaction and haptic interfaces. The contribution of Dr Nacenta has been particularly fundamental to validate the design process of the hardware and the tactons.
+
+Conclusions can also be drawn by comparing the device with the state of the art in haptic technology. \\
 The HaptiQ, unlike MIMs \cite{brock2010usage} and inFORM \cite{follmer2013inform}, can be used on any interactive surface as long as it is possible to track the device. The HaptiQ, for example, can be used on a normal paper map assuming a top-down tracking mechanism is provided. This makes the HaptiQ more flexible and less expensive, since it can be reused in different scenarios.\\
 TeslaTouch \cite{bau2010teslatouch} and REVEL \cite{bau2012revel} allow users to perceive tactile cues extrinsically or intrinsically. Both of these systems allow users to feel texture and to follow lines. The HaptiQ uses a variety of tactons to indicate not only lines, but directions as well. In addition, electrovibration or vibrational mechanical motors can be integrated with the HaptiQ to allow textures to be sensed. \\
 UltraHaptics \cite{carter2013ultrahaptics} and AIREAL \cite{sodhi2013aireal} provide haptic feedback in a 3D environment. Accuracy, in these systems, is not constant in space. These solutions, in fact, tend to use tactile feedback for media applications to be used by the visually impaired, rather than by blind people. 
 
-Finally, a brief discussion about the objectives that were not achieved is needed. The tertiary objectives included: enabling the haptic device to be used collaboratively and allowing the device to sense textures. 
+Finally, a brief discussion about the objectives that were not achieved is needed. \\
+Initially, one of the secondary objectives was to allow dynamic pointing on the interactive surface. But people with visual disabilities may encounter difficulties on keeping track of the relative position of a dynamic pointer, since no visual feedback can be perceived. Therefore, this objective was discarded. \\
+The tertiary objectives included: enabling the haptic device to be used collaboratively and allowing the device to sense textures. 
 With the focus of the project being on the tactile cues that the HaptiQ could enhance, I decided to give lower priority to any possible feature that could allow communication between two devices. However, the API can support multiple devices. Thus, clients can implement  collaborative features on top of the API.
 On the other hand, the objective of adding the possibility to sense texture was not attempted because the frequency at which the servos, used for this project, work is too low \cite{brown2005first}. A possible alternative could be to add a central static actuator to the devices, similar to the point-reference actuator, which could convey texture information to users via electrovibration \cite{bau2010teslatouch, bau2012revel} or mechanical vibration \footnote{http://www.precisionmicrodrives.com/vibrating-vibrator-vibration-motors}.   
