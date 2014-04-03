@@ -28,8 +28,13 @@ namespace FunctionsVisualiser
     /// </summary>
     public partial class SurfaceWindow1 : SurfaceWindow
     {
+        private const int XY_RANGE = 10;
+
         List<HapticShape> hapticObjects;
         HapticLine line;
+        HapticLine line1;
+
+        int initialCount;
 
         /// <summary>
         /// Default constructor.
@@ -41,10 +46,7 @@ namespace FunctionsVisualiser
             HaptiQsManager.Create(this.Title, "SurfaceInput");
             hapticObjects = new List<HapticShape>(); // list haptic objects used to display functions
 
-            // Create y-axis
-            HapticLine line1 = new HapticLine(new Point(0, 0), new Point(0, this.container.Height));
-            line1.color(Brushes.Blue);
-            this.container.Children.Add(line1);
+            initialCount = container.Children.Count;
         }
 
         /// <summary>
@@ -74,7 +76,7 @@ namespace FunctionsVisualiser
                 var regex = new Regex(Regex.Escape("x"));
                 var max = double.MinValue;
                 var min = double.MaxValue;
-                for (int i = 0; i < 10; i ++)
+                for (int i = 0; i < XY_RANGE; i++)
                 {
                     var funct = regex.Replace(function, i.ToString(), 1);
                     NCalc.Expression expr = new NCalc.Expression(funct);
@@ -95,20 +97,22 @@ namespace FunctionsVisualiser
                 }
                 button1.Background = Brushes.Green;
 
+                // Remove all
+                this.container.Children.RemoveRange(initialCount, this.container.Children.Count);
+
                 if (hapticObjects.Count != 0)
                 {
                     foreach (HapticShape obj in hapticObjects)
                     {
                         HaptiQsManager.Instance.removeObserver(obj);
-                        this.container.Children.Remove(obj);
                     }
                 }
 
                 // Scale values
-                double scaleFactor = container.Height / (max - min);
+                double scaleFactor = container.Height / XY_RANGE;
                 for (int i = 0; i < functionValues.Count; i++)
                 {
-                    functionValues[i] = new Point(functionValues[i].X * (container.Width / 10.0), container.Height - functionValues[i].Y * scaleFactor + (min < 0 ? min * scaleFactor : 0));
+                    functionValues[i] = new Point(functionValues[i].X * (container.Width / XY_RANGE), container.Height - functionValues[i].Y * scaleFactor + (min < 0 ? min * scaleFactor : 0));
                 }
 
                 HapticPolyline polyline = new HapticPolyline(functionValues);
@@ -117,12 +121,21 @@ namespace FunctionsVisualiser
 
                 hapticObjects.Add(polyline);
 
+                // Create y-axis
+                if (line1 != null)
+                {
+                    HaptiQsManager.Instance.removeObserver(line1);
+                }
+
+                line1 = new HapticLine(new Point(0, 0), new Point(0, this.container.Height));
+                line1.color(Brushes.Blue);
+                this.container.Children.Add(line1);
+
                 // x-axis
                 double mid = container.Height + (min < 0 ? min * scaleFactor : 0);
                 if (line != null)
                 {
                     HaptiQsManager.Instance.removeObserver(line);
-                    this.container.Children.Remove(line);
                 }
                 line = new HapticLine(new Point(0, mid), new Point(this.container.Width, mid));
                 line.color(Brushes.Blue);
