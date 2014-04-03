@@ -1,0 +1,118 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+% Allow C# Code to be embedded
+\usepackage{listings}
+\usepackage{xcolor}
+\renewcommand{\lstlistingname}{Code}
+
+\lstdefinestyle{sharpc}
+{language=[Sharp]C, 
+frame=single, 
+rulecolor=\color{blue!80!black}, 
+keywordstyle=\color{blue}, 
+numbers=left,
+breaklines=true,
+basicstyle=\footnotesize\singlespacing}
+
+\lstdefinestyle{sharpc1}
+{language=[Sharp]C, 
+frame=single, 
+rulecolor=\color{blue!80!black}, 
+keywordstyle=\color{blue}, 
+numbers=none,
+breaklines=true,
+basicstyle=\footnotesize\singlespacing}
+
+\title{HaptiQ Manual}
+
+\author{Simone Ivan Conte \\\href{mailto:sic2@st-andrews.ac.uk}{sic2@st-andrews.ac.uk}}
+
+\begin{document}
+\maketitle
+
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+This manual explains how to create WPF applications using the HaptiQ API and how to print the HaptiQ devices. \\
+For further information or help, please contact the author of this manual.
+
+\section{API}
+
+This section will explain how to create a basic WPF application using the HaptiQ API. 
+
+\subsection{Create a simple WPF project}
+
+\begin{itemize}
+	\item how to create WPF project
+    \item add references
+    \item change xml file
+    \item import (using) HaptiQ API
+\end{itemize}
+
+
+\todo[inline, color=green!40]{describe step by step}
+The API contains a multitude of functionality. For more information it is suggested to use Visual Studio, which allows easy access to the documentation for the API. 
+
+\subsection{Extend the HaptiQ API}
+
+\subsection{Extend the Input API}
+
+\todo[inline, color=green!40]{describe step by step}
+
+\section{Hardware}
+
+The models for the 4-HaptiQ and the 8-HaptiQ can be found in the folder \textit{HaptiQ 3D Models}. Use MakerWare to import the STL files and print all the interested parts. Note that the printing can take up to several hours, based on the 3D printer used. 
+
+\subsection{Hardware needed}
+
+\begin{itemize}
+	\item 3D Printer with 1.8mm ABS Plastic or equivalent
+    \item 4 Hitech HS-65MG micro servomotors (8 for the 8-HaptiQ)
+    \item 1 Phidget AdvancedServoBoard
+    \item 1 Phidget InterfaceKit 8/8/8 or equivalent (must support analog input)
+    \item 4 Force-Sensing resistors (8 for the 8-HaptiQ)
+    \item Screws of various dimensions 
+    \item Super glue
+    \item Female and male crimps (with slots)
+\end{itemize}
+
+\section{Software Listing}
+
+The software used in this project is listed below:
+
+\begin{center}
+    \begin{tabular}{ | l | p{3cm} | p{8cm} |}
+    \hline
+    Software & Description & Available at \\ \hline
+    Phidget libraries & Control servos and pressure sensors & http://www.phidgets.com/ \\ \hline
+    GRATF & Locate and recognize Glyphs & http://www.aforgenet.com/projects/gratf/ \\ \hline
+    Glyphs Studio & Print Glyphs & http://www.aforgenet.com/projects/gratf/ \\ \hline
+    Surface SDK 2.0 & Interface with tabletop & http://www.microsoft.com/en-gb/download/details.aspx?id=26716 \\ \hline
+    NCalc & Evaluate mathematical functions in FunctionsApp & http://ncalc.codeplex.com/ \\ \hline
+    VS2012 & C\# IDE & \- \\ \hline
+    MakerWare & 3D Printer Software & https://www.makerbot.com/makerware/ \\ \hline
+    SketchUp & 3D Modelling tool & http://www.sketchup.com/ \\ \hline
+    SketchUp STL & STL Exporter plugin & http://extensions.sketchup.com/en/content/sketchup-stl \\ \hline
+    \end{tabular}
+\end{center}
+
+\end{document}
