@@ -95,6 +95,7 @@ namespace HaptiQ_API
             _HaptiQBehaviours = new Dictionary<uint, Tuple<STATE, IBehaviour>>();
 
             this.StrokeThickness = 20;
+            this.Unloaded += new System.Windows.RoutedEventHandler(HapticShape_Unloaded);
 
             HaptiQsManager.Instance.addObserver(this);
         }
@@ -276,5 +277,13 @@ namespace HaptiQ_API
         {
             base.OnRender(drawingContext);
         }
+
+        /// <summary>
+        /// This method is called whenever this HapticShape is removed from its visual parent
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected virtual void HapticShape_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+        {}
     }
 }
