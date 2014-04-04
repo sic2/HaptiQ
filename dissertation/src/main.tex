@@ -1,0 +1,119 @@
+\documentclass[11pt]{report}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage[left=1.5in, right=1in, top=1in, bottom=1in, includefoot, headheight=13.6pt]{geometry} % margins as suggested in http://codeinthehole.com/writing/writing-a-thesis-in-latex/ 
+\usepackage{indentfirst}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{titlesec}
+\usepackage[nottoc,notlot,notlof]{tocbibind}
+\usepackage{nth} % allows days formatting. i.e. 1st, 2nd , ..., i-th
+\usepackage[hyphens]{url}
+\usepackage[toc,page]{appendix}
+\usepackage{setspace}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+ 
+\usepackage{chngcntr} 
+\counterwithout*{footnote}{chapter} % do not reset footnotes numbering for each chapter
+
+\graphicspath{{images/}}
+
+\titleformat{\chapter}[display]{\normalfont\huge\bfseries}{}{0pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{10pt}{40pt}
+
+\renewcommand{\baselinestretch}{1.5}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+% Allow C# Code to be embedded
+\usepackage{listings}
+\usepackage{xcolor}
+\renewcommand{\lstlistingname}{Code}
+
+\lstdefinestyle{sharpc}
+{language=[Sharp]C, 
+frame=single, 
+rulecolor=\color{blue!80!black}, 
+keywordstyle=\color{blue}, 
+numbers=left,
+breaklines=true,
+basicstyle=\footnotesize\singlespacing}
+
+\lstdefinestyle{sharpc1}
+{language=[Sharp]C, 
+frame=single, 
+rulecolor=\color{blue!80!black}, 
+keywordstyle=\color{blue}, 
+numbers=none,
+breaklines=true,
+basicstyle=\footnotesize\singlespacing}
+
+
+\begin{document}
+
+\input{./sections/title.tex}
+\clearpage\mbox{}\clearpage
+\newpage
+\input{./sections/abstract.tex}
+\clearpage\mbox{}\clearpage
+\newpage
+\input{./sections/declaration.tex}
+\clearpage\mbox{}\clearpage
+\newpage
+\input{./sections/acknowledgments.tex}
+\clearpage\mbox{}\clearpage
+\newpage
+
+\tableofcontents
+\newpage
+
+\listoffigures
+\newpage
+
+\input{./sections/intro.tex}
+\newpage
+\input{./sections/objectives.tex}
+\newpage
+\input{./sections/background.tex}
+\newpage
+\input{./sections/researchAndMethodology.tex}
+\newpage
+\input{./sections/ethics.tex}
+\newpage
+\input{./sections/design.tex}
+\newpage
+\input{./sections/implementation.tex}
+\newpage
+\input{./sections/evaluation.tex}
+\newpage
+\input{./sections/futureWork.tex}
+\newpage
+\input{./sections/conclusion.tex}
+
+\newpage
+\bibliographystyle{acm}
+\bibliography{bibliography}
+
+%
+%\newpage
+%\begin{appendices}
+%\chapter{MHTP API}
+%The contents...
+%Is this section actually necessary?
+%\end{appendices}
+
+\end{document}

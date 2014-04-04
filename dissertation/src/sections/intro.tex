@@ -1,0 +1,27 @@
+\chapter{Introduction}
+The use of technology for the blind and the visually impaired is not obvious. The digital divide gap is significant and has an evident impact not only on the life style of the visually impaired, but also on how they interact with others and the surrounding environment. This can lead to one's exclusion from society. Therefore, presenting information in a correct, fast and easy-to-access manner to the visually impaired is a fundamental challenge in a world where technology evolves at an exponential rate. \par
+
+So far, Braille can be considered the most used form of tactile graphics since the XIX century\cite{andrea2009history}. Braille is a coding system for alphanumeric symbols, with each braille character being a combination of raised dots or tactile bumps positioned within a fixed grid. While Braille has been shown in the past to be excellent for textual information, the trend is changing. In fact, touch screen devices, which are becoming always more pervasive, do not allow Braille to be reproduced. \par
+
+In addition to the technology revolution we are experiencing, nowadays, the amount of data  daily produced is increasing. Most of the time it is not feasible to represent data and its information in textual form, whether it is a small data set or big data. Therefore, in the last couple of decades data visualisation has been playing a crucial role in many areas, such as economics, physics, and chemistry aiding scholars and professionals to better understand problems and show their results to the public. Graphical visualisation can also help users to better understand more abstract concepts, such as graphs (e.g. automata, trees, etc) and functions behaviour. 
+The progress in information visualisation and presentation has been substantial in the last 20 years, with the increase in computational power and larger displays. However, this progress has not had a similar strong positive impact on the way the visually impaired interact with technology. \par 
+
+It is then necessary to undertake such challenge in order to minimise the digital divide for the visually impaired. Traditional devices include screen readers, like JAWS\cite{JAWS}, and dynamic Braille displays\cite{HumanWare, shimada2010development, blindMaps}. However, these tools are generally very expensive, bulky and lack of flexibility and adaptability. For instance, screen readers cannot be used for graphics, while dynamic displays can represent only a small portion of a display and being able to locate their relative position can become very hard.
+Currently researchers and industry are increasing their effort toward bridging this gap. This project is based on the work of Marquardt et al.(2009)\nocite{marquardt2009haptic}, who developed the Haptic Tabletop Puck (HTP), an inexpensive tactile feedback input device to be used on digital tabletop surfaces. Friction, height, texture, and malleability are communicated through a combination of properties of the HTP: a rod and a brake pad controlled by two servo motors, and a pressure sensor on the rod. The HTP, however, uses only one actuator on a finger to convey information to the user, which makes it unsuitable for use by people with visual disabilities, since directions and edges of tactile objects cannot be detected with ease. \par
+
+Here I present the HaptiQ (pronounced Haptic Cue), a Tangible User Interface (TUI)\cite{ishii1997tangible} with tactile and audio feedback input which takes the HTP to the next level for people with visual impairments. In addition an easy-to-use API and a new set of dynamic Tactons is presented. Tactons are ``structured, abstract, tactile messages which can be used to communicate information non-visually''\cite{brown2005first}.\par
+This project will be available to download under the GNU General Public License in accordance to one of the aims of the project: building an accessible, inexpensive and easy-to-build device for the visually impaired. \par
+
+\section{Contributions}
+
+The contributions of this project can be summarised as follows:
+\begin{itemize}
+	\item Create an inexpensive haptic-audio feedback device for the visually impaired
+    \item Create a device that can be 3D-printed at home
+    \item Create a modular device, allowing further studies to explore different types of tactons
+    \item Design and implement a dual-API (both high and low level) for the device which is easy-to-use
+    \item Project available to the community under the GNU General Public License 
+\end{itemize}
+
+\section{Report Outline}
+The remainder of this report is structured as follows. \textbf{Chapter 2} states the overall objectives of this project in order of importance and relevance. In \textbf{Chapter 3} a detailed overview of the related work is presented, in order to get a flavour of the current state of the art and how this project fits in it. The research techniques and methodology used through the development phase of this project is described in \textbf{Chapter 4}. \textbf{Chapter 5} addresses any ethical considerations. The design and implementation aspects of the HaptiQ, the API and other aspects of this project are described in \textbf{Chapters 6, 7}. The current work is evaluated in \textbf{Chapter 8}  and future work in \textbf{Chapter 9}. Finally \textbf{Chapter 10} provides a conclusive summary of this project.
