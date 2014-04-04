@@ -1,4 +1,4 @@
-### A Haptic Device for Graph and Text Exploration by People with Visual Disabilities
+### HaptiQ: A Haptic Device for Graph Exploration by People with Visual Disabilities
 
 **Student:** Simone Ivan Conte
 
@@ -18,19 +18,20 @@ My hypothesis is that the HaptiQ (pronounced Haptic cue) will facilitate the rec
 # Objectives
 
 ## Primary
-    - Design and implement an haptic device for graph exploration by people with visual disabilities
-    - Design and implement haptic device for text exploration by people with visual disabilities
-    - Develop an API for the Haptic Device
-    - Design and implement an application for Graphs exploration
-    - Develop an API for WPF client applications
+    - Design and implement an haptic device for graph exploration by people with visual disabilities.
+    - Develop an API to control one or more haptic devices.
+    - Develop an API to easily develop WPF client applications.
+    - Design and implement a new set of dynamic behaviours.
+    - Design and implement a basic application for Graphs exploration.
 
 ## Secondary
-    - Design and implement an application for Cartesian Graph exploration
-    - Increase the haptic device resolution
+    - Increase the haptic device resolution.
+    - Allow the haptic device to provide audio-feedback as well.
+    - Design and implement an application for simple mathematical functions exploration.
 
 ## Tertiary
-    - Enable the haptic device to be used collaboratively
-    - Enable the haptic device to sense textures
+    - Enable the haptic device to be used collaboratively.
+    - Enable the haptic device to sense textures.
 
 # Hardware used
 
@@ -44,6 +45,10 @@ My hypothesis is that the HaptiQ (pronounced Haptic cue) will facilitate the rec
 This project is currently under alpha development and the designing is constantly changing.
 
 Please do create a branch of the project if a new feature has to be implemented. Also, use the issue tracking on GitHub if any bug is found or new functionality is wanted.
+
+## Getting started
+
+Please refer to the manual to get started with the HaptiQ and the HaptiQ API
 
 ## Bugs
 Whenever a bug is found please: 
