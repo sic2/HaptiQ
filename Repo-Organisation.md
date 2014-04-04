@@ -3,6 +3,7 @@
 ## HaptiQ 
 
 This folder contains:
+
 	- the HaptiQ API.
 	- the Input API.
 	- two Example applications (graph visualiser and function visualiser).
