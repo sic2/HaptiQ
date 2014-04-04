@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphsVisualiser", "SurfaceApp1\GraphsVisualiser.csproj", "{7760969D-CDDB-4FB5-B89C-E77CFB0A1E3A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphsVisualiser", "GraphsVisualiser\GraphsVisualiser.csproj", "{7760969D-CDDB-4FB5-B89C-E77CFB0A1E3A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaptiQ_API", "HaptiQ_API\HaptiQ_API.csproj", "{89E94DE8-469B-49A8-8265-0FF58943C72F}"
 EndProject

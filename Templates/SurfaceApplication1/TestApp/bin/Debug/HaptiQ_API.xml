@@ -1,0 +1,1738 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HaptiQ_API</name>
+    </assembly>
+    <members>
+        <member name="T:HaptiQ_API.HapticLink">
+            <summary>
+            HapticLink defines a object that links two other objects.
+            Special haptic behaviour are used to indicate the direction 
+            of the connection.
+            </summary>
+        </member>
+        <member name="T:HaptiQ_API.HapticShape">
+            <summary>
+            Any custom HapticShape must extend this class.
+            HapticShape extends Shape, allowing geometric figures to be displayed 
+            by WPF applications as well.
+            In addition, HapticShape plays the role of the observer of the HaptiQsManager.
+            HaptiQsManager notifies HapticShape everytime a new valid input is read. 
+            
+            Issue:
+            - It is possible to extend event handlers, such as touchDown, touchMove, touchUp, etc..,
+              from Shape. This would lead to cleaner code, since not HaptiQsManager
+              notifies HapticShape objects at any input (even when outside). 
+              However, I found out that such event handlers were getting called at a lower frequency
+              compared to how often we can pull input data from out displaying device. 
+            Solution:
+            - Use of gylphs
+            </summary>
+        </member>
+        <member name="T:HaptiQ_API.IHapticObject">
+            <summary>
+            This interface allows an object, of any form, to communicate easily with
+            the HaptiQ_API.
+            The HaptiQ_API uses the observer-observable pattern on objects
+            implementing this interface. 
+            In order for an object to be notified, you need to add the following line of code 
+            in the constructor of the object:
+                HaptiQsManager.Instance.addObserver(this);
+            It is also possible to unsubscribe the object by the following line of code:
+                HaptiQsManager.Instance.removeObserver(this);   
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.IHapticObject.handleInput(HaptiQ_API.HaptiQ)">
+             <summary>
+             This method should handle a given input (position and orientation) returning 
+             an appropriate behaviour. 
+             </summary>
+             <param name="haptiQ"></param>
+             <returns>Tuple with three elements.
+             The first element in tuple indicates one of the following rules for 
+             the two behaviours in the tuple:
+             - 0 ADD (first behaviour in tuple)
+             - 1 REMOVE (first behaviour in tuple)
+             - 2 SUBSTITUTE (second behaviour in tuple with first one)
+            </returns>
+        </member>
+        <member name="M:HaptiQ_API.IHapticObject.handlePress(HaptiQ_API.HaptiQ)">
+            <summary>
+            Handles pressure input
+            </summary>
+            <param name="haptiQ"></param>
+        </member>
+        <member name="M:HaptiQ_API.IHapticObject.registerAction(HaptiQ_API.IAction)">
+            <summary>
+            Registers a custom action object. 
+            The run method in action is called when there is an input from the user
+            If not action is registered then the HapticObject will use its own default action
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="M:HaptiQ_API.IHapticObject.makeObjectSelectable(System.Boolean)">
+            <summary>
+            Allow this object to be selected
+            </summary>
+            <param name="selectable"></param>
+        </member>
+        <member name="P:HaptiQ_API.IHapticObject.isSelected">
+            <summary>
+            True if this IHapticObject is selected. 
+            False otherwise.
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.HapticShape.NEARNESS_TOLLERANCE">
+            <summary>
+            Tollerance value for lines
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.HapticShape.CORNER_NEARNESS_TOLLERANCE">
+            <summary>
+            Tollerance value for corners (two adjacent lines)
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.HapticShape.geometry">
+            <summary>
+            Geometry used to render this shape
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.HapticShape.information">
+            <summary>
+            Information contained in this shape
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.HapticShape._HaptiQBehaviours">
+            <summary>
+            Associate an HaptiQ with a specific current behaviour
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.HapticShape.connectionPoints">
+            <summary>
+            Points structure for this shape
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.HapticShape.connections">
+            <summary>
+            List of Tuples, where each tuple contains:
+            a connection point of this HapticShape and 
+            the hapticLink leaving from such point.
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.HapticShape._action">
+            <summary>
+            Action to be executed when pressure input is received
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.#ctor">
+            <summary>
+            Default constructor for HapticShape. 
+            Registers this object ad an observer to the 
+            HaptiQsManager.
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.color(System.Windows.Media.Brush)">
+            <summary>
+            Set the color of this HapticShape
+            </summary>
+            <param name="brush"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.thickness(System.Int32)">
+            <summary>
+            Set the thickness for this HapticShape. 
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.addInformation(System.String)">
+            <summary>
+            Add any information to this HapticShape.
+            Information can be output as sound if necessary
+            </summary>
+            <param name="information"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.pointIsInside(Input_API.Point)">
+            <summary>
+            Return true if point is inside this HapticShape
+            </summary>
+            <param name="point"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.pointIsCloseToSegment(Input_API.Point,Input_API.Point,Input_API.Point,System.Double)">
+            <summary>
+            Returns true if a given point is near a segment. 
+            </summary>
+            <param name="point"></param>
+            <param name="startLine"></param>
+            <param name="endLine"></param>
+            <param name="TOLLERANCE"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.distancePointToSegment(Input_API.Point,Input_API.Point,Input_API.Point)">
+            <summary>
+            Returns the distance between a point and a segment
+            </summary>
+            <param name="point"></param>
+            <param name="startLine"></param>
+            <param name="endLine"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.handleInput(HaptiQ_API.HaptiQ)">
+            <summary>
+            Handle behaviours on input
+            </summary>
+            <param name="haptiQ"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.chooseBehaviour(HaptiQ_API.HaptiQ)">
+            <summary>
+            Return a behaviour for this haptic shape
+            </summary>
+            <param name="haptiQ"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.handlePress(HaptiQ_API.HaptiQ)">
+            <summary>
+            Handle an actuator press. 
+            [ XXX ] Currently this event is called only when an actuator is pressed.
+            Multiple presses are not supported. 
+            </summary>
+            <param name="haptiQ"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.registerAction(HaptiQ_API.IAction)">
+            <summary>
+            Register action for this HapticShape
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Defines the actions to execute when rendering this HapticShape
+            </summary>
+            <param name="drawingContext"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.HapticShape_Unloaded(System.Object,System.Windows.RoutedEventArgs)">
+            <summary>
+            This method is called whenever this HapticShape is removed from its visual parent
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.makeObjectSelectable(System.Boolean)">
+            <summary>
+            Make this HapticShape selectable or not.
+            </summary>
+            <param name="selectable"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticShape.OnTouchEnter(System.Windows.Input.TouchEventArgs)">
+            <summary>
+            Called when this object is entered
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="P:HaptiQ_API.HapticShape.DefiningGeometry">
+            <summary>
+            Return the geometry used for rendering this shape
+            </summary>
+        </member>
+        <member name="P:HaptiQ_API.HapticShape.isSelected">
+            <summary>
+            True if this HapticShape is selected. False otherwise.
+            </summary>
+        </member>
+        <member name="T:HaptiQ_API.HapticShape.STATE">
+            <summary>
+            STATE enum used for indicating the current state of an haptic shape
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.HapticShape.STATE.down">
+            <summary>
+            Device is inside this shape
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.HapticShape.STATE.up">
+            <summary>
+            Device is not inside this shape
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HapticLink.#ctor(HaptiQ_API.HapticShape,HaptiQ_API.HapticShape,System.Boolean)">
+            <summary>
+            Constructor for HapticLink. 
+            </summary>
+            <param name="hapticShapeSrc"></param>
+            <param name="hapticShapeDst"></param>
+            <param name="hasDirection"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticLink.color(System.Windows.Media.Brush)">
+            <summary>
+            Set the color of the HapticLink.
+            Also automatically set the thickness of the HapticLink to be 20.
+            </summary>
+            <param name="brush"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticLink.chooseBehaviour(HaptiQ_API.HaptiQ)">
+            <summary>
+            Return PulsationBehaviour with appropriate frequency.
+            Frequency is defined by the position of the HaptiQ within this HapticLink
+            </summary>
+            <param name="haptiQ"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticLink.pointIsInside(Input_API.Point)">
+            <summary>
+            Return true if point is inside this HapticLink
+            </summary>
+            <param name="point"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticLink.getLinkedHapticShapes">
+            <summary>
+            Return a tuple of haptic shapes connected by this haptic link
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticLink.getEndPoints">
+            <summary>
+            Return the two end points of this haptic link
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticLink.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Override OnRender to display tollerance borders of the shape
+            </summary>
+            <param name="drawingContext"></param>
+        </member>
+        <member name="T:HaptiQ_API.PulsationBehaviour">
+            <summary>
+            Pulsation behaviour defines a set of behaviours where 
+            an actuator or a set of actuators pulses
+            </summary>
+        </member>
+        <member name="T:HaptiQ_API.Behaviour">
+            <summary>
+            Behaviour abstract class
+            </summary>
+        </member>
+        <member name="T:HaptiQ_API.IBehaviour">
+            <summary>
+            IBehaviour defines an interface for behaviours of the HaptiQ.
+            Any behaviour should implement IBehaviour.
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.IBehaviour.play">
+            <summary>
+            Return to the HaptiQ the gesture by defining 
+            what actuators to move and by how much.
+            Frequency must be managed by the behaviour. 
+            Remember that behaviours' play methods are called every 10ms 
+            (@see const HaptiQ.BEHAVIOUR_LOOP_MS)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.IBehaviour.updateNext(HaptiQ_API.IBehaviour)">
+            <summary>
+            Updates this behaviour given another behaviour. 
+            </summary>
+            <param name="behaviour"></param>
+        </member>
+        <member name="P:HaptiQ_API.IBehaviour.TIME">
+            <summary>
+            Behaviour relative time.
+            Should be used for pulsing effects
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Behaviour.MIN_POSITION">
+            <summary>
+            Minimum position allowed for the actuators
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Behaviour.MAX_POSITION">
+            <summary>
+            Maximum position allowed for the actuators
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Behaviour.highPosition">
+            <summary>
+            High position of this behaviour
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Behaviour.lowPosition">
+            <summary>
+            Low position of this behaviour
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Behaviour.actuators">
+            <summary>
+            List of actuators for this behaviour
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Behaviour.actuatorsDict">
+            <summary>
+            Mapping id->actuator
+            This information is duplicated from _actuators, but allows fast retrieval
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Behaviour.position">
+            <summary>
+            Position of the HaptiQ that created this Behaviour
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Behaviour.orientation">
+            <summary>
+            Orientation of the HaptiQ that created this Behaviour
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.Behaviour.#ctor(HaptiQ_API.HaptiQ)">
+            <summary>
+            Behaviour constructor
+            </summary>
+            <param name="haptiQ"></param>
+        </member>
+        <member name="M:HaptiQ_API.Behaviour.play">
+            <summary>
+            Return to the HaptiQ the gesture by defining 
+            what actuators to move and by how much.
+            Frequency must be managed by the behaviour. 
+            Remember that behaviours' play methods are called every 10ms 
+            (@see const HaptiQ.BEHAVIOUR_LOOP_MS)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.Behaviour.updateNext(HaptiQ_API.IBehaviour)">
+            <summary>
+            Updates the clock of this behaviour based on an another behaviour
+            </summary>
+            <param name="behaviour"></param>
+        </member>
+        <member name="M:HaptiQ_API.Behaviour.LshiftActs(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Shift acts to the left with carry by offset.
+            Number of bits is determined by numberActuators.
+            </summary>
+            <param name="acts"></param>
+            <param name="offset"></param>
+            <param name="numberActuators"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.Behaviour.RshiftActs(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Shift acts to the right with carry by offset.
+            Number of bits is determined by numberActuators.
+            </summary>
+            <param name="acts"></param>
+            <param name="offset"></param>
+            <param name="numberActuators"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.Behaviour.bitsToActuators(System.Int32,System.Int32,System.Boolean,System.Boolean,System.Collections.Generic.Dictionary{System.Int32,System.Double}@)">
+            <summary>
+            Convert an binary to a dictionary (actuatorID -> position>)
+            </summary>
+            <param name="numberActuators"></param>
+            <param name="activeActuators"></param>
+            <param name="switchPositionOrder"></param>
+            <param name="setZeros"></param>
+            <param name="output"></param>
+        </member>
+        <member name="M:HaptiQ_API.Behaviour.setZerosToMinimum(System.Int32,System.Int32,System.Collections.Generic.Dictionary{System.Int32,System.Double}@)">
+            <summary>
+            This function sets the zero bits to minimum position
+            </summary>
+            <param name="numberActuators"></param>
+            <param name="zeros"></param>
+            <param name="output"></param>
+        </member>
+        <member name="M:HaptiQ_API.Behaviour.getSector(System.Tuple{Input_API.Point,Input_API.Point},System.Double,System.Int32,System.Int32)">
+            <summary>
+            Return sector of the HaptiQ given a segment and orientation of the HaptiQ.
+            </summary>
+            <param name="segment"></param>
+            <param name="orientation"></param>
+            <param name="numberActuators"></param>
+            <param name="numberSections"></param>
+            <returns></returns>
+        </member>
+        <member name="P:HaptiQ_API.Behaviour.TIME">
+            <summary>
+            Internal timer of this behaviour
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.PulsationBehaviour.#ctor(HaptiQ_API.HaptiQ,System.Tuple{Input_API.Point,Input_API.Point},System.Double)">
+            <summary>
+            Constructor of the pulsation behaviour.
+            Make the specified actuators to pulse at a constant interval 
+            </summary>
+            <param name="haptiQ"></param>
+            <param name="segment"></param>
+            <param name="frequency"></param>
+        </member>
+        <member name="M:HaptiQ_API.PulsationBehaviour.play">
+            <summary>
+            Plays this behaviour
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.PulsationBehaviour.segmentBehaviour(System.Collections.Generic.Dictionary{System.Int32,System.Double}@)">
+            <summary>
+            Segment behaviour with pulsation
+            </summary>
+            <param name="output"></param>
+        </member>
+        <member name="M:HaptiQ_API.PulsationBehaviour.Equals(System.Object)">
+            <summary>
+            Override equals to allow PulsationBehaviour to be compared correctly.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:HaptiQ_API.HapticCircle">
+            <summary>
+            HapticCircle
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HapticCircle.#ctor(System.Double,System.Double,System.Double)">
+            <summary>
+            Construct an HapticCircle
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <param name="radius"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticCircle.chooseBehaviour(HaptiQ_API.HaptiQ)">
+            <summary>
+            Return a notificationBehaviour with frequency dictated by the 
+            position of the HaptiQ within this shape
+            </summary>
+            <param name="haptiQ"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticCircle.pointIsInside(Input_API.Point)">
+            <summary>
+            Return true if point is inside this HapticCircle
+            </summary>
+            <param name="point"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticCircle.dstFromCenter(Input_API.Point)">
+            <summary>
+            Returns the distance between a point and the center of the HapticCircle
+            </summary>
+            <param name="point"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticCircle.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Override OnRender to display tollerance borders of the shape
+            </summary>
+            <param name="drawingContext"></param>
+        </member>
+        <member name="T:HaptiQ_API.BasicAction">
+            <summary>
+            BasicAction class
+            </summary>
+        </member>
+        <member name="T:HaptiQ_API.IAction">
+            <summary>
+            IAction interface.
+            Implement this to define custom actions to be executed on pressure gesture events
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.IAction.run(System.UInt32,System.Collections.Generic.Dictionary{System.Int32,System.Double})">
+            <summary>
+            Executes the action
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.BasicAction.#ctor(System.String)">
+            <summary>
+            BasicAction constructor
+            </summary>
+            <param name="information"></param>
+        </member>
+        <member name="M:HaptiQ_API.BasicAction.run(System.UInt32,System.Collections.Generic.Dictionary{System.Int32,System.Double})">
+            <summary>
+            Execute this action: outputs the textual information to the speakers
+            </summary>
+            <param name="id"></param>
+            <param name="pressureData"></param>
+        </member>
+        <member name="T:HaptiQ_API.EdgeCornerBehaviour">
+            <summary>
+            EdgeCornerBehaviour 
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.EdgeCornerBehaviour.#ctor(HaptiQ_API.HaptiQ,System.Collections.Generic.List{System.Tuple{Input_API.Point,Input_API.Point}})">
+            <summary>
+            Constructor for edge-corner behaviour. 
+            </summary>
+            <param name="haptiQ"></param>
+            <param name="lines">Geometric lines indicating the direction</param>
+        </member>
+        <member name="M:HaptiQ_API.EdgeCornerBehaviour.play">
+            <summary>
+            Play this behaviour. 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.EdgeCornerBehaviour.Equals(System.Object)">
+            <summary>
+            Override equals to allow EdgeCornerBehaviour to be compared correctly.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:HaptiQ_API.ConfigurationForm">
+            <summary>
+            This class defines the layout of the configuration form
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.ConfigurationForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.ConfigurationForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:HaptiQ_API.ConfigurationForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            TODO - refactor in separate methods
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.ConfigurationForm.#ctor(System.Collections.Generic.List{Phidgets.Phidget}@,System.String)">
+            <summary>
+            Initialises a configuration form
+            TODO - refactor
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.ConfigurationForm.OnFormClosing(System.Windows.Forms.FormClosingEventArgs)">
+            <summary>
+            Overriding OnFormClosing to force configuration to be saved
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="T:HaptiQ_API.LinearBehaviour">
+            <summary>
+            LinearBehaviour behaviour defines a set of behaviours where 
+            an actuator or a set of actuators change the height linearly
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.LinearBehaviour.#ctor(HaptiQ_API.HaptiQ,System.Tuple{Input_API.Point,Input_API.Point},System.Double)">
+            <summary>
+            Constructor of the Linear behaviour.
+            Height of the actuators is specified by the ratio value
+            </summary>
+            <param name="haptiQ"></param>
+            <param name="segment"></param>
+            <param name="ratio"></param>
+        </member>
+        <member name="M:HaptiQ_API.LinearBehaviour.play">
+            <summary>
+            Plays this behaviour
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.LinearBehaviour.segmentBehaviour(System.Collections.Generic.Dictionary{System.Int32,System.Double}@)">
+            <summary>
+            Segment behaviour with pulsation
+            </summary>
+            <param name="output"></param>
+        </member>
+        <member name="M:HaptiQ_API.LinearBehaviour.Equals(System.Object)">
+            <summary>
+            Override equals to allow LinearBehaviour to be compared correctly.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:HaptiQ_API.HapticRectangle">
+            <summary>
+            HapticRectangle class
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HapticRectangle.#ctor(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Constructor for HapticRectangle
+            x, y represent the top-left coordinates relative to the main window
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <param name="width"></param>
+            <param name="height"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticRectangle.handlePress(HaptiQ_API.HaptiQ)">
+            <summary>
+            Output information content via audio if input was received 
+            for a device currently in this haptic rectangle
+            </summary>
+            <param name="haptiQ"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticRectangle.pointIsInside(Input_API.Point)">
+            <summary>
+            Return true if point is inside this HapticRectangle
+            </summary>
+            <param name="point"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticRectangle.chooseBehaviour(HaptiQ_API.HaptiQ)">
+            <summary>
+            Return appropriate behaviour based on the position of the HaptiQ within 
+            this HapticRectangle
+            </summary>
+            <param name="haptiQ"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticRectangle.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Override OnRender to display tollerance borders of the shape
+            </summary>
+            <param name="drawingContext"></param>
+        </member>
+        <member name="T:HaptiQ_API.HapticLine">
+            <summary>
+            Represent an haptic line.
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HapticLine.#ctor(System.Windows.Point,System.Windows.Point)">
+            <summary>
+            Constructor accepting System.Windows Points
+            </summary>
+            <param name="v"></param>
+            <param name="w"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticLine.color(System.Windows.Media.Brush)">
+            <summary>
+            Set the color of the HapticLine.
+            Also automatically set the thickness of the HapticLine to be 20.
+            </summary>
+            <param name="brush"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticLine.pointIsInside(Input_API.Point)">
+            <summary>
+            Return true if point is in the HapticLine
+            </summary>
+            <param name="point"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticLine.pointIsCloseToSegment(Input_API.Point,Input_API.Point,Input_API.Point,System.Double)">
+            <summary>
+            Returns true if a given point is near a segment.
+            Play sound, changing duration when getting further away.
+            </summary>
+            <param name="point"></param>
+            <param name="startLine"></param>
+            <param name="endLine"></param>
+            <param name="TOLLERANCE"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticLine.chooseBehaviour(HaptiQ_API.HaptiQ)">
+            <summary>
+            Returns an edge-corner behaviour based on the position of the HaptiQ
+            on the HapticLine
+            </summary>
+            <param name="haptiQ"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticLine.getEndPoints">
+            <summary>
+            Return the two end points of this haptic line
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticLine.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Override OnRender to display tollerance borders of the shape
+            </summary>
+            <param name="drawingContext"></param>
+        </member>
+        <member name="T:HaptiQ_API.NotificationBehaviour">
+            <summary>
+            NotificationBehaviour class
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.NotificationBehaviour.#ctor(HaptiQ_API.HaptiQ)">
+            <summary>
+            Constructor for a NotificationBehaviour.
+            </summary>
+            <param name="haptiQ"></param>
+        </member>
+        <member name="M:HaptiQ_API.NotificationBehaviour.#ctor(HaptiQ_API.HaptiQ,System.Double)">
+            <summary>
+            Constructor for a NotificationBehaviour. 
+            </summary>
+            <param name="haptiQ"></param>
+            <param name="frequency"></param>
+        </member>
+        <member name="M:HaptiQ_API.NotificationBehaviour.play">
+            <summary>
+            Play basic behaviour. 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.NotificationBehaviour.updateNext(HaptiQ_API.IBehaviour)">
+            <summary>
+            Updates this behaviour based on an another behaviour
+            </summary>
+            <param name="behaviour"></param>
+        </member>
+        <member name="M:HaptiQ_API.NotificationBehaviour.Equals(System.Object)">
+            <summary>
+            Override equals to allow notification behaviour objects to be compared properly
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:HaptiQ_API.SerializableTuple`2">
+            <summary>
+            Tuple does not have a default constructor and 
+            XMLSerialiser can only serialise objects that have default constructors, 
+            that's why this class is created
+            </summary>
+        </member>
+        <member name="T:HaptiQ_API.Actuator">
+            <summary>
+            The Actuator class represents a physical actuator of the HaptiQ.
+            An actuator has a position (output) and a current applied pressure (input)
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.#ctor(Phidgets.AdvancedServoServo,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Creates an actuator
+            </summary>
+            <param name="servo"></param>
+            <param name="id"></param>
+            <param name="minPosition"></param>
+            <param name="maxPosition"></param>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.getHeight">
+            <summary>
+            Return -1 if position cannot be retrieved
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.setHeight(System.Double)">
+            <summary>
+            It is not possible to set an actuator to an height that does not 
+            satisfies the min/max constraints.
+            </summary>
+            <param name="height"></param>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.setHeightByPercentage(System.Double)">
+            <summary>
+            Set height by percentage
+            </summary>
+            <param name="percentage">Value between 0 and 1</param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.getId">
+            <summary>
+            Returns the ID of this actuator relative to the HaptiQ it belongs to
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.setPressure(System.Int32)">
+            <summary>
+            Set the current pressure of this actuator.
+            Note: This function should not be called from other classes other than HaptiQ
+            </summary>
+            <param name="pressure"></param>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.setToMinimum">
+            <summary>
+            Set this actuator to its minimum allowed position
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.setToMaximum">
+            <summary>
+            Set this actuator to its maximum allowed position
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.setMaxPosition(System.Double)">
+            <summary>
+            Set the maximum position allowed for this actuator
+            </summary>
+            <param name="maxPosition"></param>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.setMinPosition(System.Double)">
+            <summary>
+            Set the minimum position allowed for this actuator
+            </summary>
+            <param name="minPosition"></param>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.setAcceleration(System.Double)">
+            <summary>
+            Set the current acceleration for this actuator
+            </summary>
+            <param name="acceleration"></param>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.getAcceleration">
+            <summary>
+            Get the current acceleration for this actuator
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.setVelocity(System.Double)">
+            <summary>
+            Set the current velocity limit for this actuator
+            </summary>
+            <param name="velocity"></param>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.getVelocity">
+            <summary>
+            Get the current velocity limit for this actuator
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.disable">
+            <summary>
+            Disable this actuator
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.Actuator.enable">
+            <summary>
+            Enable this actuator
+            </summary>
+        </member>
+        <member name="P:HaptiQ_API.Actuator.pressure">
+            <summary>
+            Get the current pressure of this actuator
+            </summary>
+        </member>
+        <member name="T:HaptiQ_API.BasicBehaviour">
+            <summary>
+            BasicBehaviours define a set of behaviours general enough to be used by 
+            any application. 
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.BasicBehaviour.#ctor(HaptiQ_API.HaptiQ,HaptiQ_API.BasicBehaviour.TYPES)">
+            <summary>
+            Constructor for a BasicBehaviour.
+            </summary>
+            <param name="haptiQ"></param>
+            <param name="type"></param>
+        </member>
+        <member name="M:HaptiQ_API.BasicBehaviour.#ctor(HaptiQ_API.HaptiQ,HaptiQ_API.BasicBehaviour.TYPES,System.Double)">
+            <summary>
+            Constructor for a BasicBehaviour. 
+            </summary>
+            <param name="haptiQ"></param>
+            <param name="type"></param>
+            <param name="frequency"></param>
+        </member>
+        <member name="M:HaptiQ_API.BasicBehaviour.play">
+            <summary>
+            Play basic behaviour. 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.BasicBehaviour.Equals(System.Object)">
+            <summary>
+            Override equals to allow basic behaviour objects to be compared properly
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:HaptiQ_API.BasicBehaviour.TYPES">
+            <summary>
+            This enum is used to specify the type of BasicBehaviour
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.BasicBehaviour.TYPES.flat">
+            <summary>
+            A flat behaviour puts all actuators to their minimum position
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.BasicBehaviour.TYPES.max">
+            <summary>
+            A max behaviour moves all actuators to their maximum position
+            </summary>
+        </member>
+        <member name="T:HaptiQ_API.PressureGestureEventHandler">
+            <summary>
+            Delegate for PressureGesture events
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <param name="id">This HaptiQ id</param>
+            <param name="position"></param>
+            <param name="list">list of recent pressure values</param>
+        </member>
+        <member name="T:HaptiQ_API.PressureInputEventHandler">
+            <summary>
+            Delegate for PressureInput events
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <param name="id">This HaptiQ id</param>
+            <param name="actuatorId"></param>
+            <param name="pressureValue"></param>
+        </member>
+        <member name="T:HaptiQ_API.PositionEventHandler">
+            <summary>
+            Delegate for Position (and Orientation) events.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <param name="id">This HaptiQ id</param>
+            <param name="position"></param>
+            <param name="orientation"></param>
+        </member>
+        <member name="T:HaptiQ_API.ActuatorPositionEventHandler">
+            <summary>
+            Delegate for Actuator position events. 
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <param name="id"></param>
+            <param name="actuatorId"></param>
+            <param name="position"></param>
+        </member>
+        <member name="T:HaptiQ_API.HaptiQ">
+            <summary>
+            This class represent an HaptiQ.
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.HaptiQ.BEHAVIOUR_LOOP_MS">
+            <summary>
+            Indicates how long the HaptiQ waits before playing the next behaviour
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.HaptiQ._id">
+            <summary>
+            Unique ID assigned to this HaptiQ
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.#ctor(System.UInt32,HaptiQ_API.Configuration)">
+            <summary>
+            Initialise the HaptiQ given a configuration
+            </summary>
+            <param name="id">id for this HaptiQ. 
+            The HaptiQs manager or whoever is creating the HaptiQ should use an 
+            id which is unique.</param>
+            <param name="configuration">Configuration used by this HaptiQ to setup 
+            servo and interfacekit boards.</param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.close">
+            <summary>
+            Cleanly dispose this object
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.getID">
+            <summary>
+            Return unique ID of this HaptiQ
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.setActuatorPosition(System.Int32,System.Double)">
+            <summary>
+            Set an actuator to a given position.
+            </summary>
+            <param name="index"></param>
+            <param name="position"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.setActuatorPositionByPercentage(System.Int32,System.Double)">
+            <summary>
+            Set an actuator to a given position in percentage.
+            </summary>
+            <param name="index"></param>
+            <param name="percentage"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.setActuatorMinPosition(System.Int32)">
+            <summary>
+            Set a given actuator to its minimum position
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.setActuatorMaxPosition(System.Int32)">
+            <summary>
+            Set a given actuator to its maximum position
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.setActuatorPosition(HaptiQ_API.Actuator,System.Double)">
+            <summary>
+            Set an actuator to a given position
+            </summary>
+            <param name="actuator"></param>
+            <param name="position"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.setActuatorPositionByPercentage(HaptiQ_API.Actuator,System.Double)">
+            <summary>
+            Set a specific actuator's position in percentage
+            </summary>
+            <param name="actuator"></param>
+            <param name="percentage"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.setActuatorMinPosition(HaptiQ_API.Actuator)">
+            <summary>
+            Set a given actuator to its minimum position
+            </summary>
+            <param name="actuator"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.setActuatorMaxPosition(HaptiQ_API.Actuator)">
+            <summary>
+            Set a given actuator to its maximum position
+            </summary>
+            <param name="actuator"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.setAllActuatorsPosition(System.Double)">
+            <summary>
+            Sets all actuators of this HaptiQ to the specified position
+            </summary>
+            <param name="position"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.setAllActuatorsToMinPosition">
+            <summary>
+            Set all actuators of this HaptiQ to their minimum positon
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.setAllActuatorsToMaxPosition">
+            <summary>
+            Set all actuators of this HaptiQ to their maximum position
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.getActuator(System.Int32)">
+            <summary>
+            Get actuator specifying its index as in the Phidget
+            AdvancedServoBoard.
+            This method returns null if no actuator exist at that position
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.actuatorExist(System.Int32)">
+            <summary>
+            Return true if there is an actuator at given index
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.getActuators">
+            <summary>
+            Returns a list of all actuators of this HaptiQ
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.disableActuators">
+            <summary>
+            Disable this HaptiQ.
+            Actuators are not engaged anymore.
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.enableActuators">
+            <summary>
+            Enable this HaptiQ.
+            Actuators are engaged.
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.getCurrentPressureData">
+            <summary>
+            Return the current pressure data of this HaptiQ 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.loop">
+            <summary>
+            Play current haptic behaviour
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.addBehaviour(HaptiQ_API.IBehaviour)">
+            <summary>
+            Add a behaviour to this HaptiQ
+            </summary>
+            <param name="behaviour"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.removeBehaviour(HaptiQ_API.IBehaviour)">
+            <summary>
+            Remove a behaviour from this HaptiQ
+            </summary>
+            <param name="behaviour"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.playBehaviours">
+            <summary>
+            Play the current behaviours
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.OnPressureGesture(System.EventArgs,System.Collections.Generic.List{System.Tuple{System.DateTime,System.Int32}})">
+            <summary>
+            This method raises a PressureGestureEventHandler event.
+            </summary>
+            <param name="e"></param>
+            <param name="list">list of all pressure data collected for this event</param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.OnPressureInput(System.EventArgs,System.Int32,System.Int32)">
+            <summary>
+            This method raises a PressureInputEventHandler event.
+            </summary>
+            <param name="e"></param>
+            <param name="actuatorId"></param>
+            <param name="pressureValue"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.OnPositionChanged(System.EventArgs)">
+            <summary>
+            This method raises a PositionEventHandler event.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQ.OnActuatorPositionChanged(System.EventArgs,System.Int32,System.Double)">
+            <summary>
+            This method raises an ActuatorPositionChanged event.
+            </summary>
+            <param name="e"></param>
+            <param name="actuatorId"></param>
+            <param name="position"></param>
+        </member>
+        <member name="E:HaptiQ_API.HaptiQ.PressureGesture">
+            <summary>
+            Notify that a relevant input was input
+            via the pressure sensors
+            </summary>
+        </member>
+        <member name="E:HaptiQ_API.HaptiQ.PressureInput">
+            <summary>
+            Notify that the pressure input of one of the sensors
+            has changed
+            </summary>
+        </member>
+        <member name="E:HaptiQ_API.HaptiQ.PositionChanged">
+            <summary>
+            Notify that either the position
+            or the orientation (or both) of this HaptiQ have changed.
+            </summary>
+        </member>
+        <member name="E:HaptiQ_API.HaptiQ.ActuatorPositionChanged">
+            <summary>
+            Notify that the position of one of the actuators of this HaptiQ has changed.
+            </summary>
+        </member>
+        <member name="P:HaptiQ_API.HaptiQ.position">
+            <summary>
+            Current position of this HaptiQ
+            </summary>
+        </member>
+        <member name="P:HaptiQ_API.HaptiQ.orientation">
+            <summary>
+            Orientation is in radians
+            </summary>
+        </member>
+        <member name="P:HaptiQ_API.HaptiQ.configuration">
+            <summary>
+            Configuration of this HaptiQ
+            </summary>
+        </member>
+        <member name="T:HaptiQ_API.SpeechOutput">
+            <summary>
+            SpeechOutput class with Singleton pattern. 
+            This avoids the creation of multiple classes. 
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.SpeechOutput.speak(System.String)">
+            <summary>
+            Output sound of given information
+            </summary>
+            <param name="information"></param>
+        </member>
+        <member name="M:HaptiQ_API.SpeechOutput.switchVoiceGender">
+            <summary>
+            Either switch to Male voice or to Female voice.
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.SpeechOutput.speedUp">
+            <summary>
+            Increases the speed of speech up to a certain limit
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.SpeechOutput.slowDown">
+            <summary>
+            Decreases the speed of speech up to a certain limit
+            </summary>
+        </member>
+        <member name="P:HaptiQ_API.SpeechOutput.Instance">
+            <summary>
+            Returns an instance of SpeechOutput. 
+            </summary>
+        </member>
+        <member name="T:HaptiQ_API.HapticPolyline">
+            <summary>
+            HapticPolyline class
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HapticPolyline.#ctor(System.Collections.Generic.List{System.Windows.Point})">
+            <summary>
+            Construct an HapticPolyline
+            </summary>
+            <param name="points"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticPolyline.color(System.Windows.Media.Brush)">
+            <summary>
+            Set the color of the HapticPolyline.
+            Also automatically set the thickness of the HapticPolyline to be 20.
+            </summary>
+            <param name="brush"></param>
+        </member>
+        <member name="M:HaptiQ_API.HapticPolyline.pointIsInside(Input_API.Point)">
+            <summary>
+            Return true if point is in the polyline
+            </summary>
+            <param name="point"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticPolyline.chooseBehaviour(HaptiQ_API.HaptiQ)">
+            <summary>
+            Return an Edge-Corner behaviour based on the position of the haptiQ
+            on this polyline
+            </summary>
+            <param name="haptiQ"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticPolyline.getPoints">
+            <summary>
+            Return the points that make this polyline
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HapticPolyline.OnRender(System.Windows.Media.DrawingContext)">
+            <summary>
+            Override OnRender to display tollerance borders of the shape
+            </summary>
+            <param name="drawingContext"></param>
+        </member>
+        <member name="T:HaptiQ_API.ConfigurationManager">
+            <summary>
+            Manage HaptiQs configurations. 
+            Configurations can either be loaded from file or added
+            by a third party (i.e. via ConfigurationForm)
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.ConfigurationManager.configurations">
+            <summary>
+            List of available and valid configurations
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.ConfigurationManager.getConfigurations">
+            <summary>
+            Get all the valid configurations held in memory
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.ConfigurationManager.addConfiguration(HaptiQ_API.Configuration)">
+            <summary>
+            Add a given configuration to the ConfigurationManager
+            </summary>
+            <param name="configuration"></param>
+        </member>
+        <member name="T:HaptiQ_API.BeepOutput">
+            <summary>
+            BeepOutput defines a class used to emit audio beeps using the motherboard
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.BeepOutput.MAX_DURATION">
+            <summary>
+            Maximum duration of a beep in ms
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.BeepOutput.MIN_DURATION">
+            <summary>
+            Minimum duration of a beep in ms
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.BeepOutput.Beep(System.Int32)">
+            <summary>
+            Plays a beep using the motherboard.
+            Note: that this functionality is not supported by 64-bit Window Operating Systems
+            </summary>
+            <param name="duration"></param>
+        </member>
+        <member name="T:HaptiQ_API.Helper">
+            <summary>
+            This class defines a set of methods which are used often by the HaptiQ_API 
+            and can also be useful to any client application using the HaptiQ_API
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.Helper.radsToDegrees(System.Double)">
+            <summary>
+            Convert radians to degrees
+            </summary>
+            <param name="radians"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.Helper.degreesToRads(System.Double)">
+            <summary>
+            Convert degrees to radians
+            </summary>
+            <param name="degrees"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.Helper.findNearestPoints(System.Collections.Generic.List{Input_API.Point},System.Collections.Generic.List{Input_API.Point})">
+            <summary>
+            Find the nearest points between two lists of points.
+            This function is particularly useful is we want to find the nearest points between
+            two geometric figures.
+            </summary>
+            <param name="srcPoints"></param>
+            <param name="dstPoints"></param>
+            <returns>Tuple of points. 
+            The first item belongs to srcPoints.
+            The second item belongs to dstPoints</returns>
+        </member>
+        <member name="M:HaptiQ_API.Helper.distanceBetweenTwoPoints(Input_API.Point,Input_API.Point)">
+            <summary>
+            Calculates the distance between two given points.
+            Returns zero is arguments are null
+            </summary>
+            <param name="src"></param>
+            <param name="dst"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.Helper.Logger(System.String)">
+            <summary>
+            Use this function to write a message to log file.
+            The log file is stored in the current directory of the client application.
+            The name of the file has the following format:
+                "Log-HaptiQ_API_yyyyMMdd.txt"
+            where y, M, d are time tags
+            
+            The messages are logged by appending a prefix of the following format:
+                "yyyy:MM:dd HH:mm:ss"
+                
+            TODO - introduce levels of logging:
+            @see http://stackoverflow.com/questions/7839565/logging-levels-logback-rule-of-thumb-to-assign-log-levels
+            </summary>
+            <param name="str"></param>
+        </member>
+        <member name="M:HaptiQ_API.Helper.SerializeToXML(HaptiQ_API.Configuration,System.String)">
+            <summary>
+            Serialize given configuration to specified file (XML)
+            </summary>
+            <param name="configuration"></param>
+            <param name="fileName"></param>
+        </member>
+        <member name="M:HaptiQ_API.Helper.DeserializeFromXML(System.String)">
+            <summary>
+            Deserialize configuration stored in specified file.
+            Return stored configuration.
+            </summary>
+            <param name="fileName"></param>
+            <returns></returns>
+        </member>
+        <member name="T:HaptiQ_API.HaptiQPressureInputEventHandler">
+            <summary>
+            Delegate for PressureInput events
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <param name="id">This HaptiQ id</param>
+            <param name="actuatorId"></param>
+            <param name="pressureValue"></param>
+        </member>
+        <member name="T:HaptiQ_API.HaptiQPositionEventHandler">
+            <summary>
+            Delegate for Position (and Orientation) events.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <param name="id">This HaptiQ id</param>
+            <param name="position"></param>
+            <param name="orientation"></param>
+        </member>
+        <member name="T:HaptiQ_API.HaptiQActuatorPositionEventHandler">
+            <summary>
+            Delegate for Actuator position events.
+            </summary>
+            <param name="sender"></param>
+            <param name="E"></param>
+            <param name="id"></param>
+            <param name="actuatorId"></param>
+            <param name="position"></param>
+        </member>
+        <member name="T:HaptiQ_API.BEHAVIOUR_RULES">
+            <summary>
+            Behaviour enum for the rules used when adding new/removing behaviours
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.BEHAVIOUR_RULES.ADD">
+            <summary>
+            Adds a behaviour
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.BEHAVIOUR_RULES.REMOVE">
+            <summary>
+            Removes a behaviour
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.BEHAVIOUR_RULES.SUBS">
+            <summary>
+            Substitute a behaviour with another one
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.BEHAVIOUR_RULES.NOPE">
+            <summary>
+            Do nothing
+            </summary>
+        </member>
+        <member name="T:HaptiQ_API.HaptiQsManager">
+            <summary>
+            The HaptiQsManager handles any number of HaptiQs, making sure
+            that they are configured and no error occurs. 
+            
+            Also, the HaptiQsManager automatically subscribes to HaptiQs events:
+            - PressureInputEventHandler
+            - PositionEventHandler
+            So, a client application need to subscribe only to the events:
+            - HaptiQPressureInputEventHandler
+            - HaptiQPositionEventHandler
+            to get information about any HaptiQ. 
+            However, the API also allows users to subscribe to these events
+            from the HaptiQ object themselves.
+            In this latter case, it is suggested to call #removeHaptiQsEventsHandlers
+            Call #addHaptiQsEventsHandlers to restore it.
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.HaptiQsManager.TIME_OUT">
+            <summary>
+            TimeOut for detecting the hardware (PhidgetBoards)
+            TimeOut is expressed in seconds.
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.Create(System.String,System.String)">
+            <summary>
+            Creates an object of type HaptiQsManager.
+            HaptiQsManager is a singleton object, so there can only be one instance for the entire program.
+            If Create is called twice, then an Exception is thrown.
+            
+            The creation of HaptiQsManager includes the detection of Phidgets boards
+            and the configuration of HaptiQs.
+            </summary>
+            <param name="windowName"></param>
+            <param name="inputClass"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.delete">
+            <summary>
+            Deletes the only instance of HaptiQsManager
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.configure">
+            <summary>
+            Configure the HaptiQs. 
+            This method is implicitly called any time an HaptiQsManager is created.
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.startConfigurationForm">
+            <summary>
+            Start an HaptiQ configuration form if there are still 
+            Phidget devices to be configured
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.addObserver(HaptiQ_API.IHapticObject)">
+            <summary>
+            Registers an IHapticObject.
+            This will allow observers to be notified when:
+                - the position of an HaptiQ changes
+                - there is an input (via pressure sensors)
+            </summary>
+            <param name="hapticObject"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.removeObserver(HaptiQ_API.IHapticObject)">
+            <summary>
+            Unregisters an IHapticObject
+            </summary>
+            <param name="hapticObject"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.getAllObservers">
+            <summary>
+            Return all haptic objects registered with the HaptiQsManager
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.selectObject(HaptiQ_API.IHapticObject)">
+            <summary>
+            Add this haptic object to the list of selected ones
+            </summary>
+            <param name="hapticObject"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.deselectObject(HaptiQ_API.IHapticObject)">
+            <summary>
+            Remove this object from the list of selected objects
+            </summary>
+            <param name="hapticObject"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.getSelectedObjects">
+            <summary>
+            Get the list of selected objects
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.pressureGestureHaptiQChanged(System.Object,System.EventArgs,System.UInt32,Input_API.Point,System.Collections.Generic.List{System.Tuple{System.DateTime,System.Int32}})">
+            <summary>
+            Notifies haptic observers about a relevant pressure input
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <param name="id"></param>
+            <param name="position"></param>
+            <param name="list"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.addHaptiQ(HaptiQ_API.HaptiQ)">
+            <summary>
+            Registers an HaptiQ.
+            Returns not updated id if HaptiQ could not be added.
+            </summary>
+            <param name="haptiQ"></param>
+            <returns> unique id assigned to HaptiQ </returns>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.removeHaptiQ(System.UInt32)">
+            <summary>
+            Removes (unregisters) an HaptiQ
+            </summary>
+            <param name="HaptiQID"></param>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.getAllHaptiQs">
+            <summary>
+            Get a dictionary of all the HaptiQs 
+            with a mapping:
+                HaptiQID -> HaptiQ
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.getHaptiQ(System.UInt32)">
+            <summary>
+            Get a HaptiQ given its ID
+            </summary>
+            <param name="HaptiQID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.addHaptiQsEventsHandlers">
+            <summary>
+            Subscribe to the Position and Pressure events for all HaptiQs
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.HaptiQsManager.removeHaptiQsEventsHandlers">
+            <summary>
+            Unsubscribe to the Position and Pressure events for all HaptiQs
+            </summary>
+        </member>
+        <member name="E:HaptiQ_API.HaptiQsManager.PressureInput">
+            <summary>
+            Pressure event
+            </summary>
+        </member>
+        <member name="E:HaptiQ_API.HaptiQsManager.PositionChanged">
+            <summary>
+            Position and orientation event
+            </summary>
+        </member>
+        <member name="E:HaptiQ_API.HaptiQsManager.ActuatorPositionChanged">
+            <summary>
+            Actuator position event
+            </summary>
+        </member>
+        <member name="P:HaptiQ_API.HaptiQsManager.Instance">
+            <summary>
+            Return an instance of HaptiQsManager.
+            An HaptiQsManager must be created first using the Create method,
+            otherwise an exception is thrown.
+            </summary>
+        </member>
+        <member name="T:HaptiQ_API.Configuration">
+            <summary>
+            This class describes a Configuration for an HaptiQ
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.HaptiQName">
+            <summary>
+            String used to give a name to an HaptiQ
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.idServoBoard">
+            <summary>
+            ID of servo board
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.nameServoBoard">
+            <summary>
+            Name of servo board
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.numberActuators">
+            <summary>
+            Number of actuators
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.idInterfaceKit">
+            <summary>
+            Id of Interface Kit board
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.nameInterfaceKit">
+            <summary>
+            Name of interface kit board
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.numberPressureSensors">
+            <summary>
+            Number of pressure sensors
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.actuators">
+            <summary>
+            Dictionary of actuatorIndex -> (min, max) position of actuator
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.pressureSensors">
+            <summary>
+            List of pressure sensors
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.interfaceKitBoardAttached">
+            <summary>
+            True if interface kit board is attached
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.serializableInputIdentifier">
+            <summary>
+            Wrapper field for input identifier. This is what gets included in the XML file.
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.CONFIGURATION_FILENAME_PREFIX">
+            <summary>
+            Configuration file name prefix.
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.CONFIGURATION_FILENAME_EXT">
+            <summary>
+            Extension used for configuration files
+            </summary>
+        </member>
+        <member name="F:HaptiQ_API.Configuration.CONFIGURATION_FILENAME_PATTERN">
+            <summary>
+            Configuration file name pattern. 
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.Configuration.#ctor">
+            <summary>
+            Creates an empty configuration object
+            </summary>
+        </member>
+        <member name="M:HaptiQ_API.Configuration.checkConfiguration(System.Collections.Generic.List{Phidgets.Phidget}@)">
+            <summary>
+            Verifies that this configuration is valid.
+            When an element of this configuration is found in the list
+            devicesToBeConfigured, the element is removed from the list.
+            
+            Returns true if there is a servo board for this configuration.
+            Sets interfaceKitBoardAttached to true if there is an interface kit board.
+            </summary>
+            <param name="devicesToBeConfigured"></param>
+            <returns></returns>
+        </member>
+        <member name="P:HaptiQ_API.Configuration.inputIdentifier">
+            <summary>
+            Input identifier for this configuration
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,3 @@
+2014:04:03 22:55:30 :: HaptiQ_API.HaptiQsManager.configure:: Configuring HaptiQs
+2014:04:03 22:55:30 :: HaptiQ_API.HaptiQsManager.manager_Attach::Device Phidget Advanced Servo Controller 8-motor (177012) attached
+2014:04:03 22:55:32 :: HaptiQ_API.ConfigurationForm.ConfigurationForm::Configuration Form started
