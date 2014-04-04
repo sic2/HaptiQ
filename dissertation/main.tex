@@ -14,7 +14,7 @@
 \usepackage{titlesec}
 \usepackage[nottoc,notlot,notlof]{tocbibind}
 \usepackage{nth} % allows days formatting. i.e. 1st, 2nd , ..., i-th
-\usepackage{url}
+\usepackage[hyphens]{url}
 \usepackage[toc,page]{appendix}
 \usepackage{setspace}
 
@@ -27,6 +27,9 @@
     urlcolor=black
 }
  
+\usepackage{chngcntr} 
+\counterwithout*{footnote}{chapter} % do not reset footnotes numbering for each chapter
+
 \graphicspath{{images/}}
 
 \titleformat{\chapter}[display]{\normalfont\huge\bfseries}{}{0pt}{\Huge}

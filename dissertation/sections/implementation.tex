@@ -5,15 +5,15 @@ Firstly, the hardware implementation is discussed, followed by the API. A dedica
 
 \section{The Hardware}
 
-Building the hardware components of the two HaptiQ devices has been a challenge on its own. Both the 4-HaptiQ and the 8-HaptiQ are 3D-modelled using Google Sketchup \footnote{Google SketchUp. http://www.sketchup.com . [Online; last checked: 03/04/2014].}. Models are then exported in the STL format, a standard in CAD software, and commissioned to a 3D printer. I used a MakerBot\textregistered   Replicator\texttrademark 2x. This is an experimental 3D printer, therefore high precision (\textless 2mm) is hard to achieve and requires many attempts before being able to print the wanted model. 
+Building the hardware components of the two HaptiQ devices has been a challenge on its own. Both the 4-HaptiQ and the 8-HaptiQ are 3D-modelled using Google Sketchup \footnote{Google SketchUp. \url{http://www.sketchup.com} . [Online; last checked: 03/04/2014].}. Models are then exported in the STL format, a standard in CAD software, and commissioned to a 3D printer. I used a MakerBot\textregistered   Replicator\texttrademark 2x. This is an experimental 3D printer, therefore high precision (\textless 2mm) is hard to achieve and requires many attempts before being able to print the wanted model. 
 
-Phidgets boards are used to control the micro servomotors, \textit{Hitech HS-65MG}, and get pressure inputs, via force-sensing resistors. The wiring is more of a demanding task, rather than a challenging one, requiring many hours of work.
+Phidgets boards\footnote{Phidges. \url{http://www.phidgets.com/} . [Online; last checked: 04/04/2014].} are used to control the micro servomotors, \textit{Hitech HS-65MG}\footnote{HITECH RCD USA. \url{http://hitecrcd.com/} . [Online; last checked: 04/04/2014].}, and get pressure inputs, via force-sensing resistors. The wiring is more of a demanding task, rather than a challenging one, requiring many hours of work.
 
 The different components of the device are assembled using super glue and screws (see the HaptiQ manual for more information on printing and assembling the device). 
 
 \subsection{Fiducial Markers}
 
-The provided API supports the recognition of two types of fiducial markers: Microsoft Bytetags and GRATF Glyphs. The HaptiQs, built for this project, place the fiducial markers on the bottom side. However, in the case of the the GRATF Glyphs, the fiducial marker can also be placed on top of the device. This is true if we assume that an appropriate structure around the HaptiQ is built, and a web-cam or similar is used to retrieve top-view images of the device with the glyph.
+The provided API supports the recognition of two types of fiducial markers: Microsoft Bytetags and GRATF glyphs. The HaptiQs, built for this project, place the fiducial markers on the bottom side. However, in the case of the the GRATF glyphs, the fiducial marker can also be placed on top of the device. This is true if we assume that an appropriate structure around the HaptiQ is built, and a web-cam or similar is used to retrieve top-view images of the device with the glyph.
 
 \begin{figure}
         \centering
@@ -39,11 +39,11 @@ The provided API supports the recognition of two types of fiducial markers: Micr
         \caption{Raw images}\label{fig:rawImages}
 \end{figure}
 
-The Bytetags, according to Microsoft, can be printed on standard office paper \footnote{http://msdn.microsoft.com/en-us/library/ee804862(v=surface.10).aspx}. However, during the first iteration phase of this project it was evident that printed Bytetags lead to poor results, with the fiducial markers being tracked at low frequency.
+The Bytetags, according to Microsoft, can be printed on standard office paper \footnote{MSDN. Printing Tagged Objects. \url{http://www.msdn.microsoft.com/en-us/library/ee804862(v=surface.10).aspx/}. [Online; last checked: 04/04/2014].}. However, during the first iteration phase of this project it was evident that printed Bytetags lead to poor results, with the fiducial markers being tracked at low frequency.
 
 The alternative solution is to use glyphs. The Surface SDK 2.0 allows to retrieve raw image data from the interactive table. Having access to this data, it is possible to apply classical image matching algorithms to identify particular objects. This is achieved using GRATF, a C\# library that allows recognition and localization of glyphs in still images. 
 
-Figure ~\ref{fig:rawImages} shows three raw images retrieved through the Surface SDK 2.0. The Microsoft PixelSense uses near-infrared sensors. Figure ~\ref{fig:rawHand}, for instance, represents how the hand absorbs infrared light, rather than its heat values as one may think. Glyphs are $n \times n$ grids, with n from 5 to 8, where each cell is either black or white (see Figure  ~\ref{fig:glyph}) and minimum side length of 8mm, that can be printed using Glyph Recognition Studio \footnote{Available at http://www.aforgenet.com/projects/gratf/}. Additional rules apply, such that that the border cells can only be white and the glyph cannot be symmetrical in any of its axis. The base of the HaptiQ is covered with white paper, so that the black tiles in the glyphs are recognised more easily (see Figure ~\ref{fig:rawHaptiQ1}). However, this is not sufficient for the glyph to be recognised at all angles. After testing glyphs of different dimensions and on different surfaces, I found out that extending the glyph with low absorption material (e.g. white foam board) improves the recognition of the glyph significantly (see Figures ~\ref{fig:rawHaptiQ2} and ~\ref{fig:whitesurface}).   
+Figure ~\ref{fig:rawImages} shows three raw images retrieved through the Surface SDK 2.0. The Microsoft PixelSense uses near-infrared sensors. Figure ~\ref{fig:rawHand}, for instance, represents how the hand absorbs infrared light, rather than its heat values as one may think. Glyphs are $n \times n$ grids, with n from 5 to 8, where each cell is either black or white (see Figure  ~\ref{fig:glyph}) and minimum side length of 8mm, that can be printed using Glyph Recognition Studio \footnote{Glyph Recognition Studio. Available at \url{http://www.aforgenet.com/projects/gratf/}. [Online; last checked: 04/04/2014].}. Additional rules apply, such that that the border cells can only be white and the glyph cannot be symmetrical in any of its axis. The base of the HaptiQ is covered with white paper, so that the black tiles in the glyphs are recognised more easily (see Figure ~\ref{fig:rawHaptiQ1}). However, this is not sufficient for the glyph to be recognised at all angles. After testing glyphs of different dimensions and on different surfaces, I found out that extending the glyph with low absorption material (e.g. white foam board) improves the recognition of the glyph significantly (see Figures ~\ref{fig:rawHaptiQ2} and ~\ref{fig:whitesurface}).   
 
 \begin{figure}[H]
   \centering
@@ -59,7 +59,7 @@ Figure ~\ref{fig:rawImages} shows three raw images retrieved through the Surface
 The Input API is the component used to retrieve the HaptiQ location on the tabletop. It follows that this is highly hardware dependent on the used hardware, especially on the type of interactive surface. The current targeted hardware comprehends the Microsoft Tabletops using the Surface SDK 2.0. Code to retrieve image data from web-cams is also provided. 
 As explained in the design section, two main classes exist in the Input API: one to recognise Bytetags and one to recognise glyphs.
 
-Recognising the Bytetags is straightforward. This is done through the \textit{TouchTarget} object of the \textit{Microsoft.Surface.Core} library. On the other hand, glyphs are recognised by calling the \textit{FindGlyphs} function, from the GRATF library, on a bitmap image. GRATF does not provide any functionality to estimate the position and the rotation of the glyphs. When a glyph is recognised, all its vertices are known. The position is estimated by calculating the crossing point between the two diagonals of the glyph. The rotation, instead, is estimated using the inclination angle of one of the edges of the glyph. 
+Recognising the Bytetags is straightforward. This is done through the \textit{TouchTarget} object of the \textit{Microsoft.Surface.Core} library. On the other hand, glyphs are recognised by calling the \textit{FindGlyphs} function, from the GRATF library, on a bitmap image. GRATF does not provide any functionality to estimate the position and the rotation of the glyphs. However, when a glyph is recognised, all its vertices are known. The position is estimated by calculating the crossing point between the two diagonals of the glyph. The rotation, instead, is estimated using the inclination angle of one of the edges of the glyph. 
 
 The API raises events of the form:
 \lstset{style=sharpc1}
@@ -73,7 +73,7 @@ It is important to note that Bytetags are supported for debugging purposes only.
 
 \subsection{HaptiQ API}
 
-The HaptiQ API, as previously stated, controls the device and coordinates its work with the other two main components: the Input API and the applications. The \textit{HaptiQsManager}, the \textit{HaptiQ}, and the \textit{Actuator} classes play the major role in controlling the devices and ensuring the coordination between input locations, haptic objects and behaviours. These three classes are also dependent on the Phidget library \footnote{Available at http://www.phidgets.com/}. 
+The HaptiQ API, as previously stated, controls the device and coordinates its work with the other two main components: the Input API and the applications. The \textit{HaptiQsManager}, the \textit{HaptiQ}, and the \textit{Actuator} classes play the major role in controlling the devices and ensuring the coordination between input locations, haptic objects and behaviours. These three classes are also dependent on the Phidget library \footnote{Phidgets. Library available at \url{http://www.phidgets.com/}. [Online; last checked: 04/04/2014].}. 
 
 On the creation of the manager, the configuration process is launched (see section ~\ref{sec:configuration} for more details about devices configuration) and HaptiQ instances are created appropriately. The manager assigns each device a unique ID, which can be used to find and access a device. 
 Each HaptiQ keeps track of its own actuators, the connected pressure sensors, and the current behaviours to play. After an HaptiQ instance is initialised in the constructor, an independent thread is initiated. This consists of a loop that runs all the current behaviours every 10ms. Reducing the frequency gradually decreases the smoothness of the played dynamic behaviours. On the other hand, increasing the frequency creates an unnecessary overuse of resources. 
@@ -93,19 +93,24 @@ Parallel.ForEach(actuators, entry =>
 
 \subsubsection{Pressure Events}
 
-The HaptiQ class defines two types of pressure events: pressure changes and pressure gestures. The first type of event is raised whenever the pressure registered by a sensor changes. The second type instead is raised on pressure gestures being recognised. The current API supports only one type of gesture: a press. A press is recognised whenever the pressure registered by a particular sensor increases over a certain threshold and then rapidly decreases within a certain time frame. 
+The HaptiQ class defines two types of pressure events: pressure changes and pressure gestures. The first type of event is raised whenever the pressure registered by a sensor changes. The second type instead is raised on pressure gestures being recognised. The current API supports only one type of gesture: a \textit{press}. A press is recognised whenever the pressure registered by a particular sensor increases over a certain threshold and then rapidly decreases within a certain time frame (see Figure ~\ref{fig:pressureValues}). 
 
-Time-series analysis could allow the recognition of other gestures, but this is outside the scope of this project.
+Time-series analysis could allow the recognition of other gestures, but this is outside the scope of the project.
 
 
-\missingfigure{picture of press gesture}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{pressureValues.png}
+  \caption{Three consecutive press gestures. Note that x-axis does not represent time.}
+  \label{fig:pressureValues}
+\end{figure}
 
 \subsubsection{Haptic Objects}
 
-Haptic objects are the visual elements that client applications can use to represent information to the visually impaired. An Haptic object must implement the IHapticObject interface. This interface, as shown in Code ~\ref{lst:IHapticObject}, consists of three methods:
+Haptic objects are visual elements that client applications can use to represent information to the visually impaired. An Haptic object must implement the IHapticObject interface. This interface, as shown in Code ~\ref{lst:IHapticObject}, consists of three main methods:
 
 \begin{itemize}
-	\item \textbf{handleInput}: called whenever a new input location is received from the Input API. This method returns a Tuple of three elements: a rule to apply for the returned values (ADD, REMOVE, SUBSTITUTE, NONE) and two behaviours. For instance, the method may add a new behaviour to the HaptiQ, or substitute the current behaviour with a new one. Since HaptiQs can combine behaviours, each HaptiQ object needs to keep track of what current behaviour is assigned to each HaptiQ. 
+	\item \textbf{handleInput}: called whenever a new input location is received from the Input API. This method returns a Tuple of three elements: a rule to apply for the returned values (\textit{ADD}, \textit{REMOVE}, \textit{SUBSTITUTE}, \textit{NONE}) and two behaviours. For instance, the method may add a new behaviour to the HaptiQ, or substitute the current behaviour with a new one. Since HaptiQs can combine behaviours, each HaptiQ object needs to keep track of what current behaviour is assigned to each HaptiQ. 
     \item \textbf{handlePress}: called when a pressure gesture event is raised
     \item \textbf{registerAction}: allows clients to register custom actions to be executed on \textit{handlePress}. For example, a \textit{BasicAction} allows the client to specify text to be read out through the speakers when a pressure gesture is fired.
 \end{itemize}
@@ -122,9 +127,9 @@ public interface IHapticObject
 }
 \end{lstlisting}
 
-The API provides the \textit{HapticShape} abstract class, which implements \textit{IHapticObject} and extends \textit{Shape}, from the WPF Windows Shapes. Clients, therefore, have access to haptic objects usable on WPF applications, but can create their own custom shapes, by implementing \textit{IHapticObject}, for XNA applications. 
+The API provides the \textit{HapticShape} abstract class, which implements \textit{IHapticObject} and extends \textit{Shape}, from the WPF Windows Shapes. Clients, therefore, have access to haptic objects usable on WPF applications, but can also create their own custom shapes, by implementing \textit{IHapticObject}, for XNA applications. 
 
-The \textit{HapticShape} class provides the implementation of \textit{handleInput} and provides other useful functions, such as the possibility to add textual information to a shape. The implemented \textit{handleInput} method ensures that states (UP or DOWN) and behaviours of a current HaptiQ, for a specific shape, are updated correctly. Classes extending \textit{HapticShape}, such as \textit{HapticRectangle} or \textit{HapticCircle}, need to implement the method
+The \textit{HapticShape} class provides the implementation of \textit{handleInput} and provides other useful functions, such as the possibility to add textual information to a shape. The implemented \textit{handleInput} method ensures that states (\textit{UP} or \textit{DOWN}) and behaviours of a current HaptiQ, for a specific shape, are updated correctly. Classes extending \textit{HapticShape}, such as \textit{HapticRectangle} or \textit{HapticCircle}, need to implement the method
 
 \lstset{style=sharpc1}
 \begin{lstlisting}
@@ -138,7 +143,7 @@ Finally, objects extending \textit{HapticShape} are renderable on WPF applicatio
 \section{Configuration}
 \label{sec:configuration}
 
-The two prototypes created in this project have different characteristics. For instance, the second version has eight actuators, rather than four, and its servos have a certain action range that the first version does not have. The API allows devices with different characteristics to be used by serializing their configurations as XML files. On creation, the manager inspects the current directory for XML configuration files and attempts to create HaptiQs using the deserialized configurations and the attached Phidget boards.  
+The two prototypes created in this project have different characteristics. For instance, the second version has eight actuators, rather than four, and its servos have a certain action range that the first version does not have. The API allows devices with different characteristics to be used by serializing their configurations as XML files. On creation, the manager inspects the current directory for XML configuration files\footnote{Pattern used to name configuration files is: 'CONFIG\_*.xml'} and attempts to create HaptiQs using the deserialized configurations and the attached Phidget boards.  
 
 But even so, it could be the case that no configuration file exists for an attached HaptiQ. This is especially true the first time a device is used. In this eventuality a configuration form is prompted to the user (see Figure \ref{fig:configurationPanel}). The form has been created using \textit{WinForms}, so that no dependency on WPF or similar library is added. The panel allows users to specify which actuators to use, their range of action, whether to use pressure input or not, and the fiducial marker to use. 
 
@@ -200,7 +205,7 @@ For example, to represent a vertical line in the 4-HaptiQ, we can just use the n
 Shifting numbers to right (or left) with carry allows behaviours to choose what actuators to use. 
 The shifting offset is based on the orientation of the device compared to the segment it has to represent. Finding this value consists into subdividing the HaptiQ in logical sectors. For instance, the 4-HaptiQ is divided in eight sectors (see Figure ~\ref{fig:sectors}). Even sectors, in red, represent states that the device needs to represent by alternating actuators over time.
 
-Say that 0101 is valid for the first sector, then when the device is in the third sector a shift by one only is needed: $0101 \gg 1$ = 1010 (with carry). For the case of even sectors, bits are not ended, but applied with condition:
+Say that 0101 is valid for the first sector, then when the device is in the third sector a shift by one only is needed: $0101 \gg 1$ = 1010 (with carry). For the case of even sectors, bits are not ended, but applied conditionally on the internal timer value:
 
 		0001 (timer mod 2 == 0)
         
@@ -215,23 +220,23 @@ Say that 0101 is valid for the first sector, then when the device is in the thir
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.5\textwidth]{sectors.png}
+  \includegraphics[width=0.4\textwidth]{sectors.png}
   \caption{4-HaptiQ sectors}
   \label{fig:sectors}
 \end{figure}
 
-Similar bitwise operations, as described above, are applied for the direction, pulsation, and linear tactons. The notification tacton, however, takes a different approach since each actuator can be in different states (see Section \ref{sec:notification}). The solution used is to use a 2-D array with values [position, direction] for each actuator, where the direction indicates whether the position should increase or decrease in the current iteration. The direction is inverted when the minimum or maximum allowed position is reached.  
+Similar bitwise operations, as described above, are applied for the direction, pulsation, and linear tactons. The notification tacton, however, takes a different approach since each actuator can be in different states (see Section \ref{sec:notification}). The solution used is to use a 2-D array with values $[position, direction]$ for each actuator, where the direction indicates whether the position should increase or decrease in the current iteration. The direction is inverted when the minimum or maximum allowed position is reached.  
 
 \section{A basic example}
 
 In this section, I will show how to use the API using a simple example (see Code ~\ref{lst:basicAPIUsage}). This section is necessary to properly understand section ~\ref{sec:Applications}, which discusses the provided example applications of this project.
 
-The first step consists in creating a WPF application and adding a reference to the HaptiQ\_API. In the designed view, add a Grid named \textit{container} to the main window. Import the HaptiQ\_API in the code view of the application. 
+The first step consists in creating a WPF application and adding a reference to the HaptiQ\_API. In the design view, add a Grid named \textit{container} to the main window. Import the HaptiQ\_API in the code view of the application. 
 
 The call \textit{HaptiQsManager.Create(windowTitle, \textless Input Class\textgreater)} initialises the HaptiQ device and the Input API, using the specified Input class (e.g. 'SurfaceInput' for Bytetags). 
 Objects are automatically added to the system when they are created. These are rendered only when added to a WPF grid or canvas. 
 
-In the \textit{onClosed} method of the WPF application, it is important to call \textit{HaptiQsManager.Instance.delete()} to ensure that the HaptiQs are detached correctly and all resources are disposed correctly.
+In the \textit{OnClosed} method of the WPF application, it is important to call \textit{HaptiQsManager.Instance.delete()} to ensure that the HaptiQs are detached correctly and all resources are disposed correctly.
 
 \lstset{style=sharpc}
 \begin{lstlisting}[caption={Basic API usage},label={lst:basicAPIUsage}]
@@ -271,7 +276,7 @@ public partial class Application : SurfaceWindow
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{basic_example.png}
+  \includegraphics[width=0.5\textwidth]{basic_example.png}
   \caption{Basic API usage}
   \label{fig:basicexample}
 \end{figure}
@@ -292,20 +297,20 @@ When the first type of buttons is used, a new window is shown allowing the user 
 The second type, instead, iterates over all the haptic objects through the \textit{HaptiQsManager} and make them selectable or not. This functionality is useful because we want objects to be selectable only when creating the graph and not when the user is sensing it.  
 
 
-\subsection{Functions Visualiser}
+\subsection{Function Visualiser}
 
-The functions visualiser application is self-contained in one simple C\# class. A user can input basic functions (e.g. linear, trigonometric) via the interface provided by the application. The interface, similarly to the Graph Visualiser one, is created with the assistance of Visual Studio. \\
-The application accepts only functions of the form: $ y = f(x) $, with only one occurrence of x. Functions are evaluated using the NCalc library \footnote{NCalc. http://www.ncalc.codeplex.com/ . [Online; Last checked: 02/04/2014].} at regular intervals over x. The pseudocode ~\ref{lst:functVisPseudo} shows the use of the NCalc library and the creation of the HapticPolyline. 
+The function visualiser application is self-contained in one simple C\# class. A user can input basic functions (e.g. linear, trigonometric) via the interface provided by the application. The interface, similarly to the Graph Visualiser one, is created with the assistance of Visual Studio. \\
+The application accepts only functions of the form: $ y = f(x) $, with only one occurrence of x. Functions are evaluated using the NCalc library \footnote{NCalc. Library Available at \url{http://www.ncalc.codeplex.com/}. [Online; last checked: 02/04/2014].} at regular intervals over x. The pseudocode ~\ref{lst:functVisPseudo} shows the use of the NCalc library and the creation of the HapticPolyline. 
 
 \lstset{style=sharpc1}
 \begin{lstlisting}[caption={Function Visualiser pseudocode},label={lst:functVisPseudo}]
 var regex = new Regex(Regex.Escape("x"));
 for(int i = 0; i < RANGE; i++)
 {
-	var function = regex.Replace(inputTextFunction, i.ToString(), 1);
-    NCalc.Expression expr = new NCalc.Expression(function);
-    var y = expr.Evaluate();
-    points.add(new Point(i, y));
+  var function = regex.Replace(inputTextFunction, i.ToString(), 1);
+  NCalc.Expression expr = new NCalc.Expression(function);
+  var y = expr.Evaluate();
+  points.add(new Point(i, y));
 }
 
 HapticShape polyline = new HapticPolyline(points);

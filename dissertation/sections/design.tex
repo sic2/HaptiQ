@@ -32,7 +32,7 @@ The first prototype extends the rotational axis in the xy plane (see Figure ~\re
         \caption{HaptiQ early prototypes}\label{fig:HaptiQ-early-prototypes}
 \end{figure}
 
-In the second prototype I tried to minimize the total number of servos to two. One servo would be used to rotate a combinatorial gear about the z-axis(see Figure ~\ref{fig:second prototype}). A second servo can then be used to raise the first servo with the gear it controls and all the rods. This approach can be considered very versatile and could allow an high number of actuators by keeping the number of servos always to two. Nonetheless, the actuators would all be at the same heights when raised as in the first prototype. Since height can be used to convey additional information, this prototype was discarded and a third prototype was created.
+In the second prototype I tried to minimize the total number of servos to two. One servo would be used to rotate a combinatorial gear about the z-axis (see Figure ~\ref{fig:second prototype}). A second servo can then be used to raise the first servo and all the rods. This approach can be considered very versatile and could allow an high number of actuators by keeping the number of servos always to two. Nonetheless, the actuators would all be at the same height when raised as in the first prototype. Since height can be used to convey additional information, this prototype was discarded and a third prototype was created.
 
 The third prototype does not focus on minimising the number of servos any more, but rather on the possible functions that could be added to the HaptiQ. In this design each servo controls an actuator only and these are disposed circularly around the centre of the device (see Figure ~\ref{fig:third prototype}). The device would have a \textit{joystick} shape. Three pressure sensors could be added either at the bottom of the device or in between the internal and the external annuli. Using simple triangulation on the pressure sensors values, it could be possible to use the device like a gaming joystick and eventually augment its area of interaction. However, in one of the meetings with Saad, we realised that blind people would find this feature disrupting because understanding how far in the xy plane the device is augmented can become a challenging task. 
 
@@ -87,7 +87,7 @@ This version of the HaptiQ does not provide any case. The uneven surface leads t
 
 The HaptiQ is the first vector-based display for blind users. Whether this design provides better feedback to users or not is unknown, because no study with participants could be conducted. Therefore, the actuators are designed so to support different tops in order to be able to evaluate the HaptiQ against a point-based haptic feedback TUI. In the version here presented, only vector-like tops are provided, but other type of tops can be easily printed and fasten to the actuators.   
 
-Finally, the HaptiQ does not have any break to simulate friction. While it could be possible to add this feature, I decided that the primary goal of this project was just to focus on the vectorisation of the actuators. 
+Finally, the HaptiQ does not have any break to simulate friction. While it could be possible to add this feature, I decided that the primary goal of this project was just to focus on the \textit{vectorisation} of the actuators. 
 
 \subsection{8-HaptiQ}
 The result of the final design iteration is the 8-HaptiQ. Using the same design of the 4-HaptiQ for eight actuators would lead to a considerable increase in size of the device. Therefore, the 8-HaptiQ has been completely re-engineered (see Figure ~\ref{fig:8-HaptiQ}). 
@@ -100,7 +100,7 @@ The result of the final design iteration is the 8-HaptiQ. Using the same design 
 \end{figure}
 
 The 4-HaptiQ not only is not optimised in terms of space, but its wiring is also not well engineered. As it is possible to observe in Figure ~\ref{fig:HaptiQ reference static actuators} the wiring does not allow the device to be used comfortably, especially when one wants to rotate it. 
-The servos in the 8-HaptiQ are organised in couples. Unlike its predecessor, the servos are positioned horizontally (see Figure ~\ref{fig:8-HaptiQservos}) and the screws are moved more toward the center of rotatory mechanism of the servos. These design choices allow the device to be more compact and still preserve the same functionalities of the 4-HaptiQ. 
+The servos in the 8-HaptiQ are organised in couples. Unlike its predecessor, the servos are positioned horizontally (see Figure ~\ref{fig:8-HaptiQservos}) and the screws are moved more toward the centre of the rotatory mechanism of the servos. These design choices allow the device to be more compact and still preserve the same functionalities of the 4-HaptiQ. 
 The device is lift up by an additional structure laying below it, allowing the wiring to be less disruptive. 
 
 \begin{figure}[H]
@@ -123,11 +123,11 @@ The 8-HaptiQ takes a different approach for the design of the actuators guides. 
 
 \subsection{Fiducial Markers}
 
-The HaptiQ, like the HTP, is designed to work on interactive tabletops. Specifically on Microsoft PixelSense tables (supporting Microsoft Surface SDK 2.0) \cite{pixelsense}. The Microsoft Surface Bytetag is the standard fiducial marker for the PixelSense tables (see Figure ~\ref{fig:Bytetag}). But Bytetags are hard to print, if high accuracy is wanted, and expensive, if one wants to buy them from the official store.
+The HaptiQ, like the HTP, is designed to work on interactive tabletops, specifically on Microsoft PixelSense tables (supporting Microsoft Surface SDK 2.0) \footnote{Microsoft. \url{http://www.pixelsense.com/}. [Online; last checked: 26/04/2014].}. The Microsoft Surface Bytetag is the standard fiducial marker for the PixelSense tables (see Figure ~\ref{fig:Bytetag}). But Bytetags are hard to print, if high accuracy is wanted, and expensive, if one wants to buy them from the official store.
 
-The HaptiQ, in addition to the  Microsoft Bytetags, supports Glyph, as defined by the Glyph Recognition And Tracking Framework (GRATF) (see Figure ~\ref{fig:glyph}).
+The HaptiQ, in addition to the  Microsoft Bytetags, supports glyphs, as defined by the Glyph Recognition And Tracking Framework (GRATF)\footnote{GRATF. \url{http://www.aforgenet.com/projects/gratf/}. [Online; last checked: 04/04/2014].} (see Figure ~\ref{fig:glyph}).
 
-Both types of fiducial markers are to be displaced on the bottom of the device, if a PixelSense table (or equivalent) is used. Otherwise, it could be possible to place a Glyph on top of the device, provided that an appropriate structure is built, and recognise it using a web-cam. 
+Both types of fiducial markers are to be displaced on the bottom of the device, if a PixelSense table (or equivalent) is used. Otherwise, it could be possible to place a glyph on top of the device, provided that an appropriate structure is built, and recognise it using a web-cam. 
 
 \begin{figure}[H]
         \centering
@@ -156,7 +156,7 @@ This section discusses the design choices taken for the API of the HaptiQ. The g
 	\item multiple actuators
     \item multiple pressure sensors
     \item a completely new approach to HapticObjects and HapticBehaviours
-    \item actions called when input is received by the user
+    \item custom actions called when input is received by the user
     \item additional API to get input position of the device from different hardware
 \end{itemize}
 
@@ -179,10 +179,10 @@ The following two sections describe these components in more details.
 
 \subsection{Input API}
 
-Initially, the HaptiQ, like the HTP, was designed to work on a Microsoft PixelSense table only \cite{pixelsense}.
+Initially, the HaptiQ, like the HTP, was designed to work on a Microsoft PixelSense table only.
 Microsoft Surface Bytetags are located underneath the HTP to get the location of the device in the table. However, official Bytetags are expensive and printing them with a normal printer does not lead to satisfying results. In addition, the HaptiQ will be used in the near future on digital tables that do not support the Surface SDK. Therefore, in order to abstract the HaptiQ API from any hardware input dependence, a separate API component has been created (see Figure ~\ref{fig:input_api}). 
 
-The architectural structure of the Input API is based on the classic Factory pattern. This adds a level of abstraction over the hardware that should be used to get the position of the HaptiQ. Currently the API supports Bytetags and Glyphs recognition. But client applications can also add their own customised class to support different position detection methods. 
+The architectural structure of the Input API is based on the classic Factory pattern. This adds a level of abstraction over the hardware that should be used to get the position of the HaptiQ. Currently the API supports Bytetags and glyphs recognition. But client applications can also add their own customised class to support different position detection methods. 
 
 \begin{figure}[H]
   \centering
@@ -213,11 +213,11 @@ On the other hand, each HaptiQ can keep track of pressure events, without the in
 \end{figure}
 
 \subsubsection{Haptic Objects}
-Basic haptic objects are provided by the API and are designed to be used by WPF applications without having to concern about behaviours and additional low level mechanisms. All haptic objects can carry textual information. In fact, applications should prioritise the information one wants to convey, rather than the aesthetics of the objects. Therefore, only simple shapes are provided. Obviously, one can extend the HapticShape abstract class to provide more interesting shapes, but this is outside the scope of this project.
+Basic haptic objects are provided by the API and are designed to be used by WPF (Windows Presentation Foundation) applications without having to concern about behaviours and additional low level mechanisms. All haptic objects can carry textual information. In fact, applications should prioritise the information one wants to convey, rather than the aesthetics of the objects. Therefore, only simple shapes are provided. Obviously, one can extend the HapticShape abstract class to provide more interesting shapes, but this is outside the scope of this project.
 
 Haptic objects are the main visual components of the client applications. Therefore, clients can also register custom actions to be run when pressure events are received by a specific object.
 
-Figure ~\ref{fig:hapticObjects} shows examples of the haptic objects supported by the API. Rectangles and circles can be used as identity objects, in applications like graphs. Identity objects can also be linked. Links can have directions (from red to green) or not. The API allows also to specify lines and polylines. One of the example applications provided with the API, for example, uses polylines to display mathematical functions.
+Figure ~\ref{fig:hapticObjects} shows examples of the haptic objects supported by the API. Rectangles and circles can be used as identity objects (e.g. nodes in a graph). Identity objects can also be linked. Links can have directions (from red to green) or not. The API allows also to specify lines and polylines. One of the example applications provided with the API, for example, uses polylines to display mathematical functions.
 
 The used Fiducial Markers do not provide very precise input location of the device. In order to compensate, the HapticObjects provided are extended (red borders in Figure ~\ref{fig:hapticObjects}). This makes it harder to the user to leave the object, compensating for the inaccuracy of detecting the device location.
 
@@ -252,7 +252,7 @@ The speech synthesiser, instead, is used to read out textual information stored 
 \section{Tactons}
 \label{sec:designTactons} 
 
-Pietrzak et al. \cite{pietrzak2009creating} propose a set of tactons that can be used on pin array devices and that could be used to indicate edges and directions. These tactons are designed for a 4x4 pins grid. The HaptiQ provides a maximum of eight actuators, uses lines rather than points to convey haptic cues and can provide height information as well (pin arrays typically provide only 0/1 information). Here, I present a new set of tactons. In this section the terms tacton and behaviour will be used interchangeably.
+Pietrzak et al. \cite{pietrzak2009creating} propose a set of tactons that can be used on pin array devices and that could be used to indicate edges and directions. These tactons are designed for a $4 \times 4$ pins grid. The HaptiQ provides a maximum of eight actuators, uses lines rather than points to convey haptic cues and can provide height information as well (pin arrays typically provide only 0/1 information). Here, I present a new set of tactons. From this section on, the terms tacton and behaviour will be used interchangeably.
 
 A tacton is used by an HapticObject to notify a device how to react when this is located on top of it. In the provided API there is a strong relationship between each HapticObject and a behaviour. Nonetheless, behaviours can be used by client defined HapticObjects or directly from a client application.
 
@@ -355,7 +355,7 @@ It is also possible to represent corners, which are merely the combinations of t
                 \label{fig:corner-8}
         \end{subfigure}
         ~ 
-         \begin{subfigure}[H]{0.4\textwidth}
+         \begin{subfigure}[H]{0.5\textwidth}
                 \includegraphics[width=\textwidth]{corners-8c.png}
                 \caption{8-HaptiQ (combinations)}
                 \label{fig:corner-8c}
@@ -369,7 +369,7 @@ The Edge-Corner tacton is used by the HapticRectangle, to represent its borders,
 \subsection{Pulsation and Linear}
 The Pulsation and Linear tactons are used with the HapticLink to represent the sign of the link between two Haptic objects. Figure ~\ref{fig:pulsation} shows two cases of the pulsation tacton for the 4-HaptiQ. By symmetry it is possible to represent 8 (or 16 for the 8-HaptiQ) directions. This tacton also allows frequency to be specified, so that pulsation increases as one gets closer to the target. The static actuators in this tacton are also fundamental to identify orientation of the direction.
 
-The Linear tacton, on the other hand, is the union of the pulsation tactons, but without any pulsation behaviour. Thus, the height of the actuators is used rather than the pulsation frequency in order to convoy different information about a direction. For example, the tacton can be encoded so that the height of the actuators increases linearly as the distance between the device and the target approaches zero.
+The Linear tacton, on the other hand, is the union of the pulsation tactons, but without any pulsation behaviour. Thus, the height of the actuators is used rather than the pulsation frequency in order to convey different information about a direction. For example, the tacton can be encoded so that the height of the actuators increases linearly as the distance between the device and the target approaches zero.
 
 \begin{figure}[H]
   \centering
@@ -382,25 +382,25 @@ The Linear tacton, on the other hand, is the union of the pulsation tactons, but
 
 The HaptiQ can provide a new set of haptic cues which allow the visually impaired to better perceive lines, edges and directions. The two example applications shown below illustrate the types of applications that can be created using the HaptiQ API. Note that these applications have been designed as proof-of-concepts and not as applications ready to be deployed to the end users.
 
-\subsection{Graphs Visualiser}
+\subsection{Graph Visualiser}
 \label{sec:graphVis}
 
 The first application is a basic graph visualiser. The application is designed to be used by people with visual disabilities, with the assistance of a person with normal or corrected vision. The assistant can create graphs using the provided graphical user interface (see Figure ~\ref{fig:graphsVis}). Graphs contain identity objects and links as well as lines and polylines. \\
 In order to create new object, the assistant has to select one of the options on the left hand side. A new window will be prompted asking for the properties of the haptic object. The procedure is the same for all the objects, except for links where the user has to select which objects to link by physically touching the objects with a finger or a bytetag. 
 
-The design is not complete, since it does not allow objects to be deleted and graphs to be saved for later use. However, this is a good example of a possible application for the HaptiQ. One of the issues raised by Saad, in fact, is that blind people have difficulties in visualising graphs such as Finite Automata or Trees. 
+The design is not complete, since it does not allow objects to be deleted and graphs to be saved for later use. However, this is a good example of a possible application for the HaptiQ. One of the issues raised by Saad, in fact, is that blind people have difficulties in visualising graphs such as finite automata, trees, or network topologies. 
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.5\textwidth]{graph1.png}
-  \caption{Graphs Visualiser}
+  \caption{Graph Visualiser}
   \label{fig:graphsVis}
 \end{figure}
 
-\subsection{Functions Visualiser}
+\subsection{Function Visualiser}
 \label{sec:funcVis}
 
-The second application that this project uses to prove the flexibility and usability of the HaptiQ and its API is a function visualiser. One of the most challenging tasks for the visually impaired is to be able to \textit{visualise} mathematical functions. The design of the function visualiser is also very simple. The user inputs a function and the application then evaluates and displays it (see Figure ~\ref{fig:funcVisualiser}). The application uses haptic lines and polylines to represent the functions. Cartesian axes are also added for completeness.
+The second application that this project uses to prove the flexibility and usability of the HaptiQ and its API is a function visualiser. One of the most challenging tasks for the visually impaired is to be able to \textit{visualise} mathematical functions. The design of the function visualiser is also very simple. The user inputs a function, as text, and the application then evaluates and displays it (see Figure ~\ref{fig:funcVisualiser}). The application uses haptic lines and polylines to represent the functions. Cartesian axes are also added for completeness.
 
 \begin{figure}[H]
         \centering
@@ -416,5 +416,6 @@ The second application that this project uses to prove the flexibility and usabi
                 \caption{Sine function}
                 \label{fig:funct2}
         \end{subfigure}
-        \caption{Functions Visualiser}\label{fig:funcVisualiser}
+        \caption{Function Visualiser}
+        \label{fig:funcVisualiser}
 \end{figure}
