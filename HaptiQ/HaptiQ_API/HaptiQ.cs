@@ -10,6 +10,19 @@ using Input_API;
 
 namespace HaptiQ_API
 {
+    /// <summary>
+    /// Types of pressure gestures.
+    /// At the moment only a press gesture is supported. 
+    /// </summary>
+    public enum PRESSURE_GESTURE_TYPE
+    {
+        /// <summary>
+        /// Pressure value increases over the INPUT_PRESSURE_THRESHOLD
+        /// and rapidly decreases within PRESS_GESTURE_TIME_CONSTRAINT
+        /// </summary>
+        PRESS
+    };
+
     /***************************/
     /* DELEGATES DEFINITIONS   */
     /***************************/
@@ -21,8 +34,8 @@ namespace HaptiQ_API
     /// <param name="e"></param>
     /// <param name="id">This HaptiQ id</param>
     /// <param name="position"></param>
-    /// <param name="list">list of recent pressure values</param>
-    public delegate void PressureGestureEventHandler(object sender, EventArgs e, uint id, Point position, List<Tuple<DateTime, int>> list);
+    /// <param name="gestureType"></param>
+    public delegate void PressureGestureEventHandler(object sender, EventArgs e, uint id, Point position, PRESSURE_GESTURE_TYPE gestureType);
 
     /// <summary>
     /// Delegate for PressureInput events
@@ -122,16 +135,25 @@ namespace HaptiQ_API
             }
         } 
 
+        // Servo related private fields
         private AdvancedServo _advServo;
         private static List<Actuator> _actuators;
 
+        // Pressure related private fields
         private InterfaceKit _intfKit;
         private const int INPUT_PRESSURE_THRESHOLD = 400;
-        private const int NOISE_THRESHOLD = 20;
-        // map actuator_id -> (time, pressure value)
+        private const int PRESS_GESTURE_TIME_CONSTRAINT = 200;
+        private enum PRESSURE_STATE
+        {
+            ABOVE_THRESHOLD,
+            BELOW_THRESHOLD
+        };
+
+        // map actuator_id -> (time, PRESSURE_STATE)
         // data is recorded only when above the threshold.
         // When below the threshold the data is removed.
-        private Dictionary<int, List<Tuple<DateTime, int>>> _inputData;
+        private Dictionary<int, Tuple<DateTime, PRESSURE_STATE>> _inputData;
+        // Current pressure data of all the actuators
         private Dictionary<int, double> _currentPressureData;
 
         /// <summary>
@@ -176,7 +198,7 @@ namespace HaptiQ_API
             this._configuration = configuration;
 
             // Initialise data structures
-            _inputData = new Dictionary<int, List<Tuple<DateTime, int>>>();
+            _inputData = new Dictionary<int, Tuple<DateTime, PRESSURE_STATE>>();
             _currentPressureData = new Dictionary<int, double>();
             _actuators = new List<Actuator>();
             _behaviours = new List<IBehaviour>();
@@ -632,12 +654,12 @@ namespace HaptiQ_API
         /// This method raises a PressureGestureEventHandler event.
         /// </summary>
         /// <param name="e"></param>
-        /// <param name="list">list of all pressure data collected for this event</param>
-        private void OnPressureGesture(EventArgs e, List<Tuple<DateTime, int>> list)
+        /// <param name="gestureType"></param>
+        private void OnPressureGesture(EventArgs e, PRESSURE_GESTURE_TYPE gestureType)
         {
             if (PressureGesture != null)
             {
-                PressureGesture(this, e, _id, _position, list);
+                PressureGesture(this, e, _id, _position, gestureType);
             }
         }
 
@@ -738,24 +760,28 @@ namespace HaptiQ_API
         private void intfKit_SensorChange(object sender, SensorChangeEventArgs e)
         {
             _currentPressureData[e.Index] = e.Value;
+
+            // Check current state of this actuator pressure state.
+            // If press gesture is recognised, fire appropriate event
             if (actuatorExist(e.Index)) 
             {
                 getActuator(e.Index).setPressure(e.Value);
-                if (e.Value > INPUT_PRESSURE_THRESHOLD)
+                if (e.Value > INPUT_PRESSURE_THRESHOLD && 
+                    (!_inputData.ContainsKey(e.Index) ||
+                        _inputData[e.Index].Item2 == PRESSURE_STATE.BELOW_THRESHOLD))
                 {
-                    if (!_inputData.ContainsKey(e.Index))
-                        _inputData[e.Index] = new List<Tuple<DateTime, int>>();
-                    _inputData[e.Index].Add(new Tuple<DateTime, int>(DateTime.Now, e.Value));
+                   _inputData[e.Index] = new Tuple<DateTime, PRESSURE_STATE>(DateTime.Now, PRESSURE_STATE.ABOVE_THRESHOLD);
                 }
-                else if (e.Value < INPUT_PRESSURE_THRESHOLD && e.Value > NOISE_THRESHOLD)
+                else if (e.Value < INPUT_PRESSURE_THRESHOLD)
                 {
-                    if (_inputData.ContainsKey(e.Index))
+                    TimeSpan span = DateTime.Now - _inputData[e.Index].Item1;
+                    if (_inputData.ContainsKey(e.Index) && 
+                        _inputData[e.Index].Item2 == PRESSURE_STATE.ABOVE_THRESHOLD && 
+                            span.TotalMilliseconds < PRESS_GESTURE_TIME_CONSTRAINT)
                     {
-                        OnPressureGesture(null, _inputData[e.Index]);
-                        _inputData[e.Index].Clear();
-                        _inputData[e.Index] = null; // deallocated list
-                        _inputData.Remove(e.Index);
+                        OnPressureGesture(null, PRESSURE_GESTURE_TYPE.PRESS);
                     }
+                    _inputData[e.Index] = new Tuple<DateTime, PRESSURE_STATE>(DateTime.Now, PRESSURE_STATE.BELOW_THRESHOLD);
                 }
                 Helper.Logger("HaptiQ_API.HaptiQ.intfKit_SensorChange::InterfaceKit Sensors Changed (" + e.Index + "): " + e.Value);
             }

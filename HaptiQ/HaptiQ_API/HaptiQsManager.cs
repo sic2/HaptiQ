@@ -486,14 +486,14 @@ namespace HaptiQ_API
         /// <param name="e"></param>
         /// <param name="id"></param>
         /// <param name="position"></param>
-        /// <param name="list"></param>
-        private void pressureGestureHaptiQChanged(object sender, EventArgs e, uint id, Point position, List<Tuple<DateTime, int>> list)
+        /// <param name="gestureType"></param>
+        private void pressureGestureHaptiQChanged(object sender, EventArgs e, uint id, Point position, PRESSURE_GESTURE_TYPE gestureType)
         {
             // Notify observers
             lock (_syncObj)
             {
-                Parallel.ForEach(_hapticObjectObservers, observer => 
-                    observer.handlePress(_HaptiQsDictionary.ContainsKey(id) ? _HaptiQsDictionary[id] : null));
+                Parallel.ForEach(_hapticObjectObservers, observer =>
+                    observer.handlePress(_HaptiQsDictionary.ContainsKey(id) ? _HaptiQsDictionary[id] : null, gestureType));
             }
         }
 

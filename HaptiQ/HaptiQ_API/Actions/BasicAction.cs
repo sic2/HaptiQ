@@ -26,7 +26,8 @@ namespace HaptiQ_API
         /// </summary>
         /// <param name="id"></param>
         /// <param name="pressureData"></param>
-        public void run(uint id, Dictionary<int, double> pressureData)
+        /// <param name="gestureType"></param>
+        public void run(uint id, PRESSURE_GESTURE_TYPE gestureType, Dictionary<int, double> pressureData)
         {
             Console.WriteLine("Getting input from device with id " + id);
             SpeechOutput.Instance.speak(_information);

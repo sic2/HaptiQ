@@ -14,6 +14,9 @@ namespace HaptiQ_API
         /// <summary>
         /// Executes the action
         /// </summary>
-        void run(uint id, Dictionary<int, double> pressureData);
+        /// <param name="id"></param>
+        /// <param name="gestureType"></param>
+        /// <param name="pressureData"></param>
+        void run(uint id, PRESSURE_GESTURE_TYPE gestureType, Dictionary<int, double> pressureData);
     }
 }

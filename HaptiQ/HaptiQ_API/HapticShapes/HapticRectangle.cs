@@ -54,14 +54,15 @@ namespace HaptiQ_API
         /// for a device currently in this haptic rectangle
         /// </summary>
         /// <param name="haptiQ"></param>
-        public override void handlePress(HaptiQ haptiQ)
+        /// <param name="gestureType"></param>
+        public override void handlePress(HaptiQ haptiQ, PRESSURE_GESTURE_TYPE gestureType)
         {
             Tuple<STATE, IBehaviour> HaptiQState = _HaptiQBehaviours.ContainsKey(haptiQ.getID()) ? _HaptiQBehaviours[haptiQ.getID()] : null;
             if (pointIsInside(haptiQ.position) && HaptiQState != null && HaptiQState.Item1 == STATE.down)
             {
                 if (_action != null)
                 {
-                    _action.run(haptiQ.getID(), haptiQ.getCurrentPressureData());
+                    _action.run(haptiQ.getID(), gestureType, haptiQ.getCurrentPressureData());
                 }
                 else
                 {
@@ -77,6 +78,8 @@ namespace HaptiQ_API
         /// <returns></returns>
         protected override bool pointIsInside(Point point)
         {
+            if (point == null)
+                return false;
             return (point.X >= (x - BORDERS_TOLLERANCE) &&
                 point.X <= (x + width + BORDERS_TOLLERANCE)) && 
                 (point.Y >= (y - BORDERS_TOLLERANCE) &&

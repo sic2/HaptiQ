@@ -31,6 +31,7 @@ namespace HaptiQ_API
         /// - 0 ADD (first behaviour in tuple)
         /// - 1 REMOVE (first behaviour in tuple)
         /// - 2 SUBSTITUTE (second behaviour in tuple with first one)
+        /// - 3 NONE (do nothing)
         ///</returns>
         Tuple<BEHAVIOUR_RULES, IBehaviour, IBehaviour> handleInput(HaptiQ haptiQ);
 
@@ -38,7 +39,8 @@ namespace HaptiQ_API
         /// Handles pressure input
         /// </summary>
         /// <param name="haptiQ"></param>
-        void handlePress(HaptiQ haptiQ);
+        /// <param name="gestureType"></param>
+        void handlePress(HaptiQ haptiQ, PRESSURE_GESTURE_TYPE gestureType);
 
         /// <summary>
         /// Registers a custom action object. 
@@ -59,7 +61,5 @@ namespace HaptiQ_API
         /// </summary>
         /// <param name="selectable"></param>
         void makeObjectSelectable(bool selectable);
-
-
     }
 }

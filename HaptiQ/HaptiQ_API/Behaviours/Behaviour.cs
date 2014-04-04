@@ -59,14 +59,6 @@ namespace HaptiQ_API
 
         /// <summary>
         /// Behaviour constructor
-        /// Note that this constructor should never be called.
-        /// It exists only 
-        /// </summary>
-        //public Behaviour()
-        //{ }
-
-        /// <summary>
-        /// Behaviour constructor
         /// </summary>
         /// <param name="haptiQ"></param>
         public Behaviour(HaptiQ haptiQ)

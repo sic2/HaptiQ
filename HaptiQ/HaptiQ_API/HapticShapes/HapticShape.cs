@@ -83,8 +83,8 @@ namespace HaptiQ_API
         /// </summary>
         protected IAction _action;
 
+        // Private fields
         private bool isSelectable;
-
         private Brush _color;
         private Brush SELECTION_COLOR = Brushes.Silver;
         
@@ -253,18 +253,18 @@ namespace HaptiQ_API
 
         /// <summary>
         /// Handle an actuator press. 
-        /// [ XXX ] Currently this event is called only when an actuator is pressed.
-        /// Multiple presses are not supported. 
+        /// Note: Multiple presses are not supported, yet.
         /// </summary>
         /// <param name="haptiQ"></param>
-        public virtual void handlePress(HaptiQ haptiQ)
+        /// <param name="gestureType"></param>
+        public virtual void handlePress(HaptiQ haptiQ, PRESSURE_GESTURE_TYPE gestureType)
         {
             Tuple<STATE, IBehaviour> HaptiQState = _HaptiQBehaviours.ContainsKey(haptiQ.getID()) ? _HaptiQBehaviours[haptiQ.getID()] : null;
             if (pointIsInside(haptiQ.position) && HaptiQState != null && HaptiQState.Item1 == STATE.down)
             {
                 if (_action != null)
                 {
-                    _action.run(haptiQ.getID(), haptiQ.getCurrentPressureData());
+                    _action.run(haptiQ.getID(), gestureType, haptiQ.getCurrentPressureData());
                 }
             }
         }
