@@ -114,13 +114,13 @@ namespace HaptiQ_API
             set
             {
                 _position = value;
-                OnPositionChanged(null);
+                OnPositionChanged();
             }
         }
 
         private double _orientation;
         /// <summary>
-        /// Orientation is in radians
+        /// Orientation of this HaptiQ in radians
         /// </summary>
         public double orientation
         {
@@ -131,7 +131,7 @@ namespace HaptiQ_API
             set
             {
                 _orientation = value;
-                OnPositionChanged(null);
+                OnPositionChanged();
             }
         } 
 
@@ -143,6 +143,7 @@ namespace HaptiQ_API
         private InterfaceKit _intfKit;
         private const int INPUT_PRESSURE_THRESHOLD = 400;
         private const int PRESS_GESTURE_TIME_CONSTRAINT = 200;
+        // Enum states defined for basic gesture recognition
         private enum PRESSURE_STATE
         {
             ABOVE_THRESHOLD,
@@ -156,13 +157,11 @@ namespace HaptiQ_API
         // Current pressure data of all the actuators
         private Dictionary<int, double> _currentPressureData;
 
-        /// <summary>
-        /// Indicates how long the HaptiQ waits before playing the next behaviour
-        /// </summary>
+        // Indicates how long the HaptiQ waits before playing the next behaviour
         private const int BEHAVIOUR_LOOP_MS = 10;
         private readonly Object _loopLock = new Object();
         private bool _runLoop = true;
-        private List<IBehaviour> _behaviours;
+        private HashSet<IBehaviour> _behaviours; // remember: HashSet does not preserve order.
 
         private Configuration _configuration;
         /// <summary>
@@ -201,7 +200,7 @@ namespace HaptiQ_API
             _inputData = new Dictionary<int, Tuple<DateTime, PRESSURE_STATE>>();
             _currentPressureData = new Dictionary<int, double>();
             _actuators = new List<Actuator>();
-            _behaviours = new List<IBehaviour>();
+            _behaviours = new HashSet<IBehaviour>();
 
             // Initialise boards
             initialiseServoBoard();
@@ -256,6 +255,7 @@ namespace HaptiQ_API
         {
             disableActuators();
 
+            // Stop the running loop used to play the current behaviours.
             lock (_loopLock)
             {
                 _runLoop = false;
@@ -584,11 +584,8 @@ namespace HaptiQ_API
         {
             while (_runLoop)
             {
-                lock (_loopLock)
-                {
-                    playBehaviours();
-                    System.Threading.Thread.Sleep(BEHAVIOUR_LOOP_MS);
-                }
+                playBehaviours();
+                System.Threading.Thread.Sleep(BEHAVIOUR_LOOP_MS);
             }
         }
 
@@ -621,6 +618,7 @@ namespace HaptiQ_API
         /// </summary>
         public void playBehaviours()
         {
+            // need to lock on _behaviour to avoid the list to be modified while iterating over it.
             lock (_behaviours)
             {
                 Dictionary<int, Tuple<double, int>> actuators = new Dictionary<int, Tuple<double, int>>();
@@ -653,53 +651,49 @@ namespace HaptiQ_API
         /// <summary>
         /// This method raises a PressureGestureEventHandler event.
         /// </summary>
-        /// <param name="e"></param>
         /// <param name="gestureType"></param>
-        private void OnPressureGesture(EventArgs e, PRESSURE_GESTURE_TYPE gestureType)
+        private void OnPressureGesture(PRESSURE_GESTURE_TYPE gestureType)
         {
             if (PressureGesture != null)
             {
-                PressureGesture(this, e, _id, _position, gestureType);
+                PressureGesture(this, null, _id, _position, gestureType);
             }
         }
 
         /// <summary>
         /// This method raises a PressureInputEventHandler event.
         /// </summary>
-        /// <param name="e"></param>
         /// <param name="actuatorId"></param>
         /// <param name="pressureValue"></param>
-        private void OnPressureInput(EventArgs e, int actuatorId, int pressureValue)
+        private void OnPressureInput(int actuatorId, int pressureValue)
         {
             if (PressureInput != null)
             {
-                PressureInput(this, e, _id, actuatorId, pressureValue);
+                PressureInput(this, null, _id, actuatorId, pressureValue);
             }
         }
 
         /// <summary>
         /// This method raises a PositionEventHandler event.
         /// </summary>
-        /// <param name="e"></param>
-        private void OnPositionChanged(EventArgs e)
+        private void OnPositionChanged()
         {
             if (PositionChanged != null)
             {
-                PositionChanged(this, e, _id, _position, _orientation);
+                PositionChanged(this, null, _id, _position, _orientation);
             }
         }
 
         /// <summary>
         /// This method raises an ActuatorPositionChanged event.
         /// </summary>
-        /// <param name="e"></param>
         /// <param name="actuatorId"></param>
         /// <param name="position"></param>
-        private void OnActuatorPositionChanged(EventArgs e, int actuatorId, double position)
+        private void OnActuatorPositionChanged(int actuatorId, double position)
         {
             if (ActuatorPositionChanged != null)
             {
-                ActuatorPositionChanged(this, e, _id, actuatorId, position);
+                ActuatorPositionChanged(this, null, _id, actuatorId, position);
             }
         }
 
@@ -739,7 +733,7 @@ namespace HaptiQ_API
         private void advServo_PositionChange(object sender, PositionChangeEventArgs e)
         {
             // Do not log, since this could be considered not useful information
-            OnActuatorPositionChanged(null, e.Index, e.Position);
+            OnActuatorPositionChanged(e.Index, e.Position);
         }
 
         private void intfKit_Attach(object sender, AttachEventArgs e)
@@ -779,7 +773,7 @@ namespace HaptiQ_API
                         _inputData[e.Index].Item2 == PRESSURE_STATE.ABOVE_THRESHOLD && 
                             span.TotalMilliseconds < PRESS_GESTURE_TIME_CONSTRAINT)
                     {
-                        OnPressureGesture(null, PRESSURE_GESTURE_TYPE.PRESS);
+                        OnPressureGesture(PRESSURE_GESTURE_TYPE.PRESS);
                     }
                     _inputData[e.Index] = new Tuple<DateTime, PRESSURE_STATE>(DateTime.Now, PRESSURE_STATE.BELOW_THRESHOLD);
                 }
@@ -787,7 +781,7 @@ namespace HaptiQ_API
             }
 
             // Fire an event for this pressure sensor
-            OnPressureInput(null, e.Index, e.Value);
+            OnPressureInput(e.Index, e.Value);
         }
 
     }

@@ -114,10 +114,11 @@ namespace HaptiQ_API
         private UInt32 _nextID;
 
         private List<IHapticObject> _hapticObjectObservers;
-        private readonly Object _syncObj = new Object();
+        private readonly Object _syncObj = new Object(); // hold lock on this object for _hapticObjectObservers list
 
         private List<IHapticObject> _selectedHapticObjects;
 
+        private const String CURRENT_DIR = ".";
         private List<Phidget> _devicesToBeConfigured;
 
         private Input _input;
@@ -236,7 +237,7 @@ namespace HaptiQ_API
         }
 
         /// <summary>
-        /// Configure the HaptiQs. 
+        /// Configure the HaptiQs.
         /// This method is implicitly called any time an HaptiQsManager is created.
         /// </summary>
         public void configure()
@@ -259,7 +260,7 @@ namespace HaptiQ_API
 
             // Check all configuration files in current directory
             List<Configuration> configurations = new List<Configuration>();
-            DirectoryInfo dir = new DirectoryInfo(".");
+            DirectoryInfo dir = new DirectoryInfo(CURRENT_DIR);
             foreach (var file in dir.GetFiles(Configuration.CONFIGURATION_FILENAME_PATTERN))
             {
                 Configuration conf = Helper.DeserializeFromXML(file.Name);
@@ -592,7 +593,7 @@ namespace HaptiQ_API
         }
 
         /********************/
-        /* Manage HaptiQs     */
+        /* Manage HaptiQs   */
         /* position and     */    
         /* pressure events  */
         /********************/
@@ -629,6 +630,7 @@ namespace HaptiQ_API
             if (e.Device.GetType() == typeof(AdvancedServo) || e.Device.GetType() == typeof(InterfaceKit))
             {
                 Helper.Logger("HaptiQ_API.HaptiQsManager.manager_Attach::Device " + e.Device.Name + " (" + e.Device.SerialNumber.ToString() + ") attached");
+                // TODO - do not add if device already configured
                 _devicesToBeConfigured.Add(e.Device);
             }
             else
