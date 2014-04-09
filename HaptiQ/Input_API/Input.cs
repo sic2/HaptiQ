@@ -12,10 +12,8 @@ namespace Input_API
     /// 
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="point"></param>
-    /// <param name="orientation">In radians</param>
-    /// <param name="e"></param>
-    public delegate void ChangedEventHandler(object sender, InputIdentifier inputIdentifier, Point point, double orientation, EventArgs e);
+    /// <param name="args"></param>
+    public delegate void ChangedEventHandler(object sender, InputArgs args);
 
     /// <summary>
     /// This interfaces defines what methods must be implemented
@@ -60,11 +58,12 @@ namespace Input_API
         /// </summary>
         public event ChangedEventHandler Changed;
 
-        protected virtual void OnChanged(InputIdentifier inputIdentifier, Point point, double orientation, EventArgs e)
+        protected virtual void OnChanged(InputIdentifier inputIdentifier, Point position, double orientation)
         {
             if (Changed != null)
             {
-                Changed(this, inputIdentifier, point, orientation, e);
+                InputArgs args = new InputArgs(inputIdentifier, position, orientation);
+                Changed(this, args);
             }
         }
 

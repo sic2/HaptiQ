@@ -72,6 +72,10 @@
     <Compile Include="Config\ConfigurationManager.cs" />
     <Compile Include="CustomADT\SerializableDictionary.cs" />
     <Compile Include="CustomADT\SerializableTuple.cs" />
+    <Compile Include="CustomEvents\ActuatorPositionArgs.cs" />
+    <Compile Include="CustomEvents\HaptiQPositionArgs.cs" />
+    <Compile Include="CustomEvents\PressureGestureArgs.cs" />
+    <Compile Include="CustomEvents\PressureInputArgs.cs" />
     <Compile Include="HapticShapes\HapticCircle.cs" />
     <Compile Include="HapticShapes\HapticLine.cs" />
     <Compile Include="HapticShapes\HapticLink.cs" />
@@ -98,6 +102,7 @@
       <Name>Input_API</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -15,31 +15,22 @@ namespace HaptiQ_API
     /// Delegate for PressureInput events
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <param name="id">This HaptiQ id</param>
-    /// <param name="actuatorId"></param>
-    /// <param name="pressureValue"></param>
-    public delegate void HaptiQPressureInputEventHandler(object sender, EventArgs e, uint id, int actuatorId, int pressureValue);
+    /// <param name="args"></param>
+    public delegate void HaptiQPressureInputEventHandler(object sender, PressureInputArgs args);
 
     /// <summary>
     /// Delegate for Position (and Orientation) events.
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <param name="id">This HaptiQ id</param>
-    /// <param name="position"></param>
-    /// <param name="orientation"></param>
-    public delegate void HaptiQPositionEventHandler(object sender, EventArgs e, uint id, Point position, double orientation);
+    /// <param name="args"></param>
+    public delegate void HaptiQPositionEventHandler(object sender, HaptiQPositionArgs args);
 
     /// <summary>
     /// Delegate for Actuator position events.
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="E"></param>
-    /// <param name="id"></param>
-    /// <param name="actuatorId"></param>
-    /// <param name="position"></param>
-    public delegate void HaptiQActuatorPositionEventHandler(object sender, EventArgs E, uint id, int actuatorId, double position);
+    /// <param name="args"></param>
+    public delegate void HaptiQActuatorPositionEventHandler(object sender, ActuatorPositionArgs args);
 
 
     /// <summary>
@@ -425,26 +416,26 @@ namespace HaptiQ_API
         }
 
         // This will be called whenever the position of one of the HaptiQs actuators changes.
-        private void InputChanged(object sender, InputIdentifier inputIdentifier, Point point, double orientation, EventArgs e)
+        private void InputChanged(object sender, InputArgs args)
         {
-            if (inputIdentifier == null)
+            if (args.InputIdentifier == null)
             {
                 Helper.Logger("HaptiQ_API.HaptiQsManager.InputChanged:: inputIdentifier is null");
             }
-            else if (!_inputIdentifiersToHaptiQs.ContainsKey(inputIdentifier))
+            else if (!_inputIdentifiersToHaptiQs.ContainsKey(args.InputIdentifier))
             {
                 Helper.Logger("HaptiQ_API.HaptiQsManager.InputChanged:: inputIdentifier not in dictionary");
             }
-            else if (!_HaptiQsDictionary.ContainsKey(_inputIdentifiersToHaptiQs[inputIdentifier]))
+            else if (!_HaptiQsDictionary.ContainsKey(_inputIdentifiersToHaptiQs[args.InputIdentifier]))
             {
                 Helper.Logger("HaptiQ_API.HaptiQsManager.InputChanged:: HaptiQ not in dictionary");
             }
             else
             {
-                HaptiQ haptiQ = _HaptiQsDictionary[_inputIdentifiersToHaptiQs[inputIdentifier]];
-                haptiQ.position = point;
-                haptiQ.orientation = orientation;
-                handleBehaviours(haptiQ, point, orientation);
+                HaptiQ haptiQ = _HaptiQsDictionary[_inputIdentifiersToHaptiQs[args.InputIdentifier]];
+                haptiQ.position = args.Position;
+                haptiQ.orientation = args.Orientation;
+                handleBehaviours(haptiQ, args.Position, args.Orientation);
             }
         }
 
@@ -484,17 +475,14 @@ namespace HaptiQ_API
         /// Notifies haptic observers about a relevant pressure input
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <param name="id"></param>
-        /// <param name="position"></param>
-        /// <param name="gestureType"></param>
-        private void pressureGestureHaptiQChanged(object sender, EventArgs e, uint id, Point position, PRESSURE_GESTURE_TYPE gestureType)
+        /// <param name="args"></param>
+        private void pressureGestureHaptiQChanged(object sender, PressureGestureArgs args)
         {
             // Notify observers
             lock (_syncObj)
             {
                 Parallel.ForEach(_hapticObjectObservers, observer =>
-                    observer.handlePress(_HaptiQsDictionary.ContainsKey(id) ? _HaptiQsDictionary[id] : null, gestureType));
+                    observer.handlePress(_HaptiQsDictionary.ContainsKey(args.ID) ? _HaptiQsDictionary[args.ID] : null, args.GestureType));
             }
         }
 
@@ -597,27 +585,27 @@ namespace HaptiQ_API
         /* position and     */    
         /* pressure events  */
         /********************/
-        private void HaptiQ_PositionChanged(object sender, EventArgs e, uint id, Point position, double orientation)
+        private void HaptiQ_PositionChanged(object sender, HaptiQPositionArgs args)
         {
             if (PositionChanged != null)
             {
-                PositionChanged(this, e, id, position, orientation);
+                PositionChanged(this, args);
             }
         }
 
-        private void HaptiQ_PressureInput(object sender, EventArgs e, uint id, int actuatorId, int pressureValue)
+        private void HaptiQ_PressureInput(object sender, PressureInputArgs args)
         {
             if (PressureInput != null)
             {
-                PressureInput(this, e, id, actuatorId, pressureValue);
+                PressureInput(this, args);
             }
         }
 
-        private void HaptiQ_ActuatorPositionChanged(object sender, EventArgs e, uint id, int actuatorId, double position)
+        private void HaptiQ_ActuatorPositionChanged(object sender, ActuatorPositionArgs args)
         {
             if (ActuatorPositionChanged != null)
             {
-                ActuatorPositionChanged(this, e, id, actuatorId, position);
+                ActuatorPositionChanged(this, args);
             }
         }
 

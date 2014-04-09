@@ -253,9 +253,9 @@ namespace HaptiQ_API
              
         }
 
-        private void InputChanged(object sender, InputIdentifier inputIdentifier, Point point, double orientation, EventArgs e)
+        private void InputChanged(object sender,  InputArgs args)
         {
-            _currentInputIdentifier = inputIdentifier;
+            _currentInputIdentifier = args.InputIdentifier;
             changeButtonColor(button3, _currentInputIdentifier != null);
         }
         private void ServoBoardsComboBox_SelectedValueChanged(Object sender, EventArgs e)

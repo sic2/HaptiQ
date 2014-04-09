@@ -84,7 +84,7 @@ namespace Input_API
             touchTarget.EnableInput();
         }
 
-        // XXX - calculate ratio once for all, rather than every frame?
+        //Note: need to calculate ratio everytime, because a window might change size during execution
         protected override Bitmap getImage(out double widthRatio, out double heightRatio)
         {
             GCHandle h = GCHandle.Alloc(normalizedImage, GCHandleType.Pinned);

@@ -60,7 +60,7 @@ namespace Input_API
                     {
                         List<IntPoint> glyphPoints = glyphData.RecognizedQuadrilateral;
                         OnChanged(new InputIdentifier(InputIdentifier.TYPE.glyph, 5, InputIdentifier.binaryArrayToInt(glyphData.RawData)), 
-                            estimateCenter(glyphPoints, widthRatio, heightRatio), estimateRotation(glyphPoints), EventArgs.Empty);
+                            estimateCenter(glyphPoints, widthRatio, heightRatio), estimateRotation(glyphPoints));
                     }
                     else
                     {

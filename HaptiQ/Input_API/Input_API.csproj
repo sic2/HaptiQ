@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CameraGlyphsInput.cs" />
+    <Compile Include="InputArgs.cs" />
     <Compile Include="Structures\InputIdentifier.cs" />
     <Compile Include="GlyphsInput.cs" />
     <Compile Include="Input.cs" />

@@ -31,41 +31,29 @@ namespace HaptiQ_API
     /// Delegate for PressureGesture events
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <param name="id">This HaptiQ id</param>
-    /// <param name="position"></param>
-    /// <param name="gestureType"></param>
-    public delegate void PressureGestureEventHandler(object sender, EventArgs e, uint id, Point position, PRESSURE_GESTURE_TYPE gestureType);
+    /// <param name="args"></param>
+    public delegate void PressureGestureEventHandler(object sender, PressureGestureArgs args);
 
     /// <summary>
     /// Delegate for PressureInput events
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <param name="id">This HaptiQ id</param>
-    /// <param name="actuatorId"></param>
-    /// <param name="pressureValue"></param>
-    public delegate void PressureInputEventHandler(object sender, EventArgs e, uint id, int actuatorId, int pressureValue);
+    /// <param name="args"></param>
+    public delegate void PressureInputEventHandler(object sender, PressureInputArgs args);
 
     /// <summary>
     /// Delegate for Position (and Orientation) events.
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <param name="id">This HaptiQ id</param>
-    /// <param name="position"></param>
-    /// <param name="orientation"></param>
-    public delegate void PositionEventHandler(object sender, EventArgs e, uint id, Point position, double orientation);
+    /// <param name="args"></param>
+    public delegate void PositionEventHandler(object sender, HaptiQPositionArgs args);
 
     /// <summary>
     /// Delegate for Actuator position events. 
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <param name="id"></param>
-    /// <param name="actuatorId"></param>
-    /// <param name="position"></param>
-    public delegate void ActuatorPositionEventHandler(object sender, EventArgs e, uint id, int actuatorId, double position);
+    /// <param name="args"></param>
+    public delegate void ActuatorPositionEventHandler(object sender, ActuatorPositionArgs args);
 
     /// <summary>
     /// This class represent an HaptiQ.
@@ -656,7 +644,8 @@ namespace HaptiQ_API
         {
             if (PressureGesture != null)
             {
-                PressureGesture(this, null, _id, _position, gestureType);
+                PressureGestureArgs args = new PressureGestureArgs(_id, _position, gestureType);
+                PressureGesture(this, args);
             }
         }
 
@@ -669,7 +658,8 @@ namespace HaptiQ_API
         {
             if (PressureInput != null)
             {
-                PressureInput(this, null, _id, actuatorId, pressureValue);
+                PressureInputArgs args = new PressureInputArgs(_id, actuatorId, pressureValue);
+                PressureInput(this, args);
             }
         }
 
@@ -680,7 +670,8 @@ namespace HaptiQ_API
         {
             if (PositionChanged != null)
             {
-                PositionChanged(this, null, _id, _position, _orientation);
+                HaptiQPositionArgs args = new HaptiQPositionArgs(_id, _position, _orientation);
+                PositionChanged(this, args);
             }
         }
 
@@ -693,7 +684,8 @@ namespace HaptiQ_API
         {
             if (ActuatorPositionChanged != null)
             {
-                ActuatorPositionChanged(this, null, _id, actuatorId, position);
+                ActuatorPositionArgs args = new ActuatorPositionArgs(_id, actuatorId, position);
+                ActuatorPositionChanged(this, args);
             }
         }
 
