@@ -255,15 +255,12 @@ namespace HaptiQ_API
             foreach (var file in dir.GetFiles(Configuration.CONFIGURATION_FILENAME_PATTERN))
             {
                 Configuration conf = Helper.DeserializeFromXML(file.Name);
-                if (conf != null)
+                if (conf != null && conf.checkConfiguration(ref _devicesToBeConfigured))
                 {
-                    if (conf.checkConfiguration(ref _devicesToBeConfigured))
-                    {
-                        configurations.Add(conf);
-                        createHaptiQs(configurations);
-                    }
+                    configurations.Add(conf);
                 }
             }
+            createHaptiQs(configurations);
             startConfigurationForm();
         }
 
@@ -281,7 +278,6 @@ namespace HaptiQ_API
             {
                 List<Configuration> configurations = ConfigurationManager.getConfigurations();
                 createHaptiQs(configurations);
-                
                 initialiseInput();
             }
         }
@@ -307,6 +303,10 @@ namespace HaptiQ_API
                 Helper.Logger("HaptiQ_API.HaptiQsManager.initialiseInput:: Cannot create a valid object of type " + _inputClass);
                 throw new NullReferenceException("HaptiQ_API.HaptiQsManager.initialiseInput:: Cannot create a valid object of type " + _inputClass);
             }
+            else
+            {
+                Helper.Logger("HaptiQ_API.HaptiQsManager.initialiseInput:: Input object created");
+            }
 
             // [ HACK ] - Possible to register glyph not from here? 
             foreach (KeyValuePair<uint, HaptiQ> entry in _HaptiQsDictionary)
@@ -316,8 +316,7 @@ namespace HaptiQ_API
                     GlyphsInput.registerGlyph(InputIdentifier.intToBinaryArray(entry.Value.configuration.inputIdentifier.getID(), entry.Value.configuration.inputIdentifier.getDim()));
                 }
             }
-            
-
+ 
             _input.Changed += new ChangedEventHandler(InputChanged);
         }
 

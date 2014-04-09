@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <HaptiQName>4HaptiQ</HaptiQName>
+  <idServoBoard>88421</idServoBoard>
+  <nameServoBoard>Phidget Advanced Servo Controller 8-motor</nameServoBoard>
+  <numberActuators>4</numberActuators>
+  <idInterfaceKit>0</idInterfaceKit>
+  <numberPressureSensors>0</numberPressureSensors>
+  <actuators>
+    <item>
+      <key>
+        <int>0</int>
+      </key>
+      <value>
+        <SerializableTupleOfInt32Int32>
+          <Item1>140</Item1>
+          <Item2>218</Item2>
+        </SerializableTupleOfInt32Int32>
+      </value>
+    </item>
+    <item>
+      <key>
+        <int>1</int>
+      </key>
+      <value>
+        <SerializableTupleOfInt32Int32>
+          <Item1>131</Item1>
+          <Item2>186</Item2>
+        </SerializableTupleOfInt32Int32>
+      </value>
+    </item>
+    <item>
+      <key>
+        <int>2</int>
+      </key>
+      <value>
+        <SerializableTupleOfInt32Int32>
+          <Item1>104</Item1>
+          <Item2>205</Item2>
+        </SerializableTupleOfInt32Int32>
+      </value>
+    </item>
+    <item>
+      <key>
+        <int>3</int>
+      </key>
+      <value>
+        <SerializableTupleOfInt32Int32>
+          <Item1>121</Item1>
+          <Item2>209</Item2>
+        </SerializableTupleOfInt32Int32>
+      </value>
+    </item>
+  </actuators>
+  <pressureSensors />
+  <serializableInputIdentifier>
+    <id>270784</id>
+    <equivalentIDs>
+      <unsignedLong>68032</unsignedLong>
+      <unsignedLong>270784</unsignedLong>
+      <unsignedLong>460864</unsignedLong>
+      <unsignedLong>467200</unsignedLong>
+    </equivalentIDs>
+    <type>glyph</type>
+    <dim>5</dim>
+  </serializableInputIdentifier>
+</Configuration>

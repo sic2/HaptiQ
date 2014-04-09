@@ -35,7 +35,7 @@ namespace TestApplication
             // Add handlers for window availability events
             AddWindowAvailabilityHandlers();
 
-            HaptiQsManager.Create(this.Title, "SurfaceInput");
+            HaptiQsManager.Create(this.Title, "SurfaceGlyphsInput");
 
             addTestObjects();
         }
@@ -111,39 +111,48 @@ namespace TestApplication
 
         private void addTestObjects()
         {
-            //HapticShape rectangle = new HapticRectangle(50, 50, 100, 70);
-            //rectangle.color(Brushes.Brown);
-            //Container.Children.Add(rectangle);
+            HapticShape rectangle = new HapticRectangle(50, 50, 100, 70);
+            rectangle.color(Brushes.Brown);
+            Container.Children.Add(rectangle);
 
-            //HapticShape circle = new HapticCircle(250, 250, 50);
-            //circle.color(Brushes.Yellow);
-            //Container.Children.Add(circle);
+            HapticShape circle = new HapticCircle(250, 250, 50);
+            circle.color(Brushes.Yellow);
+            Container.Children.Add(circle);
 
-            //HapticShape circle1 = new HapticCircle(50, 250, 50);
-            //circle1.color(Brushes.Purple);
-            //Container.Children.Add(circle1);
+            HapticShape circle1 = new HapticCircle(50, 250, 50);
+            circle1.color(Brushes.Purple);
+            Container.Children.Add(circle1);
 
-            //HapticShape link = new HapticLink(rectangle, circle, true);
-            //link.color(Brushes.White);
-            //Container.Children.Add(link);
+            HapticShape link = new HapticLink(rectangle, circle, true);
+            link.color(Brushes.White);
+            Container.Children.Add(link);
 
-            //HapticShape link1 = new HapticLink(circle1, circle, false);
-            //link1.color(Brushes.White);
-            //link1.thickness(10);
-            //Container.Children.Add(link1);
+            HapticShape link1 = new HapticLink(circle1, circle, false);
+            link1.color(Brushes.White);
+            link1.thickness(10);
+            Container.Children.Add(link1);
 
-            HapticShape line = new HapticLine(new Point(10, 30), new Point(100, 30));
-            line.color(Brushes.White);
-            Container.Children.Add(line);
+            HapticShape rectangle1 = new HapticRectangle(500, 250, 100, 70);
+            rectangle1.color(Brushes.LightCoral);
+            Container.Children.Add(rectangle1);
 
-            List<Point> points = new List<Point>();
-            points.Add(new Point(10, 70));
-            points.Add(new Point(60, 130));
-            points.Add(new Point(60, 200));
-            points.Add(new Point(180, 380));
-            HapticShape polyline = new HapticPolyline(points);
-            polyline.color(Brushes.Yellow);
-            Container.Children.Add(polyline);
+            HapticShape circle2 = new HapticCircle(450, 450, 100);
+            circle2.color(Brushes.Linen);
+            Container.Children.Add(circle2);
+
+
+            //HapticShape line = new HapticLine(new Point(10, 30), new Point(100, 30));
+            //line.color(Brushes.White);
+            //Container.Children.Add(line);
+
+            //List<Point> points = new List<Point>();
+            //points.Add(new Point(10, 70));
+            //points.Add(new Point(60, 130));
+            //points.Add(new Point(60, 200));
+            //points.Add(new Point(180, 380));
+            //HapticShape polyline = new HapticPolyline(points);
+            //polyline.color(Brushes.Yellow);
+            //Container.Children.Add(polyline);
         }
     }
 }

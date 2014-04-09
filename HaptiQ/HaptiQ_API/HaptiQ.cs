@@ -125,7 +125,7 @@ namespace HaptiQ_API
 
         // Servo related private fields
         private AdvancedServo _advServo;
-        private static List<Actuator> _actuators;
+        private List<Actuator> _actuators;
 
         // Pressure related private fields
         private InterfaceKit _intfKit;
@@ -706,6 +706,7 @@ namespace HaptiQ_API
                     _actuators.Add(new Actuator(attached.servos[i], i, // servo and id
                                                 _configuration.actuators[i].Item1, // Min
                                                 _configuration.actuators[i].Item2)); // Max
+
                 }
             }
         }

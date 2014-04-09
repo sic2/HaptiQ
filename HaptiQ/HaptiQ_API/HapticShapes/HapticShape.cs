@@ -100,7 +100,7 @@ namespace HaptiQ_API
             _HaptiQBehaviours = new Dictionary<uint, Tuple<STATE, IBehaviour>>();
 
             isSelected = false;
-            isSelectable = true;
+            isSelectable = false;
             this.StrokeThickness = 20;
             this.Unloaded += new System.Windows.RoutedEventHandler(HapticShape_Unloaded);
 
