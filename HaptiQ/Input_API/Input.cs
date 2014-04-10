@@ -26,10 +26,10 @@ namespace Input_API
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
+        protected static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct RECT
+        protected struct RECT
         {
             public int Left;
             public int Top;
@@ -62,7 +62,8 @@ namespace Input_API
         {
             if (Changed != null)
             {
-                InputArgs args = new InputArgs(inputIdentifier, position, orientation);
+                Console.WriteLine("position " + position.X + ", " + position.Y);
+                InputArgs args = new InputArgs(inputIdentifier, position, orientation + Math.PI / 2.0);
                 Changed(this, args);
             }
         }

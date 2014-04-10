@@ -7,8 +7,9 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                  SizeToContent="WidthAndHeight"
+                 Width="1000"
+                 Height="700"
     >
-    <Grid  Name="Container" Height="700" Width="1000">
-
-  </Grid>
+    <Grid  Name="Container">
+    </Grid>
 </s:SurfaceWindow>

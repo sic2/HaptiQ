@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <mhtpName>Configuration Name</mhtpName>
+  <HaptiQName>Configuration Name</HaptiQName>
   <idServoBoard>177012</idServoBoard>
   <nameServoBoard>Phidget Advanced Servo Controller 8-motor</nameServoBoard>
   <numberActuators>8</numberActuators>
@@ -13,8 +13,8 @@
       </key>
       <value>
         <SerializableTupleOfInt32Int32>
-          <Item1>42</Item1>
-          <Item2>169</Item2>
+          <Item1>21</Item1>
+          <Item2>188</Item2>
         </SerializableTupleOfInt32Int32>
       </value>
     </item>
@@ -24,8 +24,8 @@
       </key>
       <value>
         <SerializableTupleOfInt32Int32>
-          <Item1>89</Item1>
-          <Item2>220</Item2>
+          <Item1>49</Item1>
+          <Item2>201</Item2>
         </SerializableTupleOfInt32Int32>
       </value>
     </item>
@@ -35,8 +35,8 @@
       </key>
       <value>
         <SerializableTupleOfInt32Int32>
-          <Item1>63</Item1>
-          <Item2>190</Item2>
+          <Item1>44</Item1>
+          <Item2>182</Item2>
         </SerializableTupleOfInt32Int32>
       </value>
     </item>
@@ -46,8 +46,8 @@
       </key>
       <value>
         <SerializableTupleOfInt32Int32>
-          <Item1>66</Item1>
-          <Item2>212</Item2>
+          <Item1>70</Item1>
+          <Item2>209</Item2>
         </SerializableTupleOfInt32Int32>
       </value>
     </item>
@@ -57,8 +57,8 @@
       </key>
       <value>
         <SerializableTupleOfInt32Int32>
-          <Item1>61</Item1>
-          <Item2>157</Item2>
+          <Item1>63</Item1>
+          <Item2>197</Item2>
         </SerializableTupleOfInt32Int32>
       </value>
     </item>
@@ -68,8 +68,8 @@
       </key>
       <value>
         <SerializableTupleOfInt32Int32>
-          <Item1>108</Item1>
-          <Item2>209</Item2>
+          <Item1>93</Item1>
+          <Item2>190</Item2>
         </SerializableTupleOfInt32Int32>
       </value>
     </item>
@@ -79,8 +79,8 @@
       </key>
       <value>
         <SerializableTupleOfInt32Int32>
-          <Item1>87</Item1>
-          <Item2>197</Item2>
+          <Item1>57</Item1>
+          <Item2>201</Item2>
         </SerializableTupleOfInt32Int32>
       </value>
     </item>
@@ -90,17 +90,22 @@
       </key>
       <value>
         <SerializableTupleOfInt32Int32>
-          <Item1>91</Item1>
-          <Item2>190</Item2>
+          <Item1>59</Item1>
+          <Item2>220</Item2>
         </SerializableTupleOfInt32Int32>
       </value>
     </item>
   </actuators>
   <pressureSensors />
   <serializableInputIdentifier>
-    <id>0</id>
-    <equivalentIDs />
-    <type>tag</type>
-    <dim>-1</dim>
+    <id>340032</id>
+    <equivalentIDs>
+      <unsignedLong>201024</unsignedLong>
+      <unsignedLong>268608</unsignedLong>
+      <unsignedLong>332160</unsignedLong>
+      <unsignedLong>340032</unsignedLong>
+    </equivalentIDs>
+    <type>glyph</type>
+    <dim>5</dim>
   </serializableInputIdentifier>
 </Configuration>

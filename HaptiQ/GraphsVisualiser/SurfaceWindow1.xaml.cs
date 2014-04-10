@@ -28,7 +28,7 @@ namespace SurfaceApp1
            
             Helper.setTopLeftCorner(new Point(surfaceButton1.TranslatePoint(new Point(0, 0), this).X + surfaceButton1.Width, 0));
 
-            HaptiQsManager.Create(this.Title, "SurfaceInput");
+            HaptiQsManager.Create(this.Title, "SurfaceGlyphsInput");
         }
 
         /// <summary>

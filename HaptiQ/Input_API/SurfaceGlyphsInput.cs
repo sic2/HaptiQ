@@ -23,7 +23,6 @@ namespace Input_API
         {
             lock (imgLock)
             {
-                int paddingLeft, paddingRight;
                 imageAvailable = false;
                 if (normalizedImage == null)
                 {
@@ -33,9 +32,7 @@ namespace Input_API
                         Microsoft.Surface.Core.InteractiveSurface.PrimarySurfaceDevice.Width,
                         Microsoft.Surface.Core.InteractiveSurface.PrimarySurfaceDevice.Height,
                         out normalizedImage,
-                        out normalizedMetrics,
-                        out paddingLeft,
-                        out paddingRight);
+                        out normalizedMetrics);
                 }
                 else
                 {
@@ -54,27 +51,39 @@ namespace Input_API
 
         protected override void EnableRawImage()
         {
-            touchTarget.EnableImage(Microsoft.Surface.Core.ImageType.Normalized);
-            touchTarget.FrameReceived += OnTouchTargetFrameReceived;
+            if (touchTarget != null)
+            {
+                touchTarget.EnableImage(Microsoft.Surface.Core.ImageType.Normalized);
+                touchTarget.FrameReceived += OnTouchTargetFrameReceived;
+            }
         }
 
         protected override void DisableRawImage()
         {
-            touchTarget.DisableImage(Microsoft.Surface.Core.ImageType.Normalized);
-            touchTarget.FrameReceived -= OnTouchTargetFrameReceived;
+            if (touchTarget != null)
+            {
+                touchTarget.DisableImage(Microsoft.Surface.Core.ImageType.Normalized);
+                touchTarget.FrameReceived -= OnTouchTargetFrameReceived;
+            }
         }
 
         protected override void handleRawInput()
         {
             EnableRawImage();
             // Attach an event handler for the FrameReceived event.
-            touchTarget.FrameReceived += new EventHandler<FrameReceivedEventArgs>(OnTouchTargetFrameReceived);
+            if (touchTarget != null)
+            {
+                touchTarget.FrameReceived += new EventHandler<FrameReceivedEventArgs>(OnTouchTargetFrameReceived);
+            }
         }
 
         protected override void unhandleRawInput()
         {
-            touchTarget.FrameReceived -= new EventHandler<FrameReceivedEventArgs>(OnTouchTargetFrameReceived);
-            touchTarget.Dispose();
+            if (touchTarget != null)
+            {
+                touchTarget.FrameReceived -= new EventHandler<FrameReceivedEventArgs>(OnTouchTargetFrameReceived);
+                touchTarget.Dispose();
+            }
         }
 
         protected override void initialiseWindowTarget()

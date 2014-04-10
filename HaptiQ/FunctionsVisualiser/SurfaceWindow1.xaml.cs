@@ -43,7 +43,7 @@ namespace FunctionsVisualiser
         {
             InitializeComponent();
 
-            HaptiQsManager.Create(this.Title, "SurfaceInput");
+            HaptiQsManager.Create(this.Title, "SurfaceGlyphsInput");
             hapticObjects = new List<HapticShape>(); // list haptic objects used to display functions
 
             initialCount = container.Children.Count;
@@ -109,10 +109,10 @@ namespace FunctionsVisualiser
                 }
 
                 // Scale values
-                double scaleFactor = container.Height / XY_RANGE;
+                double scaleFactor = this.Height / XY_RANGE;
                 for (int i = 0; i < functionValues.Count; i++)
                 {
-                    functionValues[i] = new Point(functionValues[i].X * (container.Width / XY_RANGE), container.Height - functionValues[i].Y * scaleFactor + (min < 0 ? min * scaleFactor : 0));
+                    functionValues[i] = new Point(functionValues[i].X * (this.Width / XY_RANGE), this.Height - functionValues[i].Y * scaleFactor + (min < 0 ? min * scaleFactor : 0));
                 }
 
                 HapticPolyline polyline = new HapticPolyline(functionValues);
@@ -127,17 +127,17 @@ namespace FunctionsVisualiser
                     HaptiQsManager.Instance.removeObserver(line1);
                 }
 
-                line1 = new HapticLine(new Point(0, 0), new Point(0, this.container.Height));
+                line1 = new HapticLine(new Point(0, 0), new Point(0, this.Height));
                 line1.color(Brushes.Blue);
                 this.container.Children.Add(line1);
 
                 // x-axis
-                double mid = container.Height + (min < 0 ? min * scaleFactor : 0);
+                double mid = this.Height + (min < 0 ? min * scaleFactor : 0);
                 if (line != null)
                 {
                     HaptiQsManager.Instance.removeObserver(line);
                 }
-                line = new HapticLine(new Point(0, mid), new Point(this.container.Width, mid));
+                line = new HapticLine(new Point(0, mid), new Point(this.Width, mid));
                 line.color(Brushes.Blue);
                 line.thickness(5);
                 this.container.Children.Add(line);

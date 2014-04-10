@@ -132,8 +132,9 @@ namespace TestApplication
             link1.thickness(10);
             Container.Children.Add(link1);
 
-            HapticShape rectangle1 = new HapticRectangle(500, 250, 100, 70);
+            HapticShape rectangle1 = new HapticRectangle(500, 150, 200, 180);
             rectangle1.color(Brushes.LightCoral);
+            rectangle1.registerAction(new BasicAction("This is a test - add any information you want"));
             Container.Children.Add(rectangle1);
 
             HapticShape circle2 = new HapticCircle(450, 450, 100);

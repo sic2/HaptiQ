@@ -5,13 +5,14 @@
     Title="FunctionsVisualiser"
     mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="500" d:DesignWidth="500" SizeToContent="WidthAndHeight"
+    SizeToContent="WidthAndHeight"
+    Height="700" Width="1000"
     >
-    <Grid Name="container" Height="700" Width="1000" >
+    <Grid Name="container">
         <Border BorderBrush="Silver" BorderThickness="1" HorizontalAlignment="Left" Margin="666,0,0,585" Name="border1" Width="334">
             <TextBox Height="36" Name="textBox1" Width="203" FontSize="20" />
         </Border>
-        <Label Content="y =" Height="27" HorizontalAlignment="Left" Margin="666,40,0,0" Name="label1" VerticalAlignment="Top" Width="63" FontSize="26" />
+        <Label Content="y =" Height="27" HorizontalAlignment="Left" Margin="666,20,0,0" Name="label1" VerticalAlignment="Top" Width="63" FontSize="26" />
         <Button Content="Display" Height="29" HorizontalAlignment="Left" Margin="752,79,0,0" Name="button1" VerticalAlignment="Top" Width="157" FontSize="20" Click="button1_Click" />
     </Grid>
 </s:SurfaceWindow>
