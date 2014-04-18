@@ -62,7 +62,6 @@ namespace Input_API
         {
             if (Changed != null)
             {
-                Console.WriteLine("position " + position.X + ", " + position.Y);
                 InputArgs args = new InputArgs(inputIdentifier, position, orientation + Math.PI / 2.0);
                 Changed(this, args);
             }

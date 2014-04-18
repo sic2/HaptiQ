@@ -25,7 +25,7 @@ namespace HaptiQ_API
             _synth = new SpeechSynthesizer();  
             _synth.SelectVoiceByHints(VoiceGender.Female);
             _synth.Rate = 1;
-            _synth.Volume = 50; 
+            _synth.Volume = 90; 
         }
 
         /// <summary>

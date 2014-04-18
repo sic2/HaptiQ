@@ -284,7 +284,7 @@ namespace HaptiQ_API
 
         private void createHaptiQs(List<Configuration> configurations)
         {
-            if (configurations != null)
+            if (configurations != null && configurations.Count > 0)
             {
                 foreach (Configuration configuration in configurations)
                 {

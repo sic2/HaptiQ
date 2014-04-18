@@ -111,15 +111,15 @@ namespace TestApplication
 
         private void addTestObjects()
         {
-            HapticShape rectangle = new HapticRectangle(50, 50, 100, 70);
+            HapticShape rectangle = new HapticRectangle(700, 450, 100, 70);
             rectangle.color(Brushes.Brown);
             Container.Children.Add(rectangle);
 
-            HapticShape circle = new HapticCircle(250, 250, 50);
+            HapticShape circle = new HapticCircle(1050, 250, 50);
             circle.color(Brushes.Yellow);
             Container.Children.Add(circle);
 
-            HapticShape circle1 = new HapticCircle(50, 250, 50);
+            HapticShape circle1 = new HapticCircle(900, 750, 80);
             circle1.color(Brushes.Purple);
             Container.Children.Add(circle1);
 
@@ -136,6 +136,16 @@ namespace TestApplication
             rectangle1.color(Brushes.LightCoral);
             rectangle1.registerAction(new BasicAction("This is a test - add any information you want"));
             Container.Children.Add(rectangle1);
+
+            HapticShape rectangle2 = new HapticRectangle(200, 100, 150, 150);
+            rectangle2.color(Brushes.LightCoral);
+            rectangle2.registerAction(new BasicAction("Other information you can add"));
+            Container.Children.Add(rectangle2);
+
+            HapticShape link2 = new HapticLink(rectangle1, rectangle2, false);
+            link2.color(Brushes.Orange);
+            link2.thickness(15);
+            Container.Children.Add(link2);
 
             HapticShape circle2 = new HapticCircle(450, 450, 100);
             circle2.color(Brushes.Linen);

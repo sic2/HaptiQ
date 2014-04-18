@@ -15,8 +15,13 @@ namespace Input_API
         private Microsoft.Surface.Core.ImageMetrics normalizedMetrics;
         private byte[] normalizedImage;
 
+        private bool _disposed;
+
         public SurfaceGlyphsInput(String windowName)
-            : base(windowName) {}
+            : base(windowName) 
+        {
+            _disposed = false;
+        }
 
         // @see: http://msdn.microsoft.com/en-us/library/ff727886.aspx 
         private void OnTouchTargetFrameReceived(object sender, Microsoft.Surface.Core.FrameReceivedEventArgs e)
@@ -51,7 +56,7 @@ namespace Input_API
 
         protected override void EnableRawImage()
         {
-            if (touchTarget != null)
+            if (touchTarget != null && !_disposed)
             {
                 touchTarget.EnableImage(Microsoft.Surface.Core.ImageType.Normalized);
                 touchTarget.FrameReceived += OnTouchTargetFrameReceived;
@@ -60,7 +65,7 @@ namespace Input_API
 
         protected override void DisableRawImage()
         {
-            if (touchTarget != null)
+            if (touchTarget != null && !_disposed)
             {
                 touchTarget.DisableImage(Microsoft.Surface.Core.ImageType.Normalized);
                 touchTarget.FrameReceived -= OnTouchTargetFrameReceived;
@@ -71,7 +76,7 @@ namespace Input_API
         {
             EnableRawImage();
             // Attach an event handler for the FrameReceived event.
-            if (touchTarget != null)
+            if (touchTarget != null && !_disposed)
             {
                 touchTarget.FrameReceived += new EventHandler<FrameReceivedEventArgs>(OnTouchTargetFrameReceived);
             }
@@ -83,6 +88,7 @@ namespace Input_API
             {
                 touchTarget.FrameReceived -= new EventHandler<FrameReceivedEventArgs>(OnTouchTargetFrameReceived);
                 touchTarget.Dispose();
+                _disposed = true;
             }
         }
 
@@ -91,6 +97,7 @@ namespace Input_API
             // Create a target for surface input.
             touchTarget = new TouchTarget(_windowHandle, EventThreadChoice.OnBackgroundThread);
             touchTarget.EnableInput();
+            _disposed = false;
         }
 
         //Note: need to calculate ratio everytime, because a window might change size during execution

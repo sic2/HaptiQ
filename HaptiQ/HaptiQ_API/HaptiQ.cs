@@ -759,7 +759,7 @@ namespace HaptiQ_API
                 {
                    _inputData[e.Index] = new Tuple<DateTime, PRESSURE_STATE>(DateTime.Now, PRESSURE_STATE.ABOVE_THRESHOLD);
                 }
-                else if (e.Value < INPUT_PRESSURE_THRESHOLD)
+                else if (e.Value < INPUT_PRESSURE_THRESHOLD && _inputData.ContainsKey(e.Index))
                 {
                     TimeSpan span = DateTime.Now - _inputData[e.Index].Item1;
                     if (_inputData.ContainsKey(e.Index) && 

@@ -15,6 +15,6 @@
         <s:SurfaceButton Content="Line" Height="23" HorizontalAlignment="Left" Margin="12,104,0,0" Name="surfaceButton3" VerticalAlignment="Top" Width="94" Click="surfaceButton3_Click" />
         <s:SurfaceButton Content="Polyline" Height="23" HorizontalAlignment="Left" Margin="12,148,0,0" Name="surfaceButton4" VerticalAlignment="Top" Width="94" Click="surfaceButton4_Click" />
         <s:SurfaceButton Content="Link" Height="23" HorizontalAlignment="Left" Margin="12,192,0,0" Name="surfaceButton5" VerticalAlignment="Top" Width="94" Click="surfaceButton5_Click" />
-        <s:SurfaceButton Content="Lock Objs" Height="23" HorizontalAlignment="Left" Margin="12,424,0,0" Name="surfaceButton6" VerticalAlignment="Top" Width="94" Click="surfaceButton6_Click" Background="Green"></s:SurfaceButton>
+        <s:SurfaceButton Content="Lock Objs" Height="23" HorizontalAlignment="Left" Margin="12,424,0,0" Name="surfaceButton6" VerticalAlignment="Top" Width="94" Click="surfaceButton6_Click" Background="Red"></s:SurfaceButton>
     </Grid>
 </s:SurfaceWindow>
